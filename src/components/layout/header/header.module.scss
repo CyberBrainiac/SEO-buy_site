@@ -4,12 +4,12 @@
 .blok1 {
   width: 60px;
   height: 60px;
-  background-color: $highlight-main;
+  background-color: violet;
 }
 
 .blok2 {
   @extend .blok1;
-  background-color: $highlight-additional;
+  background-color: red;
 }
 
 .container {
@@ -21,6 +21,7 @@
 
   &_smallGreen {
     @extend .blok1;
-    background-color: $border-color-main;
+    background-color: green;
   }
 }
+

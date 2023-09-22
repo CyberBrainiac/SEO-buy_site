@@ -1,11 +1,14 @@
-import style from './App.module.scss'
+import Header from "./components/layout/header/Header"
 
 function App() {
+
   return (
-    <div className={style.wrap}>
-      <div className={style.wrap_test}></div>
-    </div>
+    <section>
+      <Header />
+      /**Routes */
+      <main>Main content</main>
+    </section>
   )
 }
 
-export default App
+export default App;
