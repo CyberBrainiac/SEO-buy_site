@@ -18,7 +18,8 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
-    // if github naming 
-    // "filenames/match-regex": ["error", "^[A-Z][a-zA-Z]*$"],
+    // Becouse Github React-naming-convention changes between Default-React-naming-convention
+    // I disable this strange rule
+    "filenames/match-regex": ["error", "^[A-Z][a-zA-Z]*$"],
   },
 };
