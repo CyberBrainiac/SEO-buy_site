@@ -1,0 +1,19 @@
+
+.wrap {
+  display: grid;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+
+  &_test {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 50px;
+    height: 50px;
+    background-color: rebeccapurple;
+  }
+}
