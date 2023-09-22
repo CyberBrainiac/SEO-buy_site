@@ -1,0 +1,89 @@
+@import "./variables";
+
+/*Headings and Text*/
+@mixin headings($font-size) {
+	color: $highlight-main;
+	font-size: $font-size;
+	font-style: normal;
+	font-weight: 800;
+	line-height: normal;
+}
+
+@mixin bold-text($font-size, $font-weight: 700) {
+	@include headings($font-size);
+	font-weight: $font-weight;
+}
+
+@mixin highlight-text() {
+	color: $text-color-highlight;
+	font-size: 36px;
+	font-style: normal;
+	text-transform: capitalize;
+	font-weight: 400;
+	line-height: normal;
+}
+
+@mixin common-text($font-weight: 400) {
+	color: $text-color-main;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: $font-weight;
+	line-height: 165.4%;
+}
+
+/*Images*/
+@mixin common-img() {
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+}
+
+@mixin backgr-img($url) {
+	background-image: url($url);
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/*Pseudo element*/
+@mixin pseudo-elem() {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+@mixin pseudo-elem-img($url) {
+  @include pseudo-elem();
+  background-image: url($url);
+  background-size: cover;
+	background-repeat: no-repeat;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/*Flex box*/
+@mixin flex-row() {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-evenly;
+}
+
+@mixin flex-column() {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+/*Transition*/
+@mixin transition-main() {
+	transition: all $trans-default-time linear;
+}
