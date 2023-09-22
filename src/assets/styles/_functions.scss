@@ -1,10 +1,10 @@
 @use "sass:math";
 
-@function px2vw($target) { 
+@function px2vw($target) {
   /*CHANGE VIEWPORT VALUE IF YOUR FIGMA MAKET RESOLUTION IS DIFFERENT*/
   $my-viewPort-width: 1920px;
-	// $my-viewPort-width: 2560px;
-  $metric: 'vw';
+  // $my-viewPort-width: 2560px;
+  $metric: "vw";
 
   @if unitless($target) {
     @warn "Value has no unit: '#{$target}', value convert into pixels.";
@@ -18,9 +18,9 @@
 }
 
 @function px2vh($target) {
-	/*CHANGE VIEWPORT VALUE IF YOUR FIGMA MAKET RESOLUTION IS DIFFERENT*/
+  /*CHANGE VIEWPORT VALUE IF YOUR FIGMA MAKET RESOLUTION IS DIFFERENT*/
   $my-viewPort-height: 937px;
-  $metric: 'vh';
+  $metric: "vh";
 
   @if unitless($target) {
     @warn "Value has no unit: '#{$target}', value convert into pixels.";

@@ -2,26 +2,26 @@
 @import "./rwd-760";
 
 h1 {
-	@include headings(70px);
+  @include headings(70px);
 }
 
 h2 {
-	@include headings(50px);
+  @include headings(50px);
 }
 
 h3 {
-	@include headings(40px);
+  @include headings(40px);
 }
 
 h4 {
-	@include headings(38px);
-	font-weight: 700;
+  @include headings(38px);
+  font-weight: 700;
 }
 
 h5 {
-	@include headings(30px);
+  @include headings(30px);
 }
 
 h6 {
-	@include headings(25px);
+  @include headings(25px);
 }

@@ -9,7 +9,7 @@
 
 .blok2 {
   display: grid;
-  transition: all .5s;
+  transition: all 0.5s;
   user-select: none;
   background: linear-gradient(to bottom, white, black);
   background-color: red;
@@ -29,4 +29,3 @@
     background-color: green;
   }
 }
-

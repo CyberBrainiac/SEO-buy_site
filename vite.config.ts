@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import autoprefixer from 'autoprefixer'
-import crypto from 'crypto'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import autoprefixer from "autoprefixer";
+import crypto from "crypto";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,23 +9,25 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        autoprefixer({}) // add options if needed
+        autoprefixer({}), // add options if needed
       ],
     },
 
     /*More flexible config css modules*/
     modules: {
-      localsConvention: 'camelCase',
+      localsConvention: "camelCase",
       generateScopedName: (name, filename, css) => {
-        const componentName = filename
-        .slice(filename.lastIndexOf("/") + 1, filename.indexOf("."));
+        const componentName = filename.slice(
+          filename.lastIndexOf("/") + 1,
+          filename.indexOf("."),
+        );
 
         // Generate hash
         const hash = crypto
-          .createHash('md5')
+          .createHash("md5")
           .update(css)
-          .digest('base64')
-          .substring(0, 3); 
+          .digest("base64")
+          .substring(0, 3);
 
         const date = new Date();
         const number = date.getMilliseconds();
@@ -33,5 +35,5 @@ export default defineConfig({
         return `${componentName}__${name}--${hash}${cutNumber}`;
       },
     },
-  }
-})
+  },
+});

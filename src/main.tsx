@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import RootLayout from "./App";
+import App from "./app.tsx";
 import "./assets/styles/myReset.css";
 import "./assets/styles/global.scss";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RootLayout />
-  </React.StrictMode>
+    <App />
+  </React.StrictMode>,
 );

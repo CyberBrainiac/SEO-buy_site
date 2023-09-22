@@ -143,11 +143,11 @@ a {
 }
 
 button {
-	border-color: #000;
-	border-width: 1px;
-	border-style: solid;
-	background-color: transparent;
-	cursor: pointer;
+  border-color: #000;
+  border-width: 1px;
+  border-style: solid;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 *,

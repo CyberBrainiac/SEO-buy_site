@@ -1,7 +1,7 @@
 import style from "./header.module.scss";
 
 function Header() {
-  return(
+  return (
     <header>
       <div className={style.container}>
         <div className={style.blok1}></div>
