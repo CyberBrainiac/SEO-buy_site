@@ -4,7 +4,7 @@ function App() {
   return (
     <section>
       <Header />
-      /**Routes */
+      {/**Routes */}
       <main>Main content</main>
     </section>
   );
