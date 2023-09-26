@@ -1,6 +1,11 @@
 import style from './header.module.scss';
 
 function Header() {
+  function handleClick() {
+    console.log('Click event');
+    return null;
+  }
+
   return (
     <header>
       <div className={style.container}>
@@ -11,6 +16,7 @@ function Header() {
         <div className={style.container_smallGreen}></div>
         <div className={style.blok3}></div>
       </div>
+      <button onClick={handleClick}>Click</button>
     </header>
   );
 }
