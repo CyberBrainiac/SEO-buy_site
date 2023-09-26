@@ -1,20 +1,34 @@
-@import "/src/assets/styles/variables";
-@import "/src/assets/styles/mixins";
+@import '/src/assets/styles/variables';
+@import '/src/assets/styles/mixins';
 
 .blok1 {
-  width: 60px;
-  height: 60px;
-  background-color: violet;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background-color: $page-bg-color-main;
+
+  &_item {
+    width: 40px;
+    height: 40px;
+    background-color: $text-color-main;
+  }
 }
 
 .blok2 {
   display: grid;
   transition: all 0.5s;
   user-select: none;
-  background: linear-gradient(to bottom, white, black);
-  background-color: red;
+  background: linear-gradient(to bottom, white, $highlight-main);
   width: 100px;
   height: 100px;
+}
+
+.blok3 {
+  width: 80px;
+  height: 80px;
+  background-color: $text-color-additional;
 }
 
 .container {
@@ -26,6 +40,6 @@
 
   &_smallGreen {
     @extend .blok1;
-    background-color: green;
+    background-color: $highlight-additional;
   }
 }

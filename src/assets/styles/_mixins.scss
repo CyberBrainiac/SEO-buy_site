@@ -1,4 +1,4 @@
-@import "./variables";
+@import './variables';
 
 /*Headings and Text*/
 @mixin headings($font-size) {
@@ -50,7 +50,7 @@
 
 /*Pseudo element*/
 @mixin pseudo-elem() {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;

@@ -1,5 +1,5 @@
-@import "./mixins.scss";
-@import "./rwd-760";
+@import './mixins.scss';
+@import './rwd-760';
 
 h1 {
   @include headings(70px);
