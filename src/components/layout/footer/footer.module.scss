@@ -1,0 +1,19 @@
+@import '/src/assets/styles/variables';
+@import '/src/assets/styles/mixins';
+
+.container {
+  color: $text-color-main;
+}
+
+.content {
+  @include flex-row();
+}
+
+.copyright {
+  padding: 10px 0;
+  text-align: center;
+
+  &_link {
+    color: $highlight-additional;
+  }
+}

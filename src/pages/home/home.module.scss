@@ -1,0 +1,11 @@
+@import '/src/assets/styles/variables';
+@import '/src/assets/styles/mixins';
+
+.container {
+  color: $text-color-main;
+  font-size: 40px;
+}
+
+.content {
+  @include flex-column();
+}

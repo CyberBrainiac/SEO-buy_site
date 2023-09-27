@@ -6,7 +6,7 @@ import getRandom from './src/utils/getRandom';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/site_indexThematicity/',
+  base: '/',
   plugins: [react()],
   css: {
     postcss: {

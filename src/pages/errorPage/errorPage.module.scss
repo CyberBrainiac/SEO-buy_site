@@ -1,0 +1,12 @@
+@import '/src/assets/styles/variables';
+@import '/src/assets/styles/mixins';
+
+.container {
+  @include flex-row();
+  @include fullScreen();
+}
+
+.message {
+  font-size: 40px;
+  color: $text-color-main;
+}

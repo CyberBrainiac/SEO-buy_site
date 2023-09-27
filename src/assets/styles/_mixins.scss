@@ -14,14 +14,14 @@
   font-weight: $font-weight;
 }
 
-@mixin highlight-text() {
-  color: $text-color-highlight;
-  font-size: 36px;
-  font-style: normal;
-  text-transform: capitalize;
-  font-weight: 400;
-  line-height: normal;
-}
+// @mixin highlight-text() {
+//   color: $text-color-highlight;
+//   font-size: 36px;
+//   font-style: normal;
+//   text-transform: capitalize;
+//   font-weight: 400;
+//   line-height: normal;
+// }
 
 @mixin common-text($font-weight: 400) {
   color: $text-color-main;
@@ -68,6 +68,11 @@
   transform: translate(-50%, -50%);
 }
 
+/*Transition*/
+@mixin transition-main() {
+  transition: all $trans-default-time linear;
+}
+
 /*Flex box*/
 @mixin flex-row() {
   display: flex;
@@ -83,7 +88,8 @@
   justify-content: center;
 }
 
-/*Transition*/
-@mixin transition-main() {
-  transition: all $trans-default-time linear;
+/*Block*/
+@mixin fullScreen() {
+  width: 100%;
+  height: 100vh;
 }
