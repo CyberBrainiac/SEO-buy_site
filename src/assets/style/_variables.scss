@@ -1,9 +1,14 @@
 /*Fonts and Typography*/
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&family=Kanit:wght@500;700&family=Open+Sans:wght@400;700&display=swap');
+
+$Kanit: 'Kanit', Times, sans-serif;
+$Open-Sans: 'Open Sans', 'Times New Roman', sans-serif;
+$Cormorant-Garamond: 'Cormorant Garamond', 'Georgia', serif;
 
 /*Colors*/
 $page-bg-color-main: #fff;
-$page-bg-color-additional: #205ded;
-$highlight-main: #fffb21;
+$page-bg-color-additional: #497aed;
+$highlight-main: #fffd9e;
 $highlight-additional: #6b1785;
 $text-color-main: #425259;
 $text-color-additional: #f0e0b0;
@@ -14,4 +19,4 @@ $border-color-main: #f4a124;
 /*Paddings*/
 
 /*Border radius*/
-$border-rad-main: 16px;
+

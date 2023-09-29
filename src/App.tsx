@@ -14,10 +14,7 @@ const App: React.FC = () => {
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />} errorElement={<ErrorPage />}>
         <Route index element={<Home />} />
-        <Route
-          path="/template_vite_react_ts/tools/thematicity-index"
-          element={<ThematicityIndex />}
-        />
+        <Route path="/tools/thematicity-index" element={<ThematicityIndex />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     )

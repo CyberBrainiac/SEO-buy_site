@@ -7,7 +7,7 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/template_vite_react_ts/',
+  base: '/',
   server: {
     port: 4200,
   },
@@ -38,7 +38,7 @@ export default defineConfig({
         const componentName = filename.slice(filename.lastIndexOf('/') + 1, filename.indexOf('.'));
 
         // Generate hash
-        const hash = crypto.createHash('md5').update(css).digest('base64').substring(0, 2);
+        const hash = crypto.createHash('md5').update(css).digest('base64url').substring(0, 2);
 
         return `${componentName}__${name}-${hash}${getRandom.numberInRange(10, 100)}`;
       },

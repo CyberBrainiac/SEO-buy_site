@@ -1,14 +1,11 @@
-import { Link } from 'react-router-dom';
-import style from './thematicityIndex.module.scss';
+import { ButtonLink } from '@/components/buttons/Buttons';
 
 const ThematicityIndex: React.FC = () => {
   return (
     <section>
       INDEX THEMATICITY PAGE
       <div>Content</div>
-      <Link to="/">
-        <div className={style.linkButton}>Go back</div>
-      </Link>
+      <ButtonLink href="/" text="Home page" />
     </section>
   );
 };
