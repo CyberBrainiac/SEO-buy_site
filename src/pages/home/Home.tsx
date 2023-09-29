@@ -6,10 +6,14 @@ const Home: React.FC = () => {
     <section className={style.container}>
       <div className={style.content}>HOME PAGE</div>
       <div>
-        <Link to="/tools/thematicity-index">thematicity-index</Link>
+        <Link className={style.button} to="/tools/thematicity-index">
+          Thematicity-index page
+        </Link>
       </div>
       <div>
-        <Link to="/tools/unknown">unknown</Link>
+        <Link className={style.button} to="/tools/unknown">
+          Unknown page
+        </Link>
       </div>
     </section>
   );

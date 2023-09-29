@@ -3,10 +3,26 @@ import react from '@vitejs/plugin-react-swc';
 import autoprefixer from 'autoprefixer';
 import crypto from 'crypto';
 import getRandom from './src/utils/getRandom';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
+  base: '/template_vite_react_ts/',
+  server: {
+    port: 4200,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src/'),
+      '@pages': path.resolve(__dirname, './src/'),
+      '@components': path.resolve(__dirname, './src/components/'),
+      '@containers': path.resolve(__dirname, './src/containers/'),
+      '@utils': path.resolve(__dirname, './src/utils/'),
+      '@services': path.resolve(__dirname, 'src/services/'),
+      '@image': path.resolve(__dirname, 'src/assets/image/'),
+      '@style': path.resolve(__dirname, 'src/assets/style/'),
+    },
+  },
   plugins: [react()],
   css: {
     postcss: {

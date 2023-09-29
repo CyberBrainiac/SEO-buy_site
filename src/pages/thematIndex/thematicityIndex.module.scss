@@ -1,16 +1,5 @@
-@import '@style/variables';
 @import '@style/mixins';
-
-.container {
-  @include flex-column();
-  row-gap: 40px;
-  padding: 60px;
-}
-
-.message {
-  font-size: 60px;
-  color: $text-color-main;
-}
+@import '@style/variables';
 
 .linkButton {
   display: block;
