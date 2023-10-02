@@ -2,13 +2,12 @@ import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 interface InputFileProps {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (uploadedFile: File) => void;
 }
 
 const InputFile: React.FC<InputFileProps> = ({ onFileUpload }) => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      // Do something with the uploaded file
       const uploadedFile = acceptedFiles[0];
       onFileUpload(uploadedFile);
     },
