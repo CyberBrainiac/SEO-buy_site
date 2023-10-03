@@ -1,3 +1,5 @@
+//I can configure rules whith keywords: "off", "error", "warn" for more flexible configuration
+
 module.exports = {
   root: true,
   env: { browser: true, es2021: true },
@@ -19,15 +21,19 @@ module.exports = {
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh", "prettier"],
+
   rules: {
     // Allow constant exports from files (useful for reusing constants)
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },
     ],
-    //disable additional type cheking
+    //disable additional unused variables cheking because TS contain this rule
+    "no-unused-vars": "off",
+    //disable additional type cheking because TS contain this rule
     "react/prop-types": "off",
   },
+
   settings: {
     react: {
       createClass: "createReactClass", // Regex for Component Factory to use,

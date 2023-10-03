@@ -3,13 +3,10 @@ import style from './thematicityIndex.module.scss';
 import InputFile from './inputFile/InputFile';
 import { useCallback } from 'react';
 
-interface HandleFileUploadVar {
-  obj: (file: File) => void;
-}
-
 const ThematicityIndex: React.FC = () => {
-  const handleFileUpload: HandleFileUploadVar = (file: File) => {
+  const handleFileUpload = (file: File): File => {
     console.log('Uploaded file:', file);
+    return file;
   };
 
   const handleClick = useCallback(() => {
