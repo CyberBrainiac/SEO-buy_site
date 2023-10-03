@@ -3,15 +3,17 @@
 module.exports = {
   root: true,
   env: { browser: true, es2021: true },
+  //Extends includes the recommended rules from the plugin
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:react/jsx-runtime",
-    "plugin:@typescript-eslint/stylistic-type-checked",
+    "plugin:@typescript-eslint/recommended", // This includes recommended TypeScript rules
+    "plugin:prettier/recommended", // This includes recommended eslint-plugin-prettier rules
     "plugin:react-hooks/recommended",
-    "plugin:prettier/recommended", // Add this line to enable eslint-plugin-prettier
-    "prettier",
+    // "plugin:react/jsx-runtime",  // This disabe requirement for importing "React" in new React version 
   ],
+  //Plugins allows ESLint to understand and apply rules from the plugin like Prettier. It doesn't configure specific rules but enables ESLint to recognize and process Prettier-related rules.
+  plugins: ["react", "@typescript-eslint", "react-hooks", "prettier", "react-refresh"],
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
@@ -20,7 +22,6 @@ module.exports = {
   },
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
-  plugins: ["react-refresh", "prettier"],
 
   rules: {
     // Allow constant exports from files (useful for reusing constants)
@@ -32,6 +33,8 @@ module.exports = {
     "no-unused-vars": "off",
     //disable additional type cheking because TS contain this rule
     "react/prop-types": "off",
+    //set severity level for prettier to "warn"
+    "prettier/prettier": "warn",
   },
 
   settings: {

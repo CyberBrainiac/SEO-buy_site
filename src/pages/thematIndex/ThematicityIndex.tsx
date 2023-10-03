@@ -1,7 +1,7 @@
 import { ButtonLink } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from './inputFile/InputFile';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 const ThematicityIndex: React.FC = () => {
   const handleFileUpload = (file: File): File => {
