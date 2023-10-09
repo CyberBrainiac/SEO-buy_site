@@ -49,9 +49,6 @@ import React, { useCallback, useState } from 'react';
 
 // export default ErrorPage;
 
-
-
-
 interface MyCompProps {
   handleClick: () => void;
 }

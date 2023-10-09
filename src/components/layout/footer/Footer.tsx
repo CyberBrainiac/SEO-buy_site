@@ -1,4 +1,5 @@
 import style from './footer.module.scss';
+import React from 'react';
 
 const Footer: React.FC = () => {
   const developerEmail = 'arsenij.arxipov.1998@gmail.com';
@@ -16,5 +17,9 @@ const Footer: React.FC = () => {
     </footer>
   );
 };
+/**Creacte function component for best expitience*/
+// const MemoizedFooter = React.memo(Footer);
+// MemoizedFooter.displayName = 'Footer';
+// export default MemoizedFooter;
 
 export default Footer;
