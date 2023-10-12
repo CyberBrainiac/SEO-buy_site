@@ -14,7 +14,12 @@ const InputFile: React.FC<InputFileProps> = ({ onFileUpload }) => {
     [onFileUpload]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+    },
+  });
 
   return (
     <div {...getRootProps()} style={dropzoneStyles}>
@@ -24,6 +29,7 @@ const InputFile: React.FC<InputFileProps> = ({ onFileUpload }) => {
           ? 'Drop the file here'
           : 'Drag and drop a file here, or click to select a file'}
       </p>
+      <em>(Only *.xlsx file will be accepted)</em>
     </div>
   );
 };

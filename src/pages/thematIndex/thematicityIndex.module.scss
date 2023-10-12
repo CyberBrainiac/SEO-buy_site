@@ -1,2 +1,11 @@
 .container {
 }
+
+.displayFiles {
+  height: 120px;
+  row-gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

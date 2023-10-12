@@ -1,4 +1,4 @@
-@import './mixins.scss';
+@import './mixins';
 @import './rwd-760';
 
 h1 {
@@ -24,4 +24,8 @@ h5 {
 
 h6 {
   @include headings(25px);
+}
+
+em {
+  opacity: 0.5;
 }

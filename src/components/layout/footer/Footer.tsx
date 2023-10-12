@@ -17,9 +17,5 @@ const Footer: React.FC = () => {
     </footer>
   );
 };
-/**Creacte function component for best expitience*/
-// const MemoizedFooter = React.memo(Footer);
-// MemoizedFooter.displayName = 'Footer';
-// export default MemoizedFooter;
 
 export default Footer;
