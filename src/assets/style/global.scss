@@ -1,6 +1,10 @@
 @import './mixins';
 @import './rwd-760';
 
+body {
+  @include common-text();
+}
+
 h1 {
   @include headings(70px);
 }
@@ -14,8 +18,7 @@ h3 {
 }
 
 h4 {
-  @include headings(38px);
-  font-weight: 700;
+  @include headings(36px);
 }
 
 h5 {
@@ -23,9 +26,10 @@ h5 {
 }
 
 h6 {
-  @include headings(25px);
+  @include headings(24px);
+  letter-spacing: 0.8px;
 }
 
 em {
-  opacity: 0.5;
+  opacity: 0.7;
 }

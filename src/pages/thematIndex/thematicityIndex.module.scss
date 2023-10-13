@@ -1,11 +1,18 @@
-.container {
-}
+@import '@style/mixins';
 
-.displayFiles {
+.acceptedFiles {
   height: 120px;
   row-gap: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+
+.acceptedDescription {
+  @include bold-text(20px);
+}
+
+.acceptedNames {
+  font-size: 20px;
 }

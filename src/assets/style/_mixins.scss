@@ -8,9 +8,10 @@
   font-weight: 700;
   line-height: normal;
   font-family: $Kanit;
+  letter-spacing: 0.5px;
 }
 
-@mixin bold-text($font-size, $font-weight: 700) {
+@mixin bold-text($font-size, $font-weight: 500) {
   @include headings($font-size);
   font-weight: $font-weight;
 }
@@ -31,7 +32,7 @@
   font-style: normal;
   font-weight: 400;
   font-family: $Open-Sans;
-  line-height: 165.4%;
+  line-height: 120%;
 }
 
 /*Images*/

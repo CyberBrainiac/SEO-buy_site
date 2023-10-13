@@ -19,6 +19,7 @@ module.exports = {
     sourceType: "module",
     project: ["./tsconfig.json", "./tsconfig.node.json"],
     tsconfigRootDir: __dirname,
+    include: ['<tsconfigRootDir>/src'],
   },
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",

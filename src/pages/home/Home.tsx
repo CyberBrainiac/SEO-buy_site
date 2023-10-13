@@ -5,15 +5,17 @@ import style from './home.module.scss';
 const Home: React.FC = () => {
   return (
     <section className={style.container}>
-      <div className={style.content}>HOME PAGE</div>
+      <div className={style.content}>
+        <h1>HOME PAGE</h1>
+      </div>
       <div>
         <Link className={style.button} to="/tools/thematicity-index">
-          Thematicity-index page
+          <h3>Thematicity-index page</h3>
         </Link>
       </div>
       <div>
         <Link className={style.button} to="/tools/unknown">
-          Unknown page
+          <h3>Unknown page</h3>
         </Link>
       </div>
     </section>

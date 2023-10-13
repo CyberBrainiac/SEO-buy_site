@@ -1,7 +1,8 @@
 import { ButtonLink } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
-import InputFile from './inputFile/InputFile';
+import InputFile from '@/components/inputFile/InputFile';
 import React, { useState } from 'react';
+import fileExcel from '@/utils/fileExcel';
 
 const ThematicityIndex: React.FC = () => {
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
@@ -10,15 +11,19 @@ const ThematicityIndex: React.FC = () => {
     setUpLoadedFile(file);
     return file;
   };
+  const handleCreateFile = () => {
+    fileExcel.createExample();
+  };
 
   return (
     <section className={style.container}>
       <InputFile onFileUpload={handleFileUpload} />
-      <aside className={style.displayFiles}>
-        <h4>Uploaded file:</h4>
-        <p>{upLoadedFile?.name}</p>
+      <aside className={style.acceptedFiles}>
+        <p className={style.acceptedDescription}>Uploaded file:</p>
+        <p className={style.acceptedNames}>{upLoadedFile?.name}</p>
       </aside>
       <ButtonLink href="/" text="Home page" />
+      <button onClick={handleCreateFile}>Download Example.xlsx</button>
     </section>
   );
 };
