@@ -1,16 +1,16 @@
 @import '@style/mixins';
 
 .acceptedFiles {
-  height: 120px;
+  height: 40px;
   row-gap: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
 }
 
 .acceptedDescription {
   @include bold-text(20px);
+  margin-right: 20px;
 }
 
 .acceptedNames {
