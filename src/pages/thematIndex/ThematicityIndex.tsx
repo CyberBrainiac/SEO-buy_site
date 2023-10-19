@@ -1,4 +1,4 @@
-import { ButtonLink } from '@/components/buttons/Buttons';
+import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
 import React, { useState } from 'react';
@@ -36,18 +36,32 @@ const ThematicityIndex: React.FC = () => {
     }
   };
 
+  // const formHandler = (event: Event) => {
+  //   const form = document.getElementById('thematicityIndex__form')!;
+  //   form.preventDefault();
+  // };
+
   return (
-    <section className={style.container}>
-      <InputFile onFileUpload={handleFileUpload} />
-      <aside className={style.acceptedFiles}>
-        <div className={style.acceptedDescription}>
-          {upLoadedFile ? <p>Uploaded file:</p> : null}
-        </div>
-        <p className={style.acceptedNames}>{upLoadedFile?.name}</p>
-      </aside>
-      <ButtonLink href="/" text="Home page" />
-      <button onClick={handleCreateExample}>Download Example.xlsx</button>
-      <button onClick={handleReadFile}>Read File.xlsx</button>
+    <section className="thematicityIndex">
+      <div className={style.container}>
+        <InputFile onFileUpload={handleFileUpload} />
+        <aside className={style.acceptedFiles}>
+          <div className={style.acceptedDescription}>
+            {upLoadedFile ? <p>Uploaded file:</p> : null}
+          </div>
+          <p className={style.acceptedNames}>{upLoadedFile?.name}</p>
+        </aside>
+
+        <form id="thematicityIndex__form" className={style.form}>
+          <div className={style.form_container}>
+            <input className={style.form_input} type="text" placeholder="write keyword or theme" />
+            {/* <ButtonCommon onClick={formHandler} text="Get Thematicity Index" /> */}
+          </div>
+        </form>
+
+        <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
+        <ButtonCommon onClick={handleReadFile} text={'Read File'} />
+      </div>
     </section>
   );
 };

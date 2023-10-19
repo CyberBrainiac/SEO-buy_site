@@ -44,7 +44,12 @@ async function read(buffer: ArrayBuffer): Promise<FileExcelProperties | null> {
       });
 
       const urlColumn = worksheet.getColumn(urlColumnIndex);
-      urls = urlColumn.values.map(value => String(value));
+      urls = urlColumn.values.map(value => {
+        if (typeof value === 'object' && value !== null && 'hyperlink' in value) {
+          return value.hyperlink;
+        }
+        return String(value);
+      });
     })
     .catch(err => console.error(err));
 
@@ -140,10 +145,9 @@ function createExample() {
     .writeBuffer()
     .then(buffer => {
       saveAs(new Blob([buffer], { type: 'application/octet-stream' }), fileName);
-      console.log('file created');
     })
     .catch(err => {
-      console.log(err.message);
+      console.error(err.message);
     });
 }
 

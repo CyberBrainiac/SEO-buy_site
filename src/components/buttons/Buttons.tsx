@@ -1,5 +1,6 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ButtonLinkProps } from './buttonTypes';
+import { ButtonCommonProps, ButtonLinkProps } from './buttonTypes';
 import { BsArrowRightShort } from 'react-icons/bs';
 import './buttons.scss';
 
@@ -14,8 +15,16 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({ href, className, id, text }) =>
   );
 };
 
-const Button: React.FC = () => {
-  return <button className="button">View more</button>;
+const ButtonCommon: React.FC<ButtonCommonProps> = ({ onClick, className, id, text }) => {
+  return (
+    <button
+      className={className ? className + ' buttonCommon' : 'buttonCommon'}
+      id={id}
+      onClick={onClick}
+    >
+      {text}
+    </button>
+  );
 };
 
-export { ButtonLink, Button };
+export { ButtonLink, ButtonCommon };

@@ -16,3 +16,17 @@
 .acceptedNames {
   font-size: 20px;
 }
+
+.form {
+  padding: 20px;
+
+  &_container {
+    @include flex-column();
+    width: 50%;
+    margin: 0 auto;
+  }
+
+  &_input {
+    width: 100%;
+  }
+}

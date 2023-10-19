@@ -1,19 +1,30 @@
-@import '/src/assets/style/variables';
-@import '/src/assets/style/mixins';
+@import '@style/variables';
+@import '@style/mixins';
 
 .container {
-  color: $text-color-main;
+  width: 100%;
+  color: #000;
+  background-color: $page-bg-color-additional;
+  font-size: 22px;
+  line-height: 120%;
 }
 
 .content {
   @include flex-row();
+  padding: 20px;
+
+  &_link {
+    color: $highlight-main;
+  }
 }
 
 .copyright {
   padding: 10px 0;
   text-align: center;
+  border-top: 1px solid $text-color-main;
 
-  &_link {
+  &_text {
     color: $highlight-additional;
+    font-size: 18px;
   }
 }
