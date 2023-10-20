@@ -15,12 +15,13 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({ href, className, id, text }) =>
   );
 };
 
-const ButtonCommon: React.FC<ButtonCommonProps> = ({ onClick, className, id, text }) => {
+const ButtonCommon: React.FC<ButtonCommonProps> = ({ onClick, className, id, text, type }) => {
   return (
     <button
       className={className ? className + ' buttonCommon' : 'buttonCommon'}
       id={id}
       onClick={onClick}
+      type={type}
     >
       {text}
     </button>

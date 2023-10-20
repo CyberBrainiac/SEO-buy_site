@@ -1,26 +1,34 @@
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
-import React, { useState } from 'react';
-import fileExcel from '@/utils/fileExcel';
+import React, { FormEvent, useState } from 'react';
+import fileExcel, { FileExcelProperties } from '@/utils/fileExcel';
+import calcThematicityIndex from '@/utils/calcThematicityIndex';
+import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 
 const ThematicityIndex: React.FC = () => {
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
+  const [xlsxFileData, setXlsxFileData] = useState<FileExcelProperties | null>(null);
 
-  const handleFileUpload = (file: File): File => {
-    setUpLoadedFile(file);
-
-    /**Create binary ArrayBuffer*/
+  const handleFileUpload = (file: File) => {
     const reader = new FileReader();
 
+    /**Create binary ArrayBuffer*/
     reader.onload = onReady => {
       const buffer = onReady.target?.result as ArrayBuffer;
       setFileBinaryData(buffer);
     };
-    if (file) reader.readAsArrayBuffer(file);
+    reader.onerror = error => {
+      console.error('Error in File Reader', error);
+    };
 
-    return file;
+    if (!file) {
+      alert("Please, provide Excel file with correct extension: 'example.xlsx'");
+    }
+
+    setUpLoadedFile(file);
+    reader.readAsArrayBuffer(file);
   };
 
   const handleCreateExample = () => {
@@ -29,17 +37,39 @@ const ThematicityIndex: React.FC = () => {
 
   const handleReadFile = async () => {
     if (fileBinaryData) {
-      const res = await fileExcel.read(fileBinaryData);
-      console.log(res);
+      const excelData = await fileExcel.read(fileBinaryData);
+      setXlsxFileData(excelData);
     } else {
-      alert('First upload your file.xlsx');
+      setXlsxFileData(null);
     }
   };
 
-  // const formHandler = (event: Event) => {
-  //   const form = document.getElementById('thematicityIndex__form')!;
-  //   form.preventDefault();
-  // };
+  const formHandler = async (event: FormEvent) => {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const errorContainer = document.querySelector(`.${style.errorContainer}`) as HTMLDivElement;
+
+    let inputKeyword = formData.get('request');
+    if (!inputKeyword) {
+      alert('Empty request detected');
+      return;
+    }
+    if (typeof inputKeyword !== 'string') {
+      throw new UnvalidValueError("expected type for user inputKeyword is 'string'");
+    }
+
+    inputKeyword = inputKeyword.trim();
+    formData.set('request', `intitle:"${inputKeyword}"`);
+
+    if (xlsxFileData) {
+      console.log(xlsxFileData);
+    } else {
+      alert('First upload your file.xlsx you can use example.xlsx for correct data structure');
+    }
+
+    // const thematicityIndex = await calcThematicityIndex({ arrURL_objects, formData, onUpdate, errorContainer });
+  };
 
   return (
     <section className="thematicityIndex">
@@ -52,13 +82,21 @@ const ThematicityIndex: React.FC = () => {
           <p className={style.acceptedNames}>{upLoadedFile?.name}</p>
         </aside>
 
-        <form id="thematicityIndex__form" className={style.form}>
+        <form onSubmit={formHandler} className={style.form}>
           <div className={style.form_container}>
-            <input className={style.form_input} type="text" placeholder="write keyword or theme" />
-            {/* <ButtonCommon onClick={formHandler} text="Get Thematicity Index" /> */}
+            <label htmlFor="request">Write keyword or theme</label>
+            <input
+              name="request"
+              type="text"
+              className={style.form_input}
+              placeholder="koala"
+              required
+            />
+            <ButtonCommon type="submit" text="Get Thematicity Index" />
           </div>
         </form>
 
+        <div className={style.errorContainer}></div>
         <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
         <ButtonCommon onClick={handleReadFile} text={'Read File'} />
       </div>

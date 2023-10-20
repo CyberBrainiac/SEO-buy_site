@@ -9,7 +9,8 @@ const Footer: React.FC = () => {
         <div className={style.content_link}>About Us</div>
         <div className={style.content_link}>Contact Us</div>
         <div className={style.content_link}>User Data Policy</div>
-        <div className={style.content_link}>User Data Policy</div>
+        <div className={style.content_link}>Prices</div>
+        <div className={style.content_link}>About ThematicityIndex tools</div>
       </div>
       <div className={style.copyright}>
         <p>

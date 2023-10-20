@@ -1,13 +1,14 @@
 export interface ButtonLinkProps {
+  text: string;
   href: string;
   className?: string;
   id?: string;
-  text: string;
 }
 
 export interface ButtonCommonProps {
-  className?: string;
-  id?: string;
   text: string;
-  onClick: () => void;
+  id?: string;
+  type?: 'button' | 'submit' | 'reset' | undefined;
+  className?: string;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
