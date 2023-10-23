@@ -14,6 +14,7 @@
   padding: 20px;
 
   &_link {
+    padding: 8px;
     color: $highlight-main;
   }
 }
@@ -26,5 +27,14 @@
   &_text {
     color: $highlight-additional;
     font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 1023.9px) {
+  .content {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
   }
 }

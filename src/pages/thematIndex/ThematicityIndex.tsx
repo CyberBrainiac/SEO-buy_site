@@ -3,7 +3,7 @@ import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
 import React, { FormEvent, useState } from 'react';
 import fileExcel, { FileExcelProperties } from '@/utils/fileExcel';
-import calcThematicityIndex from '@/utils/calcThematicityIndex';
+// import calcThematicityIndex, { URLObject } from '@/utils/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 
 const ThematicityIndex: React.FC = () => {
@@ -18,6 +18,7 @@ const ThematicityIndex: React.FC = () => {
     reader.onload = onReady => {
       const buffer = onReady.target?.result as ArrayBuffer;
       setFileBinaryData(buffer);
+      readBuffer(buffer);
     };
     reader.onerror = error => {
       console.error('Error in File Reader', error);
@@ -25,30 +26,37 @@ const ThematicityIndex: React.FC = () => {
 
     if (!file) {
       alert("Please, provide Excel file with correct extension: 'example.xlsx'");
+      return null;
     }
 
     setUpLoadedFile(file);
     reader.readAsArrayBuffer(file);
   };
 
+  const readBuffer = async (buffer: ArrayBuffer) => {
+    const excelData = await fileExcel.read(buffer);
+    if (!excelData) {
+      setXlsxFileData(null);
+    }
+    setXlsxFileData(excelData);
+    console.log(excelData);
+    
+  };
+
+  const handleLoadResult = async () => {
+    console.log(fileBinaryData);
+  };
+
   const handleCreateExample = () => {
     fileExcel.createExample();
   };
 
-  const handleReadFile = async () => {
-    if (fileBinaryData) {
-      const excelData = await fileExcel.read(fileBinaryData);
-      setXlsxFileData(excelData);
-    } else {
-      setXlsxFileData(null);
-    }
-  };
-
+  /**Calculate Thematicity Index*/
   const formHandler = async (event: FormEvent) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-    const errorContainer = document.querySelector(`.${style.errorContainer}`) as HTMLDivElement;
+    // const errorContainer = document.querySelector(`.${style.errorContainer}`) as HTMLDivElement;
 
     let inputKeyword = formData.get('request');
     if (!inputKeyword) {
@@ -62,13 +70,17 @@ const ThematicityIndex: React.FC = () => {
     inputKeyword = inputKeyword.trim();
     formData.set('request', `intitle:"${inputKeyword}"`);
 
-    if (xlsxFileData) {
-      console.log(xlsxFileData);
-    } else {
-      alert('First upload your file.xlsx you can use example.xlsx for correct data structure');
+    if (!xlsxFileData) {
+      alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
+      return null;
     }
 
-    // const thematicityIndex = await calcThematicityIndex({ arrURL_objects, formData, onUpdate, errorContainer });
+    // const thematicityIndex = await calcThematicityIndex({
+    //   arrURL_objects,
+    //   formData,
+    //   onUpdate,
+    //   errorContainer,
+    // });
   };
 
   return (
@@ -98,7 +110,7 @@ const ThematicityIndex: React.FC = () => {
 
         <div className={style.errorContainer}></div>
         <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
-        <ButtonCommon onClick={handleReadFile} text={'Read File'} />
+        <ButtonCommon onClick={handleLoadResult} text={'Load Result'} />
       </div>
     </section>
   );

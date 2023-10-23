@@ -1,16 +1,16 @@
 import axios, { AxiosResponse } from 'axios';
 
-interface URLObject {
+export interface URLObjectProps {
   url: string;
-  targetPage: string;
-  totalPage: string;
-  thematicityIndex: string;
+  targetPage?: string;
+  totalPage?: string;
+  thematicityIndex?: string;
 }
 
 interface CalcThematicityIndexProps {
-  arrURL_objects: URLObject[];
+  arrURL_objects: URLObjectProps[];
   formData: FormData;
-  onUpdate?: (siteData: URLObject[]) => void;
+  onUpdate?: (siteData: URLObjectProps[]) => void;
   errorContainer: HTMLDivElement | null;
 }
 
@@ -53,7 +53,7 @@ async function calcThematicityIndex(props: CalcThematicityIndexProps) {
     return null;
   }
 
-  async function calculateIndex(arrURL_objects: URLObject[]) {
+  async function calculateIndex(arrURL_objects: URLObjectProps[]) {
     for (
       let iteration = 0, siteURL = siteUrls[iteration];
       iteration < siteUrls.length;

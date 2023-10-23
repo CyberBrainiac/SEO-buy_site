@@ -8,16 +8,26 @@ materials:
 
 import Excel from 'exceljs';
 import saveAs from 'file-saver';
+import { URLObjectProps } from './calcThematicityIndex';
 
 export interface FileExcelProperties {
   urlColumnIndex: number;
   thematicityColumnIndex: number;
   totalPageColumnIndex?: number;
-  urls: string[];
+  urlObjects: URLObjectProps[];
+}
+
+/**Used Static method to set object as value*/
+class URLObject {
+  static create(props: URLObjectProps) {
+    return { url: props.url, totalPage: '', targetPage: '', thematicityIndex: '' };
+  }
 }
 
 async function read(buffer: ArrayBuffer): Promise<FileExcelProperties | null> {
   const workbook = new Excel.Workbook();
+  const urlObjects: URLObjectProps[] = [];
+
   let urlColumnIndex = 0;
   let thematicityColumnIndex = 0;
   let totalPageColumnIndex = 0;
@@ -44,12 +54,43 @@ async function read(buffer: ArrayBuffer): Promise<FileExcelProperties | null> {
       });
 
       const urlColumn = worksheet.getColumn(urlColumnIndex);
-      urls = urlColumn.values.map(value => {
-        if (typeof value === 'object' && value !== null && 'hyperlink' in value) {
-          return value.hyperlink;
+      const rowsCount = urlColumn.values.slice(2).length; //in Excel 0 row is undefind, 1 is header with capture
+      const rowsWithValues = worksheet.getRows(2, rowsCount);
+
+      if (!rowsWithValues) {
+        alert("You provide an empty file, provide urls as in example");
+        return null;
+      }
+      for (const row of rowsWithValues) {
+        const urlValue = row.getCell(urlColumnIndex);
+        const totalPageValue = row.getCell(totalPageColumnIndex);
+
+        let url: string = '';
+        let totalPage: string = '';
+
+        if (typeof urlValue === 'object' && urlValue !== null && 'hyperlink' in urlValue) {
+          url = urlValue.hyperlink;
+        } else {
+          url = String(urlValue);
         }
-        return String(value);
-      });
+
+        if (typeof totalPageValue.value === 'string' && isFinite(parseInt(totalPageValue.value))) {
+          //Что насч'т разукрашенного фарматированного шрифтом числа? Єто обьект или просто число?
+        }
+      }
+      // urls = urlColumn.values.map(value => {
+      //   if (typeof value === 'object' && value !== null && 'hyperlink' in value) {
+      //     return value.hyperlink;
+      //   }
+      //   return String(value);
+      // });
+      // urls.splice(0, 2); //in Excel 0 row is undefind, 1 is header with capture
+
+      // for (const url of urls) {
+      //   urlObjects.push(URLObject.create({ url }));
+      // }
+      
+
     })
     .catch(err => console.error(err));
 
@@ -66,7 +107,7 @@ async function read(buffer: ArrayBuffer): Promise<FileExcelProperties | null> {
     urlColumnIndex,
     thematicityColumnIndex,
     totalPageColumnIndex,
-    urls,
+    urlObjects,
   };
 
   return fileExcelProperties;
