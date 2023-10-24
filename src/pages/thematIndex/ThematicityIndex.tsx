@@ -2,19 +2,23 @@ import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
 import React, { FormEvent, useState } from 'react';
-import fileExcel, { FileExcelProperties } from '@/utils/fileExcel';
-// import calcThematicityIndex, { URLObject } from '@/utils/calcThematicityIndex';
+import fileExcel, { ReadExcelProperties } from '@/utils/fileExcel';
+import calcThematicityIndex, { URLObjectProps } from '@/utils/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
+import { AxiosResponse } from 'axios';
 
 const ThematicityIndex: React.FC = () => {
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
-  const [xlsxFileData, setXlsxFileData] = useState<FileExcelProperties | null>(null);
+  const [xlsxFileData, setXlsxFileData] = useState<ReadExcelProperties | null>(null);
+  const [resultUrlData, setResultUrlData] = useState<URLObjectProps[] | null>(null);
+  const [logProgress, setLogProgress] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleFileUpload = (file: File) => {
     const reader = new FileReader();
 
-    /**Create binary ArrayBuffer*/
+    //Create binary ArrayBuffer
     reader.onload = onReady => {
       const buffer = onReady.target?.result as ArrayBuffer;
       setFileBinaryData(buffer);
@@ -33,30 +37,41 @@ const ThematicityIndex: React.FC = () => {
     reader.readAsArrayBuffer(file);
   };
 
+  //
   const readBuffer = async (buffer: ArrayBuffer) => {
     const excelData = await fileExcel.read(buffer);
     if (!excelData) {
       setXlsxFileData(null);
     }
     setXlsxFileData(excelData);
-    console.log(excelData);
-    
   };
 
+  //
   const handleLoadResult = async () => {
-    console.log(fileBinaryData);
+    console.log(fileBinaryData, resultUrlData);
   };
 
+  //
   const handleCreateExample = () => {
     fileExcel.createExample();
   };
 
-  /**Calculate Thematicity Index*/
+  //
+  const progressHandler = (value: string) => {
+    setLogProgress(value);
+  };
+
+  //
+  const errorHandler = (errorMessage: string, response?: AxiosResponse) => {
+    console.error('AxiosResponse', response);
+    setErrorMessage(errorMessage);
+  };
+
+  //Calculate Thematicity Index
   const formHandler = async (event: FormEvent) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-    // const errorContainer = document.querySelector(`.${style.errorContainer}`) as HTMLDivElement;
 
     let inputKeyword = formData.get('request');
     if (!inputKeyword) {
@@ -75,12 +90,15 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    // const thematicityIndex = await calcThematicityIndex({
-    //   arrURL_objects,
-    //   formData,
-    //   onUpdate,
-    //   errorContainer,
-    // });
+    const urlData = await calcThematicityIndex({
+      arrURL_objects: xlsxFileData.urlObjects,
+      formData,
+      onUpdate: progressHandler,
+      onError: errorHandler,
+    });
+
+    setResultUrlData(urlData);
+    console.log(urlData);
   };
 
   return (
@@ -108,7 +126,8 @@ const ThematicityIndex: React.FC = () => {
           </div>
         </form>
 
-        <div className={style.errorContainer}></div>
+        <div className={style.errorContainer}>{errorMessage}</div>
+        <div className={style.logContainer}>{logProgress}</div>
         <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
         <ButtonCommon onClick={handleLoadResult} text={'Load Result'} />
       </div>

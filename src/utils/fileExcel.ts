@@ -10,28 +10,32 @@ import Excel from 'exceljs';
 import saveAs from 'file-saver';
 import { URLObjectProps } from './calcThematicityIndex';
 
-export interface FileExcelProperties {
+export interface ReadExcelProperties {
   urlColumnIndex: number;
   thematicityColumnIndex: number;
   totalPageColumnIndex?: number;
   urlObjects: URLObjectProps[];
 }
 
+export interface WriteExcelProperties extends ReadExcelProperties {
+  rawData: ArrayBuffer;
+}
+
 /**Used Static method to set object as value*/
 class URLObject {
   static create(props: URLObjectProps) {
-    return { url: props.url, totalPage: '', targetPage: '', thematicityIndex: '' };
+    return { url: props.url, totalPage: props.totalPage, targetPage: '', thematicityIndex: '' };
   }
 }
 
-async function read(buffer: ArrayBuffer): Promise<FileExcelProperties | null> {
+//
+async function read(buffer: ArrayBuffer): Promise<ReadExcelProperties | null> {
   const workbook = new Excel.Workbook();
   const urlObjects: URLObjectProps[] = [];
 
   let urlColumnIndex = 0;
   let thematicityColumnIndex = 0;
   let totalPageColumnIndex = 0;
-  let urls: string[] = [];
 
   await workbook.xlsx
     .load(buffer)
@@ -43,11 +47,13 @@ async function read(buffer: ArrayBuffer): Promise<FileExcelProperties | null> {
       }
 
       const headerRow = worksheet.getRow(1);
-      if (!headerRow) {
+
+      if (!headerRow.values.length) {
         alert(`First worksheet row must contain column headers`);
+        return null;
       }
       headerRow.eachCell((cell, colNumber) => {
-        const value = cell.value?.toString().toLocaleLowerCase();
+        const value = cell.value?.toString().toLowerCase();
         if (value === 'site url') urlColumnIndex = colNumber;
         else if (value === 'thematicity index') thematicityColumnIndex = colNumber;
         else if (value === 'total page') totalPageColumnIndex = colNumber;
@@ -57,51 +63,56 @@ async function read(buffer: ArrayBuffer): Promise<FileExcelProperties | null> {
       const rowsCount = urlColumn.values.slice(2).length; //in Excel 0 row is undefind, 1 is header with capture
       const rowsWithValues = worksheet.getRows(2, rowsCount);
 
-      if (!rowsWithValues) {
-        alert("You provide an empty file, provide urls as in example");
+      if (!urlColumnIndex) {
+        alert(`Provide column with name: \n\rSite URL`);
         return null;
       }
-      for (const row of rowsWithValues) {
-        const urlValue = row.getCell(urlColumnIndex);
-        const totalPageValue = row.getCell(totalPageColumnIndex);
+      if (!thematicityColumnIndex) {
+        alert(`Provide column with name: \n\rThematicity Index`);
+        return null;
+      }
+      if (!rowsWithValues) {
+        alert('You provide an empty file, provide urls as in example');
+        return null;
+      }
 
+      for (const row of rowsWithValues) {
+        const urlCell = row.getCell(urlColumnIndex);
         let url: string = '';
         let totalPage: string = '';
 
-        if (typeof urlValue === 'object' && urlValue !== null && 'hyperlink' in urlValue) {
-          url = urlValue.hyperlink;
+        if (
+          typeof urlCell.value === 'object' &&
+          urlCell.value !== null &&
+          'hyperlink' in urlCell.value
+        ) {
+          url = urlCell.hyperlink;
         } else {
-          url = String(urlValue);
+          url = String(urlCell.value);
         }
 
-        if (typeof totalPageValue.value === 'string' && isFinite(parseInt(totalPageValue.value))) {
-          //Что насч'т разукрашенного фарматированного шрифтом числа? Єто обьект или просто число?
+        if (!totalPageColumnIndex) {
+          totalPage = '';
+          urlObjects.push(URLObject.create({ url, totalPage }));
+          continue;
         }
+
+        const totalPageCell = row.getCell(totalPageColumnIndex);
+        if (typeof totalPageCell.value === 'number' && !isNaN(totalPageCell.value)) {
+          totalPage = String(totalPageCell.value);
+        } else if (
+          typeof totalPageCell.value === 'string' &&
+          isFinite(parseInt(totalPageCell.value))
+        ) {
+          totalPage = totalPageCell.value;
+        } else {
+          totalPage = '';
+        }
+
+        urlObjects.push(URLObject.create({ url, totalPage }));
       }
-      // urls = urlColumn.values.map(value => {
-      //   if (typeof value === 'object' && value !== null && 'hyperlink' in value) {
-      //     return value.hyperlink;
-      //   }
-      //   return String(value);
-      // });
-      // urls.splice(0, 2); //in Excel 0 row is undefind, 1 is header with capture
-
-      // for (const url of urls) {
-      //   urlObjects.push(URLObject.create({ url }));
-      // }
-      
-
     })
     .catch(err => console.error(err));
-
-  if (!urlColumnIndex) {
-    alert(`Provide column with name: \n\rSite URL`);
-    return null;
-  }
-  if (!thematicityColumnIndex) {
-    alert(`Provide column with name: \n\rThematicity Index`);
-    return null;
-  }
 
   const fileExcelProperties = {
     urlColumnIndex,
@@ -113,6 +124,7 @@ async function read(buffer: ArrayBuffer): Promise<FileExcelProperties | null> {
   return fileExcelProperties;
 }
 
+//
 function createExample() {
   const fileName = 'example.xlsx';
   const workbook = new Excel.Workbook();
