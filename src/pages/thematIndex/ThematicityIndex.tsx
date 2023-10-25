@@ -5,12 +5,11 @@ import React, { FormEvent, useState } from 'react';
 import fileExcel, { ReadExcelProperties } from '@/utils/fileExcel';
 import calcThematicityIndex, { URLObjectProps } from '@/utils/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
-import { AxiosResponse } from 'axios';
 
 const ThematicityIndex: React.FC = () => {
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
-  const [xlsxFileData, setXlsxFileData] = useState<ReadExcelProperties | null>(null);
+  const [xlsxFileProps, setXlsxFileProps] = useState<ReadExcelProperties | null>(null);
   const [resultUrlData, setResultUrlData] = useState<URLObjectProps[] | null>(null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -41,14 +40,22 @@ const ThematicityIndex: React.FC = () => {
   const readBuffer = async (buffer: ArrayBuffer) => {
     const excelData = await fileExcel.read(buffer);
     if (!excelData) {
-      setXlsxFileData(null);
+      setXlsxFileProps(null);
     }
-    setXlsxFileData(excelData);
+    setXlsxFileProps(excelData);
   };
 
   //
   const handleLoadResult = async () => {
-    console.log(fileBinaryData, resultUrlData);
+    if (!resultUrlData || !fileBinaryData || !xlsxFileProps) {
+      alert("First click on the 'Get Thematicity Index button");
+      return null;
+    }
+
+    fileExcel.write({
+      rawData: fileBinaryData,
+      excelProps: xlsxFileProps,
+    });
   };
 
   //
@@ -62,43 +69,51 @@ const ThematicityIndex: React.FC = () => {
   };
 
   //
-  const errorHandler = (errorMessage: string, response?: AxiosResponse) => {
-    console.error('AxiosResponse', response);
+  const errorHandler = (errorMessage: string) => {
     setErrorMessage(errorMessage);
   };
 
   //Calculate Thematicity Index
   const formHandler = async (event: FormEvent) => {
     event.preventDefault();
+    setErrorMessage('');
+
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
     let inputKeyword = formData.get('request');
+
+    if (typeof inputKeyword !== 'string') {
+      throw new UnvalidValueError("expected type for user inputKeyword is 'string'");
+    }
+    inputKeyword = inputKeyword.trim();
+
     if (!inputKeyword) {
       alert('Empty request detected');
       return;
     }
-    if (typeof inputKeyword !== 'string') {
-      throw new UnvalidValueError("expected type for user inputKeyword is 'string'");
-    }
 
-    inputKeyword = inputKeyword.trim();
+    //Note: The limit on the length of the search request should be within 2048 characters.
+    if (inputKeyword.length > 2000) {
+      alert('too many words');
+      return null;
+    }
     formData.set('request', `intitle:"${inputKeyword}"`);
 
-    if (!xlsxFileData) {
+    if (!xlsxFileProps) {
       alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
       return null;
     }
 
     const urlData = await calcThematicityIndex({
-      arrURL_objects: xlsxFileData.urlObjects,
+      arrURL_objects: xlsxFileProps.urlObjects,
       formData,
       onUpdate: progressHandler,
       onError: errorHandler,
     });
 
     setResultUrlData(urlData);
-    console.log(urlData);
+    console.log('RETURNING DATA', urlData);
   };
 
   return (

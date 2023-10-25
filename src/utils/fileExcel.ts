@@ -17,8 +17,9 @@ export interface ReadExcelProperties {
   urlObjects: URLObjectProps[];
 }
 
-export interface WriteExcelProperties extends ReadExcelProperties {
+export interface WriteExcelProperties {
   rawData: ArrayBuffer;
+  excelProps: ReadExcelProperties;
 }
 
 /**Used Static method to set object as value*/
@@ -125,6 +126,33 @@ async function read(buffer: ArrayBuffer): Promise<ReadExcelProperties | null> {
 }
 
 //
+async function write({ rawData, excelProps }: WriteExcelProperties) {
+  const workbook = new Excel.Workbook();
+  const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex, urlObjects } = excelProps;
+
+  console.log("1");
+  
+  workbook.xlsx
+    .load(rawData)
+    .then(() => {
+      const worksheet = workbook.getWorksheet('Site Data');
+      if (!worksheet) {
+        alert(`Unexpected error, buffer Excel data contain no 'Site Data' tab`);
+        return null;
+      }
+
+      const urlColumn = worksheet.getColumn(urlColumnIndex);
+      console.log(urlColumn);
+      
+      // for (let cell_i = 2, value_i = 0;)
+      urlColumn.eachCell((cell, colNumber) => {
+        console.log(colNumber, cell.value);
+      });
+    })
+    .catch(err => console.error(err));
+}
+
+//
 function createExample() {
   const fileName = 'example.xlsx';
   const workbook = new Excel.Workbook();
@@ -206,6 +234,7 @@ function createExample() {
 
 const fileExcel = {
   read,
+  write,
   createExample,
 };
 

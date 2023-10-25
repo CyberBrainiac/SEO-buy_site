@@ -11,4 +11,5 @@ export interface ButtonCommonProps {
   type?: 'button' | 'submit' | 'reset' | undefined;
   className?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
 }
