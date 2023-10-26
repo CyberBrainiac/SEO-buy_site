@@ -126,32 +126,32 @@ async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
 }
 
 //
-async function write({ file, excelData }: WriteExcelProperties) {
-  const workbook = new Excel.Workbook();
-  const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex, urlObjects } = excelData;
+// async function write({ file, excelData }: WriteExcelProperties) {
+//   const workbook = new Excel.Workbook();
+//   const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex, urlObjects } = excelData;
 
-  console.log('1');
+//   console.log('1');
 
-  try {
-    await workbook.xlsx.load(file);
-  } catch (error) {
-    console.error(error);
-  }
+//   try {
+//     await workbook.xlsx.load(file);
+//   } catch (error) {
+//     console.error(error);
+//   }
 
-  const worksheet = workbook.getWorksheet('Site Data');
-  if (!worksheet) {
-    alert(`Unexpected error, buffer Excel data contain no 'Site Data' tab`);
-    return null;
-  }
+//   const worksheet = workbook.getWorksheet('Site Data');
+//   if (!worksheet) {
+//     alert(`Unexpected error, buffer Excel data contain no 'Site Data' tab`);
+//     return null;
+//   }
 
-  const urlColumn = worksheet.getColumn(urlColumnIndex);
-  console.log(urlColumn);
+//   const urlColumn = worksheet.getColumn(urlColumnIndex);
+//   console.log(urlColumn);
 
-  // for (let cell_i = 2, value_i = 0;)
-  urlColumn.eachCell((cell, colNumber) => {
-    console.log(colNumber, cell.value);
-  });
-}
+//   // for (let cell_i = 2, value_i = 0;)
+//   urlColumn.eachCell((cell, colNumber) => {
+//     console.log(colNumber, cell.value);
+//   });
+// }
 
 //
 function createExample() {
@@ -235,7 +235,7 @@ function createExample() {
 
 const fileExcel = {
   read,
-  write,
+  // write,
   createExample,
 };
 

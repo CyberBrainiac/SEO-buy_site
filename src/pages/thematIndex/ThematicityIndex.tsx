@@ -2,15 +2,14 @@ import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
 import React, { FormEvent, useState, useReducer } from 'react';
-import fileExcel, { ExcelDataType } from '@/utils/fileExcel';
-import calcThematicityIndex, { URLObjectProps } from '@/utils/calcThematicityIndex';
+import fileExcel from '@/utils/fileExcel';
+import calcThematicityIndex from '@/utils/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 import reducerExelData from './reducerExelData';
 
 const ThematicityIndex: React.FC = () => {
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
-  const [resultUrlData, setResultUrlData] = useState<URLObjectProps[] | null>(null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -62,10 +61,10 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    fileExcel.write({
-      file: fileBinaryData,
-      excelData: excelData,
-    });
+    // fileExcel.write({
+    //   file: fileBinaryData,
+    //   excelData: excelData,
+    // });
   };
 
   //
