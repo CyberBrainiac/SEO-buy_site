@@ -142,12 +142,16 @@ a {
   color: inherit;
 }
 
+p {
+  line-height: normal;
+}
+
 button {
   border-color: #000;
   border-width: 1px;
   border-style: solid;
   background-color: transparent;
-  cursor: pointer;
+  cursor: pointer; /*not supported in many mobile browser*/
 }
 
 *,

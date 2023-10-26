@@ -1,19 +1,28 @@
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
-import React, { FormEvent, useState } from 'react';
-import fileExcel, { ReadExcelProperties } from '@/utils/fileExcel';
+import React, { FormEvent, useState, useReducer } from 'react';
+import fileExcel, { ExcelDataType } from '@/utils/fileExcel';
 import calcThematicityIndex, { URLObjectProps } from '@/utils/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
+import reducerExelData from './reducerExelData';
 
 const ThematicityIndex: React.FC = () => {
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
-  const [xlsxFileProps, setXlsxFileProps] = useState<ReadExcelProperties | null>(null);
   const [resultUrlData, setResultUrlData] = useState<URLObjectProps[] | null>(null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const initialExcelData = {
+    urlColumnIndex: 0,
+    thematicityColumnIndex: 0,
+    totalPageColumnIndex: 0,
+    urlObjects: [],
+  };
+  const [excelData, dispatchExcelData] = useReducer(reducerExelData, initialExcelData);
+
+  //
   const handleFileUpload = (file: File) => {
     const reader = new FileReader();
 
@@ -38,23 +47,24 @@ const ThematicityIndex: React.FC = () => {
 
   //
   const readBuffer = async (buffer: ArrayBuffer) => {
-    const excelData = await fileExcel.read(buffer);
-    if (!excelData) {
-      setXlsxFileProps(null);
+    const data = await fileExcel.read(buffer);
+    if (!data) {
+      console.error('Can not read buffer data');
+      return null;
     }
-    setXlsxFileProps(excelData);
+    dispatchExcelData({ type: 'SET', excelData: data });
   };
 
   //
   const handleLoadResult = async () => {
-    if (!resultUrlData || !fileBinaryData || !xlsxFileProps) {
+    if (!fileBinaryData || !excelData.urlObjects.length) {
       alert("First click on the 'Get Thematicity Index button");
       return null;
     }
 
     fileExcel.write({
-      rawData: fileBinaryData,
-      excelProps: xlsxFileProps,
+      file: fileBinaryData,
+      excelData: excelData,
     });
   };
 
@@ -80,7 +90,6 @@ const ThematicityIndex: React.FC = () => {
 
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-
     let inputKeyword = formData.get('request');
 
     if (typeof inputKeyword !== 'string') {
@@ -98,22 +107,23 @@ const ThematicityIndex: React.FC = () => {
       alert('too many words');
       return null;
     }
-    formData.set('request', `intitle:"${inputKeyword}"`);
+    const request = `intitle:"${inputKeyword}"`;
 
-    if (!xlsxFileProps) {
+    if (!excelData.urlObjects.length) {
       alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
       return null;
     }
 
-    const urlData = await calcThematicityIndex({
-      arrURL_objects: xlsxFileProps.urlObjects,
-      formData,
+    const resultURLObjects = await calcThematicityIndex({
+      arrURL_objects: excelData.urlObjects,
+      query: request,
       onUpdate: progressHandler,
       onError: errorHandler,
     });
-
-    setResultUrlData(urlData);
-    console.log('RETURNING DATA', urlData);
+    console.log('Origin', excelData);
+    dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
+    console.log('Modify', excelData);
+    console.log('RETURNING DATA', resultURLObjects);
   };
 
   return (
@@ -122,9 +132,8 @@ const ThematicityIndex: React.FC = () => {
         <InputFile onFileUpload={handleFileUpload} />
         <aside className={style.acceptedFiles}>
           <div className={style.acceptedDescription}>
-            {upLoadedFile ? <p>Uploaded file:</p> : null}
+            {upLoadedFile ? <p>{`Uploaded file: ${upLoadedFile?.name}`}</p> : null}
           </div>
-          <p className={style.acceptedNames}>{upLoadedFile?.name}</p>
         </aside>
 
         <form onSubmit={formHandler} className={style.form}>

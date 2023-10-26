@@ -10,7 +10,7 @@ import Excel from 'exceljs';
 import saveAs from 'file-saver';
 import { URLObjectProps } from './calcThematicityIndex';
 
-export interface ReadExcelProperties {
+export interface ExcelDataType {
   urlColumnIndex: number;
   thematicityColumnIndex: number;
   totalPageColumnIndex?: number;
@@ -18,8 +18,8 @@ export interface ReadExcelProperties {
 }
 
 export interface WriteExcelProperties {
-  rawData: ArrayBuffer;
-  excelProps: ReadExcelProperties;
+  file: ArrayBuffer;
+  excelData: ExcelDataType;
 }
 
 /**Used Static method to set object as value*/
@@ -30,7 +30,7 @@ class URLObject {
 }
 
 //
-async function read(buffer: ArrayBuffer): Promise<ReadExcelProperties | null> {
+async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
   const workbook = new Excel.Workbook();
   const urlObjects: URLObjectProps[] = [];
 
@@ -126,30 +126,31 @@ async function read(buffer: ArrayBuffer): Promise<ReadExcelProperties | null> {
 }
 
 //
-async function write({ rawData, excelProps }: WriteExcelProperties) {
+async function write({ file, excelData }: WriteExcelProperties) {
   const workbook = new Excel.Workbook();
-  const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex, urlObjects } = excelProps;
+  const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex, urlObjects } = excelData;
 
-  console.log("1");
-  
-  workbook.xlsx
-    .load(rawData)
-    .then(() => {
-      const worksheet = workbook.getWorksheet('Site Data');
-      if (!worksheet) {
-        alert(`Unexpected error, buffer Excel data contain no 'Site Data' tab`);
-        return null;
-      }
+  console.log('1');
 
-      const urlColumn = worksheet.getColumn(urlColumnIndex);
-      console.log(urlColumn);
-      
-      // for (let cell_i = 2, value_i = 0;)
-      urlColumn.eachCell((cell, colNumber) => {
-        console.log(colNumber, cell.value);
-      });
-    })
-    .catch(err => console.error(err));
+  try {
+    await workbook.xlsx.load(file);
+  } catch (error) {
+    console.error(error);
+  }
+
+  const worksheet = workbook.getWorksheet('Site Data');
+  if (!worksheet) {
+    alert(`Unexpected error, buffer Excel data contain no 'Site Data' tab`);
+    return null;
+  }
+
+  const urlColumn = worksheet.getColumn(urlColumnIndex);
+  console.log(urlColumn);
+
+  // for (let cell_i = 2, value_i = 0;)
+  urlColumn.eachCell((cell, colNumber) => {
+    console.log(colNumber, cell.value);
+  });
 }
 
 //

@@ -15,14 +15,14 @@ export interface URLObjectProps {
 
 interface CalcThematicityIndexProps {
   arrURL_objects: URLObjectProps[];
-  formData: FormData;
+  query: string;
   onUpdate?: (progress: string, siteData?: URLObjectProps[]) => void;
   onError?: (errorMessage: string, response?: AxiosResponse) => void;
 }
 
 async function calcThematicityIndex({
   arrURL_objects,
-  formData,
+  query,
   onUpdate,
   onError,
 }: CalcThematicityIndexProps) {
@@ -44,10 +44,9 @@ async function calcThematicityIndex({
   const limit_package_urls = 10; //value set limit for count of site urls, which process in one iteration.
   const delay_between_iterations = 500; //value set delay after finish each iteration in MILLISECONDS. 66000 milliseconds = 66 seconds
   const delay_between_steps = 130; //value set delay before each request in MILLISECONDS. 130 milliseconds = 0.13 second
-
-  const query = formData.get('request');
   const siteUrls: string[] = [];
 
+  arrURL_objects = JSON.parse(JSON.stringify(arrURL_objects)); //clone arrURL_objects
   for (const arrURL_object of arrURL_objects) {
     const siteUrl = arrURL_object.url;
     siteUrls.push(siteUrl);
