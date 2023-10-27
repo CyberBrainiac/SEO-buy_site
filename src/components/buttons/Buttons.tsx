@@ -21,6 +21,7 @@ const ButtonCommon: React.FC<ButtonCommonProps> = ({
   id,
   text,
   type,
+  style,
   disabled,
 }) => {
   return (
@@ -29,6 +30,7 @@ const ButtonCommon: React.FC<ButtonCommonProps> = ({
       id={id}
       onClick={onClick}
       type={type}
+      style={style}
       disabled={disabled}
     >
       {text}

@@ -1,25 +1,39 @@
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
+import styleBtns from '@components/buttons/buttons.scss';
 import InputFile from '@/components/inputFile/InputFile';
-import React, { FormEvent, useState, useReducer } from 'react';
+import React, { FormEvent, useState, useReducer, useEffect, useRef } from 'react';
 import fileExcel from '@/utils/fileExcel';
 import calcThematicityIndex from '@/utils/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 import reducerExelData from './reducerExelData';
+import locStorage from '@/utils/localStorage';
 
 const ThematicityIndex: React.FC = () => {
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
+  const [excelData, dispatchExcelData] = useReducer(reducerExelData, null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const wasUserUploadFile = useRef(false);
+  const isToolRun = useRef(false);
 
-  const initialExcelData = {
-    urlColumnIndex: 0,
-    thematicityColumnIndex: 0,
-    totalPageColumnIndex: 0,
-    urlObjects: [],
-  };
-  const [excelData, dispatchExcelData] = useReducer(reducerExelData, initialExcelData);
+  //
+  useEffect(() => {
+    const storageKey = 'TI_userExcelData';
+
+    if (!excelData) {
+      const data = locStorage.get(storageKey);
+
+      if (!data) return;
+      dispatchExcelData({ type: 'SET', excelData: data });
+      return;
+    }
+
+    if (!wasUserUploadFile.current) return; // check 1 load, if data empty this is first load and not need to set data in storage
+    locStorage.set(storageKey, excelData);
+    isToolRun.current = false;
+  }, [excelData]);
 
   //
   const handleFileUpload = (file: File) => {
@@ -51,12 +65,13 @@ const ThematicityIndex: React.FC = () => {
       console.error('Can not read buffer data');
       return null;
     }
+    wasUserUploadFile.current = true;
     dispatchExcelData({ type: 'SET', excelData: data });
   };
 
   //
   const handleLoadResult = async () => {
-    if (!fileBinaryData || !excelData.urlObjects.length) {
+    if (!fileBinaryData || !excelData) {
       alert("First click on the 'Get Thematicity Index button");
       return null;
     }
@@ -108,21 +123,20 @@ const ThematicityIndex: React.FC = () => {
     }
     const request = `intitle:"${inputKeyword}"`;
 
-    if (!excelData.urlObjects.length) {
+    if (!excelData) {
       alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
       return null;
     }
 
+    isToolRun.current = true;
     const resultURLObjects = await calcThematicityIndex({
       arrURL_objects: excelData.urlObjects,
       query: request,
       onUpdate: progressHandler,
       onError: errorHandler,
     });
-    console.log('Origin', excelData);
+
     dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
-    console.log('Modify', excelData);
-    console.log('RETURNING DATA', resultURLObjects);
   };
 
   return (
@@ -145,7 +159,14 @@ const ThematicityIndex: React.FC = () => {
               placeholder="koala"
               required
             />
-            <ButtonCommon type="submit" text="Get Thematicity Index" />
+            <ButtonCommon 
+            // className={(() => {
+            //   if (!isToolRun.current) return '';
+
+            //   return `${style.buttonCommon_working}`;
+            // })()} 
+            className={styleBtns.buttonCommon_working}
+            type="submit" text="Get Thematicity Index" />
           </div>
         </form>
 
