@@ -16,18 +16,28 @@
 .form {
   padding: 20px;
 
-  &_container {
+  &Container {
     @include flex-column();
     width: 50%;
     margin: 0 auto;
   }
 
-  &_input {
+  &Input {
     width: 100%;
+  }
+
+  &Btn {
+    &_active {
+      background-color: rgb(76, 212, 76);
+    }
   }
 }
 
 .errorContainer {
   width: 100%;
   color: #ff0000;
+}
+
+.logContainer {
+  width: 100%;
 }

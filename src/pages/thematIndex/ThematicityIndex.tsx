@@ -1,10 +1,9 @@
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
-import styleBtns from '@components/buttons/buttons.scss';
 import InputFile from '@/components/inputFile/InputFile';
 import React, { FormEvent, useState, useReducer, useEffect, useRef } from 'react';
-import fileExcel from '@/utils/fileExcel';
-import calcThematicityIndex from '@/utils/calcThematicityIndex';
+import fileExcel from '@/pages/thematIndex/fileExcel';
+import calcThematicityIndex from '@/pages/thematIndex/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 import reducerExelData from './reducerExelData';
 import locStorage from '@/utils/localStorage';
@@ -15,8 +14,8 @@ const ThematicityIndex: React.FC = () => {
   const [excelData, dispatchExcelData] = useReducer(reducerExelData, null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isToolRun, setToolRun] = useState(false);
   const wasUserUploadFile = useRef(false);
-  const isToolRun = useRef(false);
 
   //
   useEffect(() => {
@@ -30,9 +29,9 @@ const ThematicityIndex: React.FC = () => {
       return;
     }
 
+    setToolRun(false);
     if (!wasUserUploadFile.current) return; // check 1 load, if data empty this is first load and not need to set data in storage
     locStorage.set(storageKey, excelData);
-    isToolRun.current = false;
   }, [excelData]);
 
   //
@@ -61,6 +60,7 @@ const ThematicityIndex: React.FC = () => {
   //
   const readBuffer = async (buffer: ArrayBuffer) => {
     const data = await fileExcel.read(buffer);
+
     if (!data) {
       console.error('Can not read buffer data');
       return null;
@@ -69,17 +69,21 @@ const ThematicityIndex: React.FC = () => {
     dispatchExcelData({ type: 'SET', excelData: data });
   };
 
-  //
+  //Create new Excel file
   const handleLoadResult = async () => {
-    if (!fileBinaryData || !excelData) {
-      alert("First click on the 'Get Thematicity Index button");
+    if (!excelData) {
+      alert("Tool have not any urls, upload your file.xlsx or use Example file");
+      return null;
+    }
+    if (!fileBinaryData) {
+      alert("Upload Example.xlsx or similar file to load previous result index thematicity calculation");
       return null;
     }
 
-    // fileExcel.write({
-    //   file: fileBinaryData,
-    //   excelData: excelData,
-    // });
+    fileExcel.write({
+      file: fileBinaryData,
+      excelData: excelData,
+    });
   };
 
   //
@@ -128,7 +132,7 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    isToolRun.current = true;
+    setToolRun(true);
     const resultURLObjects = await calcThematicityIndex({
       arrURL_objects: excelData.urlObjects,
       query: request,
@@ -150,23 +154,20 @@ const ThematicityIndex: React.FC = () => {
         </aside>
 
         <form onSubmit={formHandler} className={style.form}>
-          <div className={style.form_container}>
+          <div className={style.formContainer}>
             <label htmlFor="request">Write keyword or theme</label>
             <input
               name="request"
               type="text"
-              className={style.form_input}
+              className={style.formInput}
               placeholder="koala"
               required
             />
-            <ButtonCommon 
-            // className={(() => {
-            //   if (!isToolRun.current) return '';
-
-            //   return `${style.buttonCommon_working}`;
-            // })()} 
-            className={styleBtns.buttonCommon_working}
-            type="submit" text="Get Thematicity Index" />
+            <ButtonCommon
+              className={isToolRun ? style.formBtn_active : ''}
+              type="submit"
+              text={isToolRun ? 'Index Is Calculated' : 'Get Thematicity Index'}
+            />
           </div>
         </form>
 

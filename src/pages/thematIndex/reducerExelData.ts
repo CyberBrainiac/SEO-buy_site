@@ -1,5 +1,5 @@
-import { ExcelDataType } from '@/utils/fileExcel';
-import { URLObjectProps } from '@/utils/calcThematicityIndex';
+import { ExcelDataType } from '@/pages/thematIndex/fileExcel';
+import { URLObjectProps } from '@/pages/thematIndex/calcThematicityIndex';
 
 export interface ExcelDataAction {
   type: string;
