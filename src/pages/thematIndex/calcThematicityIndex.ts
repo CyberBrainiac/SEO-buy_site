@@ -8,9 +8,9 @@ import axios, { AxiosResponse } from 'axios';
 
 export interface URLObjectProps {
   url: string;
-  totalPage?: string;
-  targetPage?: string;
-  thematicityIndex?: string;
+  totalPage?: number;
+  targetPage?: number;
+  thematicityIndex?: number;
 }
 
 interface CalcThematicityIndexProps {
@@ -88,15 +88,15 @@ async function calcThematicityIndex({
         }
 
         if (targetPage === null) {
-          obj.targetPage = '';
+          obj.targetPage = 0;
         } else {
-          obj.targetPage = targetPage;
+          obj.targetPage = Number(targetPage);
         }
 
         /**If we have totalPage value, we wont do one more request*/
         if (obj.totalPage) {
           thematicIndex = targetPage / Number(obj.totalPage);
-          const truncatedThematicIndex = thematicIndex.toFixed(4);
+          const truncatedThematicIndex = Number(thematicIndex.toFixed(4));
           obj.thematicityIndex = truncatedThematicIndex;
           break;
         }
@@ -105,15 +105,15 @@ async function calcThematicityIndex({
         await waitStep();
 
         if (totalPage === null) {
-          obj.totalPage = '';
-          obj.thematicityIndex = '';
+          obj.totalPage = 0;
+          obj.thematicityIndex = 0;
           break;
         }
 
         thematicIndex = targetPage / totalPage;
         const truncatedThematicIndex = Number(thematicIndex.toFixed(4));
-        obj.thematicityIndex = String(truncatedThematicIndex);
-        obj.totalPage = totalPage;
+        obj.thematicityIndex = truncatedThematicIndex;
+        obj.totalPage = Number(totalPage);
         break;
       }
     }

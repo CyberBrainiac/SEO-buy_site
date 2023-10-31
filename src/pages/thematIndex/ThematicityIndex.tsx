@@ -15,12 +15,11 @@ const ThematicityIndex: React.FC = () => {
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isToolRun, setToolRun] = useState(false);
-  const wasUserUploadFile = useRef(false);
+  const isUserUseTool = useRef(false);
+  const storageKey = 'TI_userExcelData';
 
   //
   useEffect(() => {
-    const storageKey = 'TI_userExcelData';
-
     if (!excelData) {
       const data = locStorage.get(storageKey);
 
@@ -30,7 +29,7 @@ const ThematicityIndex: React.FC = () => {
     }
 
     setToolRun(false);
-    if (!wasUserUploadFile.current) return; // check 1 load, if data empty this is first load and not need to set data in storage
+    if (!isUserUseTool.current) return; // check 1 load, if data empty this is first load and not need to set data in storage
     locStorage.set(storageKey, excelData);
   }, [excelData]);
 
@@ -65,19 +64,28 @@ const ThematicityIndex: React.FC = () => {
       console.error('Can not read buffer data');
       return null;
     }
-    wasUserUploadFile.current = true;
     dispatchExcelData({ type: 'SET', excelData: data });
   };
 
   //Create new Excel file
   const handleLoadResult = async () => {
     if (!excelData) {
-      alert("Tool have not any urls, upload your file.xlsx or use Example file");
+      alert('Upload your file.xlsx or use Example file');
       return null;
     }
     if (!fileBinaryData) {
-      alert("Upload Example.xlsx or similar file to load previous result index thematicity calculation");
+      alert(
+        'Upload Example.xlsx or similar file to load previous result index thematicity calculation'
+      );
       return null;
+    }
+
+    if (!isUserUseTool.current) {
+      fileExcel.write({
+        file: fileBinaryData,
+        excelData: locStorage.get(storageKey),
+      });
+      return;
     }
 
     fileExcel.write({
@@ -140,6 +148,7 @@ const ThematicityIndex: React.FC = () => {
       onError: errorHandler,
     });
 
+    isUserUseTool.current = true;
     dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
   };
 

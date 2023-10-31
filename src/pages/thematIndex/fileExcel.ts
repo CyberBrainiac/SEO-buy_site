@@ -12,6 +12,7 @@ import { URLObjectProps } from './calcThematicityIndex';
 
 export interface ExcelDataType {
   urlColumnIndex: number;
+  query: string;
   thematicityColumnIndex: number;
   totalPageColumnIndex?: number;
   urlObjects: URLObjectProps[];
@@ -25,7 +26,7 @@ export interface WriteExcelProperties {
 /**Used Static method to set object as value*/
 class URLObject {
   static create(props: URLObjectProps) {
-    return { url: props.url, totalPage: props.totalPage, targetPage: '', thematicityIndex: '' };
+    return { url: props.url, totalPage: props.totalPage, targetPage: 0, thematicityIndex: 0 };
   }
 }
 
@@ -80,7 +81,7 @@ async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
       for (const row of rowsWithValues) {
         const urlCell = row.getCell(urlColumnIndex);
         let url: string = '';
-        let totalPage: string = '';
+        let totalPage: number = 0;
 
         if (
           typeof urlCell.value === 'object' &&
@@ -93,21 +94,21 @@ async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
         }
 
         if (!totalPageColumnIndex) {
-          totalPage = '';
+          totalPage = 0;
           urlObjects.push(URLObject.create({ url, totalPage }));
           continue;
         }
 
         const totalPageCell = row.getCell(totalPageColumnIndex);
         if (typeof totalPageCell.value === 'number' && !isNaN(totalPageCell.value)) {
-          totalPage = String(totalPageCell.value);
+          totalPage = totalPageCell.value;
         } else if (
           typeof totalPageCell.value === 'string' &&
           isFinite(parseInt(totalPageCell.value))
         ) {
-          totalPage = totalPageCell.value;
+          totalPage = parseInt(totalPageCell.value);
         } else {
-          totalPage = '';
+          totalPage = 0;
         }
 
         urlObjects.push(URLObject.create({ url, totalPage }));
@@ -129,6 +130,10 @@ async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
 async function write({ file, excelData }: WriteExcelProperties) {
   const workbook = new Excel.Workbook();
   const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex, urlObjects } = excelData;
+  const date = new Date();
+  const fileName = `themat_index_${date.getDate()}-${
+    date.getMonth() + 1
+  }-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}.xlsx`;
 
   try {
     await workbook.xlsx.load(file);
@@ -142,21 +147,44 @@ async function write({ file, excelData }: WriteExcelProperties) {
     return null;
   }
 
-  const urlColumn = worksheet.getColumn(urlColumnIndex);
-  const thematicityColumn = worksheet.getColumn(thematicityColumnIndex);
-  let totalPageColumn;
-
-  if (totalPageColumnIndex) {
-    totalPageColumn = worksheet.getColumn(totalPageColumnIndex);
-  }
   console.log(urlObjects);
 
-  for (let cell_i = 2, value_i = 0; cell_i < urlObjects.length; cell_i++, value_i++) {
-    let t = urlColumn.values;
-    console.log(t);
-    
+  //clear previous value
+  worksheet.getColumn(urlColumnIndex).eachCell((cell, rowNumber) => {
+    if (rowNumber === 1) return cell.value;
+    return (cell.value = '');
+  });
+
+  worksheet.getColumn(thematicityColumnIndex).eachCell((cell, rowNumber) => {
+    if (rowNumber === 1) return cell.value;
+    return (cell.value = '');
+  });
+
+  if (totalPageColumnIndex) {
+    worksheet.getColumn(totalPageColumnIndex).eachCell((cell, rowNumber) => {
+      if (rowNumber === 1) return cell.value;
+      return (cell.value = '');
+    });
   }
 
+  //set new value
+  for (let tableRow = 2, urlObjRow = 0; urlObjRow < urlObjects.length; tableRow++, urlObjRow++) {
+    worksheet.getCell(tableRow, urlColumnIndex).value = urlObjects[urlObjRow].url;
+    worksheet.getCell(tableRow, thematicityColumnIndex).value =
+      urlObjects[urlObjRow].thematicityIndex;
+
+    if (!totalPageColumnIndex) continue;
+    worksheet.getCell(tableRow, totalPageColumnIndex).value = urlObjects[urlObjRow].totalPage;
+  }
+
+  workbook.xlsx
+    .writeBuffer()
+    .then(buffer => {
+      saveAs(new Blob([buffer], { type: 'application/octet-stream' }), fileName);
+    })
+    .catch(err => {
+      console.error(err.message);
+    });
 }
 
 //
