@@ -12,7 +12,6 @@ import { URLObjectProps } from './calcThematicityIndex';
 
 export interface ExcelDataType {
   urlColumnIndex: number;
-  query: string;
   thematicityColumnIndex: number;
   totalPageColumnIndex?: number;
   urlObjects: URLObjectProps[];
@@ -21,6 +20,7 @@ export interface ExcelDataType {
 export interface WriteExcelProperties {
   file: ArrayBuffer;
   excelData: ExcelDataType;
+  query: string;
 }
 
 /**Used Static method to set object as value*/
@@ -127,11 +127,11 @@ async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
 }
 
 //
-async function write({ file, excelData }: WriteExcelProperties) {
+async function write({ file, excelData, query }: WriteExcelProperties) {
   const workbook = new Excel.Workbook();
   const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex, urlObjects } = excelData;
   const date = new Date();
-  const fileName = `themat_index_${date.getDate()}-${
+  const fileName = `thematicity_${query}_${date.getDate()}-${
     date.getMonth() + 1
   }-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}.xlsx`;
 
@@ -146,8 +146,6 @@ async function write({ file, excelData }: WriteExcelProperties) {
     alert(`Unexpected error, buffer Excel data not contain 'Site Data' tab`);
     return null;
   }
-
-  console.log(urlObjects);
 
   //clear previous value
   worksheet.getColumn(urlColumnIndex).eachCell((cell, rowNumber) => {

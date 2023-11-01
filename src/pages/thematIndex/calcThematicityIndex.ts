@@ -43,7 +43,7 @@ async function calcThematicityIndex({
 
   const limit_package_urls = 10; //value set limit for count of site urls, which process in one iteration.
   const delay_between_iterations = 500; //value set delay after finish each iteration in MILLISECONDS. 66000 milliseconds = 66 seconds
-  const delay_between_steps = 130; //value set delay before each request in MILLISECONDS. 130 milliseconds = 0.13 second
+  const delay_between_steps = 150; //value set delay before each request in MILLISECONDS. 130 milliseconds = 0.13 second
   const siteUrls: string[] = [];
 
   arrURL_objects = JSON.parse(JSON.stringify(arrURL_objects)); //clone arrURL_objects

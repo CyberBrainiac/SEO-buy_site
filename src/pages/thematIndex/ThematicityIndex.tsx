@@ -16,21 +16,28 @@ const ThematicityIndex: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isToolRun, setToolRun] = useState(false);
   const isUserUseTool = useRef(false);
-  const storageKey = 'TI_userExcelData';
+  const userQuery = useRef('');
+  const storageExcelKey = 'TI_userExcelData';
+  const storageQueryKey = 'TI_userQuery';
 
   //
   useEffect(() => {
     if (!excelData) {
-      const data = locStorage.get(storageKey);
+      const data = locStorage.get(storageExcelKey);
+      let savedQuery = locStorage.get(storageQueryKey);
 
       if (!data) return;
+      if (!savedQuery) savedQuery = { query: '' };
+
       dispatchExcelData({ type: 'SET', excelData: data });
+      userQuery.current = savedQuery.query;
       return;
     }
 
     setToolRun(false);
     if (!isUserUseTool.current) return; // check 1 load, if data empty this is first load and not need to set data in storage
-    locStorage.set(storageKey, excelData);
+    locStorage.set(storageExcelKey, excelData);
+    locStorage.set(storageQueryKey, { query: userQuery.current });
   }, [excelData]);
 
   //
@@ -83,7 +90,8 @@ const ThematicityIndex: React.FC = () => {
     if (!isUserUseTool.current) {
       fileExcel.write({
         file: fileBinaryData,
-        excelData: locStorage.get(storageKey),
+        excelData: locStorage.get(storageExcelKey),
+        query: userQuery.current,
       });
       return;
     }
@@ -91,6 +99,7 @@ const ThematicityIndex: React.FC = () => {
     fileExcel.write({
       file: fileBinaryData,
       excelData: excelData,
+      query: userQuery.current,
     });
   };
 
@@ -141,6 +150,8 @@ const ThematicityIndex: React.FC = () => {
     }
 
     setToolRun(true);
+    userQuery.current = inputKeyword;
+
     const resultURLObjects = await calcThematicityIndex({
       arrURL_objects: excelData.urlObjects,
       query: request,
@@ -164,8 +175,9 @@ const ThematicityIndex: React.FC = () => {
 
         <form onSubmit={formHandler} className={style.form}>
           <div className={style.formContainer}>
-            <label htmlFor="request">Write keyword or theme</label>
+            <label htmlFor="ThemIndRequest">Write keyword or theme</label>
             <input
+              id="ThemIndRequest"
               name="request"
               type="text"
               className={style.formInput}
