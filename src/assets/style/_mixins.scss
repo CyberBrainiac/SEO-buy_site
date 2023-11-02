@@ -6,7 +6,6 @@
   font-size: $font-size;
   font-style: normal;
   font-weight: 700;
-  line-height: normal;
   font-family: $Kanit;
   letter-spacing: 0.5px;
 }
@@ -23,7 +22,6 @@
   font-style: normal;
   text-transform: capitalize;
   font-weight: 400;
-  line-height: normal;
 }
 
 @mixin common-text($font-weight: 400) {
@@ -32,7 +30,6 @@
   font-style: normal;
   font-weight: 400;
   font-family: $Open-Sans;
-  line-height: 120%;
 }
 
 /*Images*/
