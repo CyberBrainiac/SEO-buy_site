@@ -39,7 +39,7 @@ const ThematicityIndex: React.FC = () => {
     locStorage.set(storageExcelKey, excelData);
     locStorage.set(storageQueryKey, { query: userQuery.current });
   }, [excelData]);
-
+  
   //
   const handleFileUpload = (file: File) => {
     const reader = new FileReader();
@@ -194,8 +194,10 @@ const ThematicityIndex: React.FC = () => {
 
         <div className={style.errorContainer}>{errorMessage}</div>
         <div className={style.logContainer}>{logProgress}</div>
-        <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
-        <ButtonCommon onClick={handleLoadResult} text={'Load Result'} />
+        <div className={style.loadBtnContainer}>
+          <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
+          <ButtonCommon onClick={handleLoadResult} text={'Load Result'} />
+        </div>
       </div>
     </section>
   );
