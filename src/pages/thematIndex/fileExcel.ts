@@ -44,7 +44,9 @@ async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
     .then(() => {
       const worksheet = workbook.getWorksheet('Site Data');
       if (!worksheet) {
-        alert(`Rename your worksheet(Excel tab) with list of urls to:\n\rSite Data`);
+        alert(
+          `Use an example\n\rRename your worksheet(Excel tab) with list of urls to:\n\rSite Data`
+        );
         return null;
       }
 
@@ -66,11 +68,11 @@ async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
       const rowsWithValues = worksheet.getRows(2, rowsCount);
 
       if (!urlColumnIndex) {
-        alert(`Provide column with name: \n\rSite URL`);
+        alert(`Use an example\n\rProvide column with name: \n\rSite URL`);
         return null;
       }
       if (!thematicityColumnIndex) {
-        alert(`Provide column with name: \n\rThematicity Index`);
+        alert(`Use an example\n\rProvide column with name: \n\rThematicity Index`);
         return null;
       }
       if (!rowsWithValues) {

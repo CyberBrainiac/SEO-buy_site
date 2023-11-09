@@ -16,7 +16,7 @@
 }
 
 @mixin highlight-text() {
-  color: $text-color-highlight;
+  color: $highlight-additional;
   font-family: $Cormorant-Garamond;
   font-size: 36px;
   font-style: normal;

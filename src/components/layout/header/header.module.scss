@@ -1,46 +1,56 @@
 @import '/src/assets/style/variables';
 @import '/src/assets/style/mixins';
 
-.blok1 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  background-color: $page-bg-color-main;
+.container {
+  @include flex-row();
+  height: 100px;
+  background-color: $page-bg-color-additional;
+}
 
-  &_item {
-    width: 40px;
-    height: 40px;
-    background-color: $text-color-main;
+.logo {
+  @include highlight-text();
+  color: $highlight-main;
+  font-size: 68px;
+  cursor: pointer;
+}
+
+.nav {
+  @include flex-row();
+  color: $highlight-main;
+  font-size: 30px;
+  width: 300px;
+
+  &Services {
+    cursor: pointer;
+  }
+
+  &Tools {
+    cursor: pointer;
   }
 }
 
-.blok2 {
-  display: grid;
-  transition: all 0.5s;
-  user-select: none;
-  background: linear-gradient(to bottom, white, $highlight-main);
-  width: 100px;
-  height: 100px;
-}
+.auth {
+  font-family: $Kanit;
+  color: $highlight-main;
 
-.blok3 {
-  width: 80px;
-  height: 80px;
-  background-color: $text-color-additional;
-}
+  &Btn {
+    @include flex-row();
+    justify-content: space-between;
+    width: 160px;
+    border: 2px solid $border-color-main;
+    border-radius: 6px;
+    cursor: pointer;
 
-.container {
-  @include flex-row();
-  flex-wrap: wrap;
-  width: 100%;
-  height: 140px;
-  background-color: $page-bg-color-additional;
-  border: 5px solid $border-color-main;
+    &_highlight {
+      background-color: $highlight-additional;
+      padding: 4px 9px;
+      height: inherit;
+      border-radius: 0 4px 4px 0;
+      color: $text-color-additional;
+    }
 
-  &_smallGreen {
-    @extend .blok1;
-    background-color: $highlight-additional;
+    &:first-child {
+      padding-left: 10px;
+    }
   }
 }
