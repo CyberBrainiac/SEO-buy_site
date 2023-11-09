@@ -39,7 +39,7 @@ const ThematicityIndex: React.FC = () => {
     locStorage.set(storageExcelKey, excelData);
     locStorage.set(storageQueryKey, { query: userQuery.current });
   }, [excelData]);
-  
+
   //
   const handleFileUpload = (file: File) => {
     const reader = new FileReader();
