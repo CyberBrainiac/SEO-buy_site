@@ -4,9 +4,11 @@ import { ButtonLink } from '@/components/buttons/Buttons';
 
 const ErrorPage: React.FC = () => {
   return (
-    <section className={style.container}>
-      <h1>404 page not found :(</h1>
-      <ButtonLink href="/" text="Go home" />
+    <section className="errorPage">
+      <div className={style.container}>
+        <h1>404 page not found :(</h1>
+        <ButtonLink href="/" text="Go home" />
+      </div>
     </section>
   );
 };

@@ -1,14 +1,15 @@
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import firebaseConfig from './config/firebase';
+import { initializeApp } from 'firebase/app';
 
+initializeApp(firebaseConfig);
 const auth = getAuth();
 
 const logIn = async () => {
-  console.log("Authenticating user")
-
   const provider = new GoogleAuthProvider();
 
   try {
-    const result = await signInWithPopup(auth, provider)
+    const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
     console.log(user.providerData[0]);
@@ -19,8 +20,6 @@ const logIn = async () => {
 };
 
 const logOut = async () => {
-  // Sign out user if authenticated
-  console.log("Logging out user")
   let result;
 
   try {

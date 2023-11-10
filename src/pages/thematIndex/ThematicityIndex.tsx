@@ -1,19 +1,23 @@
+import React, { FormEvent, useState, useReducer, useEffect, useRef, useContext } from 'react';
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
-import React, { FormEvent, useState, useReducer, useEffect, useRef } from 'react';
 import fileExcel from '@/pages/thematIndex/fileExcel';
 import calcThematicityIndex from '@/pages/thematIndex/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 import reducerExelData from './reducerExelData';
 import locStorage from '@/utils/localStorage';
+import { AuthContext } from '@/containers/AuthContext';
 
 const ThematicityIndex: React.FC = () => {
+  const { isAuth } = useContext(AuthContext);
+
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
   const [excelData, dispatchExcelData] = useReducer(reducerExelData, null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [isToolRun, setToolRun] = useState(false);
   const isUserUseTool = useRef(false);
   const userQuery = useRef('');
@@ -149,6 +153,11 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
+    if (!isAuth) {
+      alert('First you need to register');
+      return null;
+    }
+
     setToolRun(true);
     userQuery.current = inputKeyword;
 
@@ -166,6 +175,19 @@ const ThematicityIndex: React.FC = () => {
   return (
     <section className="thematicityIndex">
       <div className={style.container}>
+        <div className={style.userInf}>
+          {isAuth ? (
+            <>
+              <div className={style.userInf__freeReq}>You have: {} free request</div>
+              <div className={style.userInf__walletBal}>Wallet balance: {}$</div>
+            </>
+          ) : (
+            <div className={style.userInf__unAuthMessage}>
+              Sign up now and get 20 free thematicity index calculation per day!
+            </div>
+          )}
+        </div>
+
         <InputFile onFileUpload={handleFileUpload} />
         <aside className={style.acceptedFiles}>
           <div className={style.acceptedDescription}>

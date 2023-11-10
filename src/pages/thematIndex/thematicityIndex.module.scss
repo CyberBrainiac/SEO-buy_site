@@ -1,5 +1,25 @@
 @import '@style/mixins';
 
+.userInf {
+  font-size: 24px;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  &__freeReq {
+    color: rgb(4, 129, 4);
+  }
+
+  &__walletBal {
+    color: $highlight-additional;
+  }
+
+  &__unAuthMessage {
+    font-size: 28px;
+    color: $highlight-additional;
+  }
+}
+
 .acceptedFiles {
   height: 40px;
   row-gap: 10px;
