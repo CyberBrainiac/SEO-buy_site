@@ -78,7 +78,13 @@ async function calcThematicityIndex({
         await waitIteration();
       }
 
-      const targetPage = await searchWithQuery(siteURL);
+      if (siteURL === '') {
+        continue;
+      }
+
+      const targetPageStr = await searchWithQuery(siteURL);
+      const targetPage = Number(targetPageStr);
+
       await waitStep();
       let thematicIndex = 0;
 
@@ -87,8 +93,8 @@ async function calcThematicityIndex({
           continue;
         }
 
-        if (targetPage === null) {
-          obj.targetPage = 0;
+        if (targetPage === null || targetPage === 0) {
+          continue;
         } else {
           obj.targetPage = Number(targetPage);
         }
@@ -104,7 +110,7 @@ async function calcThematicityIndex({
         const totalPage = await searchSite(siteURL);
         await waitStep();
 
-        if (totalPage === null) {
+        if (totalPage === null || totalPage === 0) {
           obj.totalPage = 0;
           obj.thematicityIndex = 0;
           break;

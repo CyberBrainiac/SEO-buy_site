@@ -12,7 +12,6 @@ const logIn = async () => {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    console.log(user.providerData[0]);
     return user.providerData[0];
   } catch (err) {
     console.error(err);

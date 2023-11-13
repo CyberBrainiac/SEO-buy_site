@@ -7,16 +7,16 @@ import { UserInfo } from 'firebase/auth/cordova';
 
 interface AuthContextProps {
   isAuth: boolean;
-  googleProf: UserInfo | null;
-  projProf: null;
+  googleProfl: UserInfo | null;
+  projProfl: null;
   setUser: () => void;
   deleteUser: () => void;
 }
 
 const initialProps = {
   isAuth: false,
-  googleProf: null,
-  projProf: null,
+  googleProfl: null,
+  projProfl: null,
   setUser: () => {},
   deleteUser: () => {},
 };

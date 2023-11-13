@@ -85,11 +85,9 @@ async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
         let url: string = '';
         let totalPage: number = 0;
 
-        if (
-          typeof urlCell.value === 'object' &&
-          urlCell.value !== null &&
-          'hyperlink' in urlCell.value
-        ) {
+        if (urlCell.value === null) {
+          url = '';
+        } else if (typeof urlCell.value === 'object' && 'hyperlink' in urlCell.value) {
           url = urlCell.hyperlink;
         } else {
           url = String(urlCell.value);
@@ -136,6 +134,7 @@ async function write({ file, excelData, query }: WriteExcelProperties) {
   const fileName = `thematicity_${query}_${date.getDate()}-${
     date.getMonth() + 1
   }-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}.xlsx`;
+  console.log('excelData', excelData);
 
   try {
     await workbook.xlsx.load(file);

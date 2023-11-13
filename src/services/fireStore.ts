@@ -1,31 +1,37 @@
 import { db } from './config/firebase';
-import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 import { UserInfo } from 'firebase/auth/cordova';
 
 async function isUserExist(uid: string) {
-  const userRef = doc(db, 'users', uid);
-  const userSnap = await getDoc(userRef);
+  const userRef = collection(db, 'users', uid, 'googleProfl');
+  const userSnap = await getDocs(userRef);
+  let isExist = false;
 
-  if (!userSnap.exists()) return false;
-  console.log('User already exists');
-  return true;
+  userSnap.forEach(doc => {
+    const data = doc.data();
+    if ('email' in data) {
+      isExist = true;
+    }
+  });
+
+  return isExist;
 }
 
 async function createUser(user: UserInfo) {
-  const userGoogleRef = collection(db, 'users', user.uid, 'googleProf');
-  const userGoogleProf = await addDoc(userGoogleRef, {
+  const userGoogleRef = collection(db, 'users', user.uid, 'googleProfl');
+  const userGoogleProfl = await addDoc(userGoogleRef, {
     ...user,
   });
-  console.log(`Google id: ${userGoogleProf.id}`);
+  console.log(`Google id: ${userGoogleProfl.id}`);
 
-  const userProjRef = collection(db, 'users', user.uid, 'projProf');
-  const userProjProf = await addDoc(userProjRef, {
+  const userProjRef = collection(db, 'users', user.uid, 'projProfl');
+  const userProjProfl = await addDoc(userProjRef, {
     freeRequest: 20,
     walletBalance: 0,
     allIndexCalculation: 0,
     lastLogIn: serverTimestamp(),
   });
-  console.log(`Proj id: ${userProjProf.id}`);
+  console.log(`Proj id: ${userProjProfl.id}`);
 }
 
 async function modifyUser(uid: string) {

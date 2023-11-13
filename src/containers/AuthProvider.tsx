@@ -10,8 +10,8 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
-  const [googleProf, setGoogleProf] = useState<UserInfo | null>(null);
-  const [projProf, setProjProf] = useState<null>(null);
+  const [googleProfl, setGoogleProfl] = useState<UserInfo | null>(null);
+  const [projProfl, setProjProfl] = useState<null>(null);
 
   //
   const setUser = async () => {
@@ -21,9 +21,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       alert('Authorization error, open the developer console for more details');
       return;
     }
-    setGoogleProf(user);
+    setGoogleProfl(user);
 
-    setProjProf(null);
+    setProjProfl(null);
     setIsAuth(true);
 
     const isCustomer = await fireStore.isUserExist(user.uid);
@@ -34,13 +34,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   //
   const deleteUser = async () => {
-    setGoogleProf(null);
-    setProjProf(null);
+    setGoogleProfl(null);
+    setProjProfl(null);
     setIsAuth(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuth, googleProf, projProf, setUser, deleteUser }}>
+    <AuthContext.Provider value={{ isAuth, googleProfl, projProfl, setUser, deleteUser }}>
       {children}
     </AuthContext.Provider>
   );
