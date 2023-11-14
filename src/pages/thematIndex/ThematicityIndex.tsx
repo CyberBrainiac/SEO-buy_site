@@ -10,7 +10,7 @@ import locStorage from '@/utils/localStorage';
 import { AuthContext } from '@/containers/AuthContext';
 
 const ThematicityIndex: React.FC = () => {
-  const { isAuth } = useContext(AuthContext);
+  const { isAuth, projProfl } = useContext(AuthContext);
 
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
@@ -176,10 +176,14 @@ const ThematicityIndex: React.FC = () => {
     <section className="thematicityIndex">
       <div className={style.container}>
         <div className={style.userInf}>
-          {isAuth ? (
+          {isAuth && projProfl ? (
             <>
-              <div className={style.userInf__freeReq}>You have: {} free request</div>
-              <div className={style.userInf__walletBal}>Wallet balance: {}$</div>
+              <div className={style.userInf__freeReq}>
+                You have: {projProfl.freeRequest} free request
+              </div>
+              <div className={style.userInf__walletBal}>
+                Wallet balance: {projProfl.walletBalance}$
+              </div>
             </>
           ) : (
             <div className={style.userInf__unAuthMessage}>

@@ -40,6 +40,10 @@ const dropzoneStyles: React.CSSProperties = {
   padding: '20px',
   textAlign: 'center',
   cursor: 'pointer',
+  height: '20vh',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
 };
 
 export default InputFile;

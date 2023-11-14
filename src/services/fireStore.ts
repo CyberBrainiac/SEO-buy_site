@@ -2,6 +2,18 @@ import { db } from './config/firebase';
 import { collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 import { UserInfo } from 'firebase/auth/cordova';
 
+interface FireTimestamp {
+  seconds: number;
+  nanoseconds: number;
+}
+
+export interface UserProjProfl {
+  freeRequest: number;
+  walletBalance: number;
+  allIndexCalculation: number;
+  lastLogIn: FireTimestamp;
+}
+
 async function isUserExist(uid: string) {
   const userRef = collection(db, 'users', uid, 'googleProfl');
   const userSnap = await getDocs(userRef);
@@ -34,6 +46,18 @@ async function createUser(user: UserInfo) {
   console.log(`Proj id: ${userProjProfl.id}`);
 }
 
+async function getProjProfl(uid: string) {
+  const projRef = collection(db, 'users', uid, 'projProfl');
+  const projSnapshot = await getDocs(projRef);
+  const projData: UserProjProfl[] = [];
+
+  projSnapshot.forEach(doc => {
+    const data = doc.data() as UserProjProfl;
+    projData.push(data);
+  });
+  return projData[0];
+}
+
 async function modifyUser(uid: string) {
   return uid;
 }
@@ -41,6 +65,7 @@ async function modifyUser(uid: string) {
 const fireStore = {
   isUserExist,
   createUser,
+  getProjProfl,
   modifyUser,
 };
 

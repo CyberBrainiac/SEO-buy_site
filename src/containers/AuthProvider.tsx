@@ -1,8 +1,10 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState, ReactNode, useEffect } from 'react';
 import { UserInfo } from 'firebase/auth/cordova';
 import firebaseAuth from '@/services/fireAuth';
 import { AuthContext } from './AuthContext';
-import fireStore from '@/services/fireStore';
+import fireStore, { UserProjProfl } from '@/services/fireStore';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '@/services/config/firebase';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -11,7 +13,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [googleProfl, setGoogleProfl] = useState<UserInfo | null>(null);
-  const [projProfl, setProjProfl] = useState<null>(null);
+  const [projProfl, setProjProfl] = useState<UserProjProfl | null>(null);
 
   //
   const setUser = async () => {
@@ -21,15 +23,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       alert('Authorization error, open the developer console for more details');
       return;
     }
-    setGoogleProfl(user);
 
-    setProjProfl(null);
+    setGoogleProfl(user);
     setIsAuth(true);
 
     const isCustomer = await fireStore.isUserExist(user.uid);
     if (!isCustomer) {
       fireStore.createUser(user);
     }
+
+    const profl = await fireStore.getProjProfl(user.uid);
+    if (!user) {
+      alert('Get profile error, open the developer console for more details');
+      return;
+    }
+    setProjProfl(profl);
   };
 
   //
@@ -38,6 +46,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setProjProfl(null);
     setIsAuth(false);
   };
+
+  //Subscribe to user profile for realtime update
+  useEffect(() => {
+    console.log('start');
+
+    if (googleProfl) {
+      console.log('continue');
+
+      const userProjRef = collection(db, 'users', googleProfl.uid, 'projProfl');
+      const unsubscribe = onSnapshot(userProjRef, querySnapshot => {
+        const userProjProfls: UserProjProfl[] = [];
+
+        querySnapshot.forEach(doc => {
+          const data = doc.data() as UserProjProfl;
+          userProjProfls.push(data);
+        });
+        setProjProfl(userProjProfls[0]);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [googleProfl]);
 
   return (
     <AuthContext.Provider value={{ isAuth, googleProfl, projProfl, setUser, deleteUser }}>

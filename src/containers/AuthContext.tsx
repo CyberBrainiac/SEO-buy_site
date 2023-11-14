@@ -4,11 +4,12 @@
 
 import { createContext } from 'react';
 import { UserInfo } from 'firebase/auth/cordova';
+import { UserProjProfl } from '@/services/fireStore';
 
 interface AuthContextProps {
   isAuth: boolean;
   googleProfl: UserInfo | null;
-  projProfl: null;
+  projProfl: UserProjProfl | null;
   setUser: () => void;
   deleteUser: () => void;
 }
