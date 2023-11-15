@@ -2,7 +2,8 @@
  * https://developers.google.com/custom-search/v1/overview
  * Custom Search JSON API provides 100 search queries per day for free.
  * If you need more, you may sign up for billing in the API Console.
- * Additional requests cost $5 per 1000 queries, up to 10k queries per day. */
+ * Additional requests cost $5 per 1000 queries, up to 10k queries per day.
+ * $0.005 per query, $0.01 for Index, $0.012 for Index + 20% profit*/
 
 import axios, { AxiosResponse } from 'axios';
 
@@ -129,7 +130,7 @@ async function calcThematicityIndex({
   //
   async function searchWithQuery(siteURL: string) {
     if (typeof query !== 'string') {
-      console.error("Parameter 'query' must be a 'string'");
+      console.error(new TypeError("Parameter 'query' must be a 'string'"));
       return null;
     }
 
@@ -154,6 +155,7 @@ async function calcThematicityIndex({
 
     if (response && response.status === 200) {
       const res = response.data;
+      console.log(res);
       // console.log(siteURL, 'target: ', res.searchInformation.totalResults);
       return res.searchInformation.totalResults;
     } else {

@@ -14,6 +14,11 @@ export interface UserProjProfl {
   lastLogIn: FireTimestamp;
 }
 
+// interface ModifyUserProps {
+//   uid: string;
+//   requestCount: number;
+// }
+
 async function isUserExist(uid: string) {
   const userRef = collection(db, 'users', uid, 'googleProfl');
   const userSnap = await getDocs(userRef);
@@ -58,15 +63,18 @@ async function getProjProfl(uid: string) {
   return projData[0];
 }
 
-async function modifyUser(uid: string) {
-  return uid;
-}
+// async function modifyUser({ uid, requestCount }: ModifyUserProps): Promise<boolean> {
+//   const pricePerRequest = 0.012;
+//   const userProjProflRef = collection(db, 'users', uid, 'projProfl');
+
+//   return true;
+// }
 
 const fireStore = {
   isUserExist,
   createUser,
   getProjProfl,
-  modifyUser,
+  // modifyUser,
 };
 
 export default fireStore;

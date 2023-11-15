@@ -49,11 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   //Subscribe to user profile for realtime update
   useEffect(() => {
-    console.log('start');
-
     if (googleProfl) {
-      console.log('continue');
-
       const userProjRef = collection(db, 'users', googleProfl.uid, 'projProfl');
       const unsubscribe = onSnapshot(userProjRef, querySnapshot => {
         const userProjProfls: UserProjProfl[] = [];
