@@ -134,7 +134,6 @@ async function write({ file, excelData, query }: WriteExcelProperties) {
   const fileName = `thematicity_${query}_${date.getDate()}-${
     date.getMonth() + 1
   }-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}.xlsx`;
-  console.log('excelData', excelData);
 
   try {
     await workbook.xlsx.load(file);

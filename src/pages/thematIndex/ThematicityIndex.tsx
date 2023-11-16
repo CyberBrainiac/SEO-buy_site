@@ -8,10 +8,10 @@ import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 import reducerExelData from './reducerExelData';
 import locStorage from '@/utils/localStorage';
 import { AuthContext } from '@/containers/AuthContext';
-// import fireStore from '@/services/fireStore';
+import fireStore from '@/services/fireStore';
 
 const ThematicityIndex: React.FC = () => {
-  const { googleProfl, projProfl } = useContext(AuthContext);
+  const { userProfl } = useContext(AuthContext);
   const [excelData, dispatchExcelData] = useReducer(reducerExelData, null);
 
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
@@ -25,7 +25,6 @@ const ThematicityIndex: React.FC = () => {
   const userQuery = useRef('');
   const storageExcelKey = 'TI_userExcelData';
   const storageQueryKey = 'TI_userQuery';
-  const pricePerRequest = 0.012;
 
   //
   useEffect(() => {
@@ -156,24 +155,25 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    if (!googleProfl) {
+    if (!userProfl) {
       alert('First you need to register');
       return null;
     }
 
-    if (!isAvailableRequest()) {
+    const currentRequestCount = (() => {
+      return excelData.urlObjects.reduce((sum, urlObj) => {
+        if (urlObj.url === '') return sum;
+        return ++sum;
+      }, 0);
+    })();
+    setRequestCount(currentRequestCount);
+
+    const modifyResult = await fireStore.modifyUser({ userProfl: userProfl, requestCount: requestCount });
+    console.log(modifyResult);
+
+    if (!modifyResult) {
       return null;
     }
-
-    /**
-     * RETURN FALSE AT ALL
-     * MODIFY UserProjectProffile after finish calculation !!!!
-     * add after "dispatchExcelData"
-     */
-    requestCount; //delete this too
-
-    // fireStore.modifyUser({ uid: googleProfl.uid, requestCount: requestCount });
-    // return false;
 
     setToolRun(true);
     userQuery.current = inputKeyword;
@@ -189,53 +189,17 @@ const ThematicityIndex: React.FC = () => {
     dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
   };
 
-  //Check how much request user can do
-  function isAvailableRequest() {
-    if (!excelData) return false;
-    if (!projProfl) return false;
-
-    const currentRequestCount = (() => {
-      return excelData.urlObjects.reduce((sum, urlObj) => {
-        if (urlObj.url === '') return sum;
-        return ++sum;
-      }, 0);
-    })();
-
-    console.log(currentRequestCount);
-
-    setRequestCount(currentRequestCount);
-    const requestCount_excludeFreeRequest = currentRequestCount - projProfl.freeRequest;
-
-    if (currentRequestCount > 10000) {
-      alert(
-        'Sorry but Thematicity index has limit 5000 request per day. If you want do more request, please contact with us. We solve this problem!'
-      );
-      return false;
-    }
-    if (requestCount_excludeFreeRequest <= 0) return true;
-    if (requestCount_excludeFreeRequest * pricePerRequest > projProfl.walletBalance) {
-      alert(
-        `You can do ${
-          Math.trunc(projProfl.walletBalance / pricePerRequest) + projProfl.freeRequest
-        } index calculations, but tool got ${currentRequestCount} urls`
-      );
-      return false;
-    }
-
-    return true;
-  }
-
   return (
     <section className="thematicityIndex">
       <div className={style.container}>
         <div className={style.userInf}>
-          {projProfl ? (
+          {userProfl ? (
             <>
               <div className={style.userInf__freeReq}>
-                You have: {projProfl.freeRequest} free calculations
+                You have: {userProfl.freeRequest} free calculations
               </div>
               <div className={style.userInf__walletBal}>
-                Wallet balance: {projProfl.walletBalance}$
+                Wallet balance: {userProfl.walletBalance}$
               </div>
             </>
           ) : (

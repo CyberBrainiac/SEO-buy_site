@@ -1,74 +1,67 @@
 import React, { useState, ReactNode, useEffect } from 'react';
-import { UserInfo } from 'firebase/auth/cordova';
 import firebaseAuth from '@/services/fireAuth';
 import { AuthContext } from './AuthContext';
-import fireStore, { UserProjProfl } from '@/services/fireStore';
-import { collection, onSnapshot } from 'firebase/firestore';
+import fireStore, { UserProfl } from '@/services/fireStore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/services/config/firebase';
+import { UserInfo } from 'firebase/auth';
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuth, setIsAuth] = useState(false);
-  const [googleProfl, setGoogleProfl] = useState<UserInfo | null>(null);
-  const [projProfl, setProjProfl] = useState<UserProjProfl | null>(null);
+  const [userProfl, setUserProfl] = useState<UserProfl | null>(null);
+  const [acc, setAcc] = useState<UserInfo | null>(null);
 
   //
   const setUser = async () => {
     const user = await firebaseAuth.logIn();
-
     if (!user) {
       alert('Authorization error, open the developer console for more details');
+      setAcc(null);
       return;
     }
 
-    setGoogleProfl(user);
-    setIsAuth(true);
-
+    setAcc(user);
     const isCustomer = await fireStore.isUserExist(user.uid);
+
     if (!isCustomer) {
       fireStore.createUser(user);
     }
 
-    const profl = await fireStore.getProjProfl(user.uid);
-    if (!user) {
-      alert('Get profile error, open the developer console for more details');
-      return;
-    }
-    setProjProfl(profl);
+    const userProfl = await fireStore.getUserProfl(user.uid);
+    setUserProfl(userProfl);
   };
 
   //
   const deleteUser = async () => {
-    setGoogleProfl(null);
-    setProjProfl(null);
-    setIsAuth(false);
+    setUserProfl(null);
+    firebaseAuth.logOut();
   };
 
-  //Subscribe to user profile for realtime update
+  // Subscribe to user profile for realtime update
   useEffect(() => {
-    if (googleProfl) {
-      const userProjRef = collection(db, 'users', googleProfl.uid, 'projProfl');
-      const unsubscribe = onSnapshot(userProjRef, querySnapshot => {
-        const userProjProfls: UserProjProfl[] = [];
+    if (acc) {
+      const userProflRef = doc(db, 'users', acc.uid);
+      const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
+        const updateUserProfl = querySnapshot.data();
 
-        querySnapshot.forEach(doc => {
-          const data = doc.data() as UserProjProfl;
-          userProjProfls.push(data);
-        });
-        setProjProfl(userProjProfls[0]);
+        if (!updateUserProfl) {
+          setUserProfl(null);
+          return;
+        }
+        setUserProfl(updateUserProfl as UserProfl);
       });
 
       return () => {
         unsubscribe();
       };
     }
-  }, [googleProfl]);
+  }, [acc]);
 
   return (
-    <AuthContext.Provider value={{ isAuth, googleProfl, projProfl, setUser, deleteUser }}>
+    <AuthContext.Provider value={{ userProfl, setUser, deleteUser }}>
       {children}
     </AuthContext.Provider>
   );

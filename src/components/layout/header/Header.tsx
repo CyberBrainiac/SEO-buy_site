@@ -6,7 +6,7 @@ import { AuthContext } from '@/containers/AuthContext';
 // import { LiaUserCircle } from 'react-icons/lia';
 
 const Header: React.FC = () => {
-  const { isAuth, googleProfl, setUser, deleteUser } = useContext(AuthContext);
+  const { userProfl, setUser, deleteUser } = useContext(AuthContext);
 
   return (
     <header className={style.container}>
@@ -22,15 +22,16 @@ const Header: React.FC = () => {
       <ButtonLink href="/" text="Home page" />
 
       <div className={style.auth}>
-        {isAuth ? (
+        {userProfl ? (
           <div className={style.authProfile}>
             <img
               className={style.authImg}
-              src={(() => {
-                const url = googleProfl?.photoURL;
-                if (!url) return undefined;
-                return url;
-              })()}
+              // src={(() => {
+              //   const url = userProfl.photoURL;
+              //   if (!url) return undefined;
+              //   return url;
+              // })()}
+              src={userProfl.photoURL}
               alt="user avatar"
               referrerPolicy="no-referrer"
             />
