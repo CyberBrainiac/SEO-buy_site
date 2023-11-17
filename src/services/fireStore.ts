@@ -1,5 +1,5 @@
 import { db } from './config/firebase';
-import { serverTimestamp, setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { serverTimestamp, setDoc, doc, getDoc, updateDoc, FieldValue } from 'firebase/firestore';
 import { UserInfo } from 'firebase/auth/cordova';
 
 interface FireTimestamp {
@@ -21,6 +21,13 @@ export interface UserProfl {
 }
 
 interface ModifyUserProps {
+  freeRequest?: number;
+  walletBalance?: number;
+  allIndexCalculation?: number;
+  lastLogIn?: FieldValue;
+}
+
+interface ModifyUserBalanceProps {
   requestCount: number;
   userProfl: UserProfl;
 }
@@ -54,10 +61,18 @@ async function getUserProfl(uid: string) {
   return data as UserProfl;
 }
 
-async function modifyUser({ userProfl, requestCount }: ModifyUserProps): Promise<boolean> {
+async function modifyUser(userProfl: UserProfl, modifyObj: ModifyUserProps) {
+  const userProflRef = doc(db, 'users', userProfl.uid);
+  await updateDoc(userProflRef, { ...modifyObj });
+}
+
+async function modifyUserBalance({
+  userProfl,
+  requestCount,
+}: ModifyUserBalanceProps): Promise<boolean> {
   const pricePerRequest = 0.012;
   const paidRequest = requestCount - userProfl.freeRequest;
-  const userProflRef = doc(db, 'users', userProfl.uid);
+  const indexCalculation = userProfl.allIndexCalculation + requestCount;
 
   if (requestCount > 5000) {
     alert(
@@ -71,8 +86,9 @@ async function modifyUser({ userProfl, requestCount }: ModifyUserProps): Promise
     console.log('requestCount', requestCount);
 
     const newFreeRequest = userProfl.freeRequest - requestCount;
-    await updateDoc(userProflRef, {
+    await modifyUser(userProfl, {
       freeRequest: newFreeRequest,
+      allIndexCalculation: indexCalculation,
     });
     return true;
   }
@@ -89,10 +105,12 @@ async function modifyUser({ userProfl, requestCount }: ModifyUserProps): Promise
     return false;
   }
 
-  const newWalletBalance = Math.trunc((userProfl.walletBalance - costOfRequests) * 10000000) / 10000000;
-  await updateDoc(userProflRef, {
+  const newWalletBalance =
+    Math.trunc((userProfl.walletBalance - costOfRequests) * 10000000) / 10000000;
+  await modifyUser(userProfl, {
     freeRequest: 0,
     walletBalance: newWalletBalance,
+    allIndexCalculation: indexCalculation,
   });
   return true;
 }
@@ -102,6 +120,7 @@ const fireStore = {
   createUser,
   getUserProfl,
   modifyUser,
+  modifyUserBalance,
 };
 
 export default fireStore;

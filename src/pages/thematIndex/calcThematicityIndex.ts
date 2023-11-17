@@ -155,7 +155,6 @@ async function calcThematicityIndex({
 
     if (response && response.status === 200) {
       const res = response.data;
-      console.log(res);
       // console.log(siteURL, 'target: ', res.searchInformation.totalResults);
       return res.searchInformation.totalResults;
     } else {

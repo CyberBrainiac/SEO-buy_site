@@ -19,7 +19,6 @@ const ThematicityIndex: React.FC = () => {
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isToolRun, setToolRun] = useState(false);
-  const [requestCount, setRequestCount] = useState(0);
 
   const isUserUseTool = useRef(false);
   const userQuery = useRef('');
@@ -150,7 +149,7 @@ const ThematicityIndex: React.FC = () => {
     }
     const request = `intitle:"${inputKeyword}"`;
 
-    if (!excelData) {
+    if (!excelData || !fileBinaryData) {
       alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
       return null;
     }
@@ -166,16 +165,18 @@ const ThematicityIndex: React.FC = () => {
         return ++sum;
       }, 0);
     })();
-    setRequestCount(currentRequestCount);
 
-    const modifyResult = await fireStore.modifyUser({ userProfl: userProfl, requestCount: requestCount });
-    console.log(modifyResult);
+    const modifyResult = await fireStore.modifyUserBalance({
+      userProfl: userProfl,
+      requestCount: currentRequestCount,
+    });
 
     if (!modifyResult) {
       return null;
     }
 
     setToolRun(true);
+    isUserUseTool.current = true;
     userQuery.current = inputKeyword;
 
     const resultURLObjects = await calcThematicityIndex({
@@ -185,8 +186,12 @@ const ThematicityIndex: React.FC = () => {
       onError: errorHandler,
     });
 
-    isUserUseTool.current = true;
     dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
+
+    //Style Load Result Button
+    // const loadBtn = document.querySelector('#buttonLoadIndexThemat') as HTMLButtonElement;
+    // loadBtn.style.backgroundColor = "rgb(76, 212, 76);";
+    // debugger
   };
 
   return (
@@ -239,7 +244,19 @@ const ThematicityIndex: React.FC = () => {
         <div className={style.logContainer}>{logProgress}</div>
         <div className={style.loadBtnContainer}>
           <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
-          <ButtonCommon onClick={handleLoadResult} text={'Load Result'} />
+          {isUserUseTool.current ? (
+            <ButtonCommon
+              id="buttonLoadIndexThemat"
+              onClick={handleLoadResult}
+              text="Load Result"
+            />
+          ) : !locStorage.get(storageExcelKey) ? null : (
+            <ButtonCommon
+              id="buttonLoadIndexThemat"
+              onClick={handleLoadResult}
+              text="Load Previous Result"
+            />
+          )}
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@ import React, { useState, ReactNode, useEffect } from 'react';
 import firebaseAuth from '@/services/fireAuth';
 import { AuthContext } from './AuthContext';
 import fireStore, { UserProfl } from '@/services/fireStore';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/services/config/firebase';
 import { UserInfo } from 'firebase/auth';
 
@@ -27,11 +27,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const isCustomer = await fireStore.isUserExist(user.uid);
 
     if (!isCustomer) {
-      fireStore.createUser(user);
+      await fireStore.createUser(user);
     }
 
     const userProfl = await fireStore.getUserProfl(user.uid);
     setUserProfl(userProfl);
+
+    if (!userProfl) return null;
+    //Modify login time and set free request
+    const lastLoginDate = new Date(userProfl.lastLogIn.seconds * 1000);
+    const dayInMillSec = 86400000;
+    let freeRequest = userProfl.freeRequest;
+
+    console.log('Check is free request added?');
+    if (Date.now() - lastLoginDate.getTime() >= dayInMillSec) {
+      freeRequest = 20;
+    }
+
+    fireStore.modifyUser(userProfl, {
+      freeRequest: freeRequest,
+      lastLogIn: serverTimestamp(),
+    });
   };
 
   //
@@ -46,7 +62,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userProflRef = doc(db, 'users', acc.uid);
       const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
         const updateUserProfl = querySnapshot.data();
-
         if (!updateUserProfl) {
           setUserProfl(null);
           return;
