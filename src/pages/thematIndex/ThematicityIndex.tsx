@@ -175,44 +175,39 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    setToolRun(true);
-    isUserUseTool.current = true;
-    userQuery.current = inputKeyword;
+    console.log('Code commented');
 
-    const resultURLObjects = await calcThematicityIndex({
-      arrURL_objects: excelData.urlObjects,
-      query: request,
-      onUpdate: progressHandler,
-      onError: errorHandler,
-    });
+    // setToolRun(true);
+    // isUserUseTool.current = true;
+    // userQuery.current = inputKeyword;
 
-    dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
+    // const resultURLObjects = await calcThematicityIndex({
+    //   arrURL_objects: excelData.urlObjects,
+    //   query: request,
+    //   onUpdate: progressHandler,
+    //   onError: errorHandler,
+    // });
 
-    //Style Load Result Button
-    // const loadBtn = document.querySelector('#buttonLoadIndexThemat') as HTMLButtonElement;
-    // loadBtn.style.backgroundColor = "rgb(76, 212, 76);";
-    // debugger
+    // dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
   };
+
+  const userInf = userProfl ? (
+    <>
+      <div className={style.userInf__freeReq}>
+        You have: {userProfl.freeRequest} free calculations
+      </div>
+      <div className={style.userInf__walletBal}>Wallet balance: {userProfl.walletBalance}$</div>
+    </>
+  ) : (
+    <div className={style.userInf__unAuthMessage}>
+      Sign up now and get 20 free thematicity index calculation per day!
+    </div>
+  );
 
   return (
     <section className="thematicityIndex">
       <div className={style.container}>
-        <div className={style.userInf}>
-          {userProfl ? (
-            <>
-              <div className={style.userInf__freeReq}>
-                You have: {userProfl.freeRequest} free calculations
-              </div>
-              <div className={style.userInf__walletBal}>
-                Wallet balance: {userProfl.walletBalance}$
-              </div>
-            </>
-          ) : (
-            <div className={style.userInf__unAuthMessage}>
-              Sign up now and get 20 free thematicity index calculation per day!
-            </div>
-          )}
-        </div>
+        <div className={style.userInf}>{userInf}</div>
 
         <InputFile onFileUpload={handleFileUpload} />
         <aside className={style.acceptedFiles}>

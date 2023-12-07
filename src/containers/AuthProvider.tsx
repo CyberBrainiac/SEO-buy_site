@@ -23,7 +23,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
 
-    setAcc(user);
     const isCustomer = await fireStore.isUserExist(user.uid);
 
     if (!isCustomer) {
@@ -31,15 +30,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     const userProfl = await fireStore.getUserProfl(user.uid);
+    setAcc(user);
     setUserProfl(userProfl);
 
     if (!userProfl) return null;
     //Modify login time and set free request
-    const lastLoginDate = new Date(userProfl.lastLogIn.seconds * 1000);
+    const lastLoginDate = new Date(userProfl.lastLogIn.seconds * 1000); //*1000 because new Date() create timestamp from millisecond value
     const dayInMillSec = 86400000;
     let freeRequest = userProfl.freeRequest;
 
-    console.log('Check is free request added?');
     if (Date.now() - lastLoginDate.getTime() >= dayInMillSec) {
       freeRequest = 20;
     }
