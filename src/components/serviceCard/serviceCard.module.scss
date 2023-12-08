@@ -1,0 +1,39 @@
+@import '@style/variables';
+@import '@style/mixins';
+
+.container {
+  @include card-shadow();
+  position: relative;
+  width: 360px;
+  height: 440px;
+  border-radius: 36px;
+  padding: 10px;
+}
+
+.background {
+  @include absolute-container();
+  z-index: -1;
+  opacity: 0.6;
+  overflow: hidden;
+
+  img {
+    @include common-img();
+    transform: scaleX(1.025);
+  }
+}
+
+.modalWrap {
+  @include absolute-container();
+  z-index: 1;
+  width: inherit;
+  height: inherit;
+}
+
+.modal {
+  @include flex-column();
+  width: inherit;
+  height: inherit;
+  border-radius: 36px;
+  background-color: $page-bg-color-additional;
+  opacity: 0.6;
+}

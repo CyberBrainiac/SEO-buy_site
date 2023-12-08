@@ -9,44 +9,49 @@ const Header: React.FC = () => {
   const { userProfl, setUser, deleteUser } = useContext(AuthContext);
 
   return (
-    <header className={style.container}>
-      <div className={style.logo}>
-        <Link to="/">SP</Link>
-      </div>
-
-      <div className={style.nav}>
-        <div className={style.navServices}>Services</div>
-        <div className={style.navTools}>Tools</div>
-      </div>
-
-      <ButtonLink href="/" text="Home page" />
-
-      <div className={style.auth}>
-        {userProfl ? (
-          <div className={style.authProfile}>
-            <img
-              className={style.authImg}
-              // src={(() => {
-              //   const url = userProfl.photoURL;
-              //   if (!url) return undefined;
-              //   return url;
-              // })()}
-              src={userProfl.photoURL}
-              alt="user avatar"
-              referrerPolicy="no-referrer"
-            />
-            {/* <div onClick={deleteUser}>Sign OUT</div> */}
-            <ButtonCommon onClick={deleteUser} text="Sign Out" />
+    <header className="header">
+      <div className={style.container}>
+        <div className={style.logoWrap}>
+          <div className={style.logo}>
+            <Link to="/">SP</Link>
           </div>
-        ) : (
-          <div onClick={setUser} className={style.authBtn}>
-            <p>Sign In</p>
-            <div className={style.authBtn_highlight}>
-              <p>Sign Up</p>
+        </div>
+
+        <div className={style.nav}>
+          <div className={style.navServices}>Services</div>
+          <div className={style.navTools}>Tools</div>
+        </div>
+
+        <ButtonLink href="/" text="Home page" />
+
+        <div className={style.auth}>
+          {userProfl ? (
+            <div className={style.authProfile}>
+              <img
+                className={style.authImg}
+                // src={(() => {
+                //   const url = userProfl.photoURL;
+                //   if (!url) return undefined;
+                //   return url;
+                // })()}
+                src={userProfl.photoURL}
+                alt="user avatar"
+                referrerPolicy="no-referrer"
+              />
+              {/* <div onClick={deleteUser}>Sign OUT</div> */}
+              <ButtonCommon onClick={deleteUser} text="Sign Out" />
             </div>
-          </div>
-        )}
+          ) : (
+            <div onClick={setUser} className={style.authBtn}>
+              <p>Sign In</p>
+              <div className={style.authBtn_highlight}>
+                <p>Sign Up</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+      <div className={style.background}></div>
     </header>
   );
 };

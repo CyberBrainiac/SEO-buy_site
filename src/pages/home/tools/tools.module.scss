@@ -1,0 +1,21 @@
+@import '@style/variables';
+@import '@style/mixins';
+
+.container {
+  padding-top: 60px;
+}
+
+.heading {
+  text-align: center;
+}
+
+.cardWrap {
+  @include flex-row();
+  justify-content: space-between;
+  padding-top: 60px;
+}
+
+.cardHeading {
+  margin-top: 90px;
+  text-align: center;
+}

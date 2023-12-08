@@ -3,8 +3,8 @@
 .userInf {
   font-size: 24px;
   text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  padding-top: calc($header-height + 20px);
+  padding-bottom: 20px;
 
   &__freeReq {
     color: rgb(4, 129, 4);

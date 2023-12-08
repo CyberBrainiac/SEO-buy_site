@@ -177,18 +177,18 @@ const ThematicityIndex: React.FC = () => {
 
     console.log('Code commented');
 
-    // setToolRun(true);
-    // isUserUseTool.current = true;
-    // userQuery.current = inputKeyword;
+    setToolRun(true);
+    isUserUseTool.current = true;
+    userQuery.current = inputKeyword;
 
-    // const resultURLObjects = await calcThematicityIndex({
-    //   arrURL_objects: excelData.urlObjects,
-    //   query: request,
-    //   onUpdate: progressHandler,
-    //   onError: errorHandler,
-    // });
+    const resultURLObjects = await calcThematicityIndex({
+      arrURL_objects: excelData.urlObjects,
+      query: request,
+      onUpdate: progressHandler,
+      onError: errorHandler,
+    });
 
-    // dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
+    dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
   };
 
   const userInf = userProfl ? (

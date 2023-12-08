@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 84.2 105.5" version="1.1" viewBox="0 0 84.2 105.5">
+<style type="text/css">
+	.st0{fill:#BCBCBC;}
+	.st1{fill:#D6D4D4;}
+	.st2{fill:#FFFFFF;}
+	.st3{opacity:0.72;fill:#9A9999;}
+</style>
+	<path class="st0" d="m75.8 105.5h-67.4c-4.6 0-8.4-3.8-8.4-8.4v-88.7c0-4.6 3.8-8.4 8.4-8.4h51l24.8 24.4v72.7c0 4.6-3.8 8.4-8.4 8.4z"/>
+	<polygon class="st1" points="59.4 0 59.4 24.4 84.2 24.4"/>
+	<path class="st2" d="M12.4,33.7v45.2h59.4V33.7H12.4z M68.3,46.5H31.9v-9.3h36.3V46.5z M31.9,50.1h36.3v11.1H31.9V50.1z M28.4,61.2   H16V50.1h12.4V61.2z M28.4,37.2v9.3H16v-9.3H28.4z M16,64.7h12.4v10.6H16V64.7z M31.9,75.4V64.7h36.3v10.6H31.9z"/>
+	<polygon class="st3" points="84 24.4 59.6 24.4 84 56.3"/>
+</svg>

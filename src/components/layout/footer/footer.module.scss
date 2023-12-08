@@ -2,11 +2,19 @@
 @import '@style/mixins';
 
 .container {
+  @include flex-column();
   width: 100%;
+  height: $footer-height;
   color: #000;
   background-color: $page-bg-color-additional;
   font-size: 22px;
   line-height: 120%;
+  padding: $offset-block-padding;
+
+  @media screen and (min-width: $max-app-width) {
+    max-width: $max-app-width;
+    margin: 0 auto;
+  }
 }
 
 .content {
@@ -17,6 +25,17 @@
     cursor: pointer;
     padding: 8px;
     color: $highlight-main;
+
+    &:hover {
+      color: $highlight-additional;
+    }
+  }
+
+  @media screen and (max-width: 1023.9px) {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
   }
 }
 
@@ -28,14 +47,16 @@
   &_text {
     color: $highlight-main;
     font-size: 18px;
+
+    &:hover {
+      color: $highlight-additional;
+    }
   }
 }
 
-@media screen and (max-width: 1023.9px) {
-  .content {
-    display: grid;
-    justify-items: center;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-  }
+.background {
+  @include absolute-container();
+  z-index: -1;
+  height: $footer-height;
+  background-color: $page-bg-color-additional;
 }

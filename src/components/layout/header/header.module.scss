@@ -3,10 +3,24 @@
 
 .container {
   @include flex-row();
-  height: 100px;
-  background-color: $page-bg-color-additional;
-}
+  justify-content: space-between;
+  height: $header-height;
+  padding: $offset-block-padding;
 
+  @media screen and (min-width: $max-app-width) {
+    max-width: $max-app-width;
+    margin: 0 auto;
+  }
+}
+.logoWrap {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background-image: radial-gradient(75% 75% at 50% 50%, #6a87ca 50%, #fffc62 98%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .logo {
   @include highlight-text();
   color: $highlight-main;
@@ -63,4 +77,11 @@
     height: 50px;
     border-radius: 8px;
   }
+}
+
+.background {
+  @include absolute-container();
+  z-index: -1;
+  height: $header-height;
+  background-color: $page-bg-color-additional;
 }
