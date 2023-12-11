@@ -1,4 +1,4 @@
-import React, { FormEvent, useState, useReducer, useEffect, useRef, useContext } from 'react';
+import React, { FormEvent, useState, useReducer, useEffect, useRef } from 'react';
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
@@ -6,12 +6,13 @@ import fileExcel from '@/pages/thematIndex/fileExcel';
 import calcThematicityIndex from '@/pages/thematIndex/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 import reducerExelData from './reducerExelData';
-import locStorage from '@/utils/localStorage';
-import { AuthContext } from '@/containers/AuthContext';
+import locStorage, { locKeys } from '@/utils/localStorage';
 import fireStore from '@/services/fireStore';
+import { useSelector } from 'react-redux';
+import { selectUser } from '@/containers/reducers/userSlice';
 
 const ThematicityIndex: React.FC = () => {
-  const { userProfl } = useContext(AuthContext);
+  const userProfile = useSelector(selectUser);
   const [excelData, dispatchExcelData] = useReducer(reducerExelData, null);
 
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
@@ -22,14 +23,12 @@ const ThematicityIndex: React.FC = () => {
 
   const isUserUseTool = useRef(false);
   const userQuery = useRef('');
-  const storageExcelKey = 'TI_userExcelData';
-  const storageQueryKey = 'TI_userQuery';
 
-  //
+  //get previous calculation result
   useEffect(() => {
     if (!excelData) {
-      const data = locStorage.get(storageExcelKey);
-      let savedQuery = locStorage.get(storageQueryKey);
+      const data = locStorage.get(locKeys.excelData);
+      let savedQuery = locStorage.get(locKeys.userQuery);
 
       if (!data) return;
       if (!savedQuery) savedQuery = { query: '' };
@@ -41,8 +40,8 @@ const ThematicityIndex: React.FC = () => {
 
     setToolRun(false);
     if (!isUserUseTool.current) return; // check 1 load, if data empty this is first load and not need to set data in storage
-    locStorage.set(storageExcelKey, excelData);
-    locStorage.set(storageQueryKey, { query: userQuery.current });
+    locStorage.set(locKeys.excelData, excelData);
+    locStorage.set(locKeys.userQuery, { query: userQuery.current });
   }, [excelData]);
 
   //
@@ -95,7 +94,7 @@ const ThematicityIndex: React.FC = () => {
     if (!isUserUseTool.current) {
       fileExcel.write({
         file: fileBinaryData,
-        excelData: locStorage.get(storageExcelKey),
+        excelData: locStorage.get(locKeys.excelData),
         query: userQuery.current,
       });
       return;
@@ -154,7 +153,7 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    if (!userProfl) {
+    if (!userProfile) {
       alert('First you need to register');
       return null;
     }
@@ -167,7 +166,7 @@ const ThematicityIndex: React.FC = () => {
     })();
 
     const modifyResult = await fireStore.modifyUserBalance({
-      userProfl: userProfl,
+      userProfile: userProfile,
       requestCount: currentRequestCount,
     });
 
@@ -191,12 +190,12 @@ const ThematicityIndex: React.FC = () => {
     dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
   };
 
-  const userInf = userProfl ? (
+  const userInf = userProfile ? (
     <>
       <div className={style.userInf__freeReq}>
-        You have: {userProfl.freeRequest} free calculations
+        You have: {userProfile.freeRequest} free calculations
       </div>
-      <div className={style.userInf__walletBal}>Wallet balance: {userProfl.walletBalance}$</div>
+      <div className={style.userInf__walletBal}>Wallet balance: {userProfile.walletBalance}$</div>
     </>
   ) : (
     <div className={style.userInf__unAuthMessage}>
@@ -245,7 +244,7 @@ const ThematicityIndex: React.FC = () => {
               onClick={handleLoadResult}
               text="Load Result"
             />
-          ) : !locStorage.get(storageExcelKey) ? null : (
+          ) : !locStorage.get(locKeys.excelData) ? null : (
             <ButtonCommon
               id="buttonLoadIndexThemat"
               onClick={handleLoadResult}

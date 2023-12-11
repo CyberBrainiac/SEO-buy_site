@@ -3,18 +3,22 @@
 /**Solve issue https://github.com/vitejs/vite/issues/3301#issuecomment-1080030773*/
 
 import { createContext } from 'react';
-import { UserProfl } from '@/services/fireStore';
+import { userProfile } from '@/services/fireStore';
+
+export type AuthenticationArg = 'Google' | 'Facebook';
 
 interface AuthContextProps {
-  userProfl: UserProfl | null;
-  setUser: () => void;
-  deleteUser: () => void;
+  setUser: (provider: AuthenticationArg) => Promise<userProfile | undefined>;
+  deleteUser: () => Promise<boolean>;
 }
 
 const initialProps = {
-  userProfl: null,
-  setUser: () => {},
-  deleteUser: () => {},
+  setUser: async () => {
+    return undefined;
+  },
+  deleteUser: async () => {
+    return false;
+  },
 };
 
 export const AuthContext = createContext<AuthContextProps>(initialProps);

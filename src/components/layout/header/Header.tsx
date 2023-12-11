@@ -3,10 +3,16 @@ import style from './header.module.scss';
 import { ButtonCommon, ButtonLink } from '@/components/buttons/Buttons';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '@/containers/AuthContext';
-// import { LiaUserCircle } from 'react-icons/lia';
+import { useSelector } from 'react-redux';
+import { selectUser } from '@/containers/reducers/userSlice';
 
 const Header: React.FC = () => {
-  const { userProfl, setUser, deleteUser } = useContext(AuthContext);
+  const { setUser, deleteUser } = useContext(AuthContext);
+  const userProfile = useSelector(selectUser);
+
+  const handleAuthBtnClick = () => {
+    setUser('Google');
+  };
 
   return (
     <header className="header">
@@ -25,16 +31,11 @@ const Header: React.FC = () => {
         <ButtonLink href="/" text="Home page" />
 
         <div className={style.auth}>
-          {userProfl ? (
+          {userProfile ? (
             <div className={style.authProfile}>
               <img
                 className={style.authImg}
-                // src={(() => {
-                //   const url = userProfl.photoURL;
-                //   if (!url) return undefined;
-                //   return url;
-                // })()}
-                src={userProfl.photoURL}
+                src={userProfile.photoURL}
                 alt="user avatar"
                 referrerPolicy="no-referrer"
               />
@@ -42,7 +43,7 @@ const Header: React.FC = () => {
               <ButtonCommon onClick={deleteUser} text="Sign Out" />
             </div>
           ) : (
-            <div onClick={setUser} className={style.authBtn}>
+            <div onClick={handleAuthBtnClick} className={style.authBtn}>
               <p>Sign In</p>
               <div className={style.authBtn_highlight}>
                 <p>Sign Up</p>

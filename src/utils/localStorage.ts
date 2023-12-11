@@ -1,3 +1,9 @@
+export const locKeys = {
+  excelData: 'TI_userExcelData',
+  userQuery: 'TI_userQuery',
+  user: 'SP_user',
+};
+
 function set(paramName: string, data: object) {
   try {
     localStorage.setItem(paramName, JSON.stringify(data));

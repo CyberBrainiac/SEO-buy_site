@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit/react';
-import { UserProfl } from '@/services/fireStore';
+import { userProfile } from '@/services/fireStore';
+import { RootState } from '../storeRedux';
 
 interface InitialState {
-  user: UserProfl | undefined;
-  urls: object[]; //entities??
+  profile: userProfile | undefined;
+  urls: object[];
 }
 
 const initialState: InitialState = {
-  user: undefined,
+  profile: undefined,
   urls: [],
 };
 
@@ -15,11 +16,11 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser(state, action) {
-      state.user = action.payload;
+    setUserProfl(state, action) {
+      state.profile = action.payload;
     },
-    deleteUser(state) {
-      state.user = undefined;
+    deleteUserProfl(state) {
+      state.profile = undefined;
     },
     setUrls(state, action) {
       state.urls = action.payload;
@@ -27,5 +28,9 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, deleteUser, setUrls } = userSlice.actions;
+export const { setUserProfl, deleteUserProfl, setUrls } = userSlice.actions;
 export default userSlice.reducer;
+
+/** Selectors */
+export const selectUser = (state: RootState) => state.user.profile;
+export const selectUrls = (state: RootState) => state.user.urls;

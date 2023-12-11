@@ -7,7 +7,7 @@ interface FireTimestamp {
   nanoseconds: number;
 }
 
-export interface UserProfl {
+export interface userProfile {
   uid: string;
   displayName: string;
   email: string;
@@ -29,7 +29,7 @@ interface ModifyUserProps {
 
 interface ModifyUserBalanceProps {
   requestCount: number;
-  userProfl: UserProfl;
+  userProfile: userProfile;
 }
 
 async function isUserExist(uid: string) {
@@ -55,24 +55,24 @@ async function getUserProfl(uid: string) {
   const data = userProfl.data();
 
   if (!data) {
-    alert('Can not get User Data, open develop console for more details');
-    return null;
+    console.error('Can`t get userProfl');
+    return undefined;
   }
-  return data as UserProfl;
+  return data as userProfile;
 }
 
-async function modifyUser(userProfl: UserProfl, modifyObj: ModifyUserProps) {
+async function modifyUser(userProfl: userProfile, modifyObj: ModifyUserProps) {
   const userProflRef = doc(db, 'users', userProfl.uid);
   await updateDoc(userProflRef, { ...modifyObj });
 }
 
 async function modifyUserBalance({
-  userProfl,
+  userProfile,
   requestCount,
 }: ModifyUserBalanceProps): Promise<boolean> {
   const pricePerRequest = 0.012;
-  const paidRequest = requestCount - userProfl.freeRequest;
-  const indexCalculation = userProfl.allIndexCalculation + requestCount;
+  const paidRequest = requestCount - userProfile.freeRequest;
+  const indexCalculation = userProfile.allIndexCalculation + requestCount;
 
   if (requestCount > 5000) {
     alert(
@@ -85,8 +85,8 @@ async function modifyUserBalance({
     console.log('no paid');
     console.log('requestCount', requestCount);
 
-    const newFreeRequest = userProfl.freeRequest - requestCount;
-    await modifyUser(userProfl, {
+    const newFreeRequest = userProfile.freeRequest - requestCount;
+    await modifyUser(userProfile, {
       freeRequest: newFreeRequest,
       allIndexCalculation: indexCalculation,
     });
@@ -96,18 +96,18 @@ async function modifyUserBalance({
   const costOfRequests = paidRequest * pricePerRequest;
   console.log('cost', costOfRequests);
 
-  if (userProfl.walletBalance - costOfRequests < 0) {
+  if (userProfile.walletBalance - costOfRequests < 0) {
     alert(
       `You can do ${
-        Math.trunc(userProfl.walletBalance / pricePerRequest) + userProfl.freeRequest
+        Math.trunc(userProfile.walletBalance / pricePerRequest) + userProfile.freeRequest
       } index calculations, but tool got ${requestCount} urls`
     );
     return false;
   }
 
   const newWalletBalance =
-    Math.trunc((userProfl.walletBalance - costOfRequests) * 10000000) / 10000000;
-  await modifyUser(userProfl, {
+    Math.trunc((userProfile.walletBalance - costOfRequests) * 10000000) / 10000000;
+  await modifyUser(userProfile, {
     freeRequest: 0,
     walletBalance: newWalletBalance,
     allIndexCalculation: indexCalculation,
