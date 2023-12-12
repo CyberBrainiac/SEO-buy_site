@@ -18,8 +18,11 @@
 }
 
 .content {
-  @include flex-row();
-  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  margin-bottom: 24px;
 
   &_link {
     cursor: pointer;

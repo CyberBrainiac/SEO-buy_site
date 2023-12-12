@@ -1,0 +1,25 @@
+@import '/src/assets/style/variables';
+@import '/src/assets/style/mixins';
+
+.auth {
+  color: $highlight-main;
+  font-size: 30px;
+  padding: 6px 6px 8px 6px;
+  border: 2px solid $highlight-main;
+  border-radius: 10px;
+  transition: all 0.2s ease-in;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $highlight-main;
+    color: $page-bg-color-additional;
+    border-color: $page-bg-color-additional;
+  }
+}
+
+.userNav {
+  width: 54px;
+  height: 54px;
+  cursor: pointer;
+}

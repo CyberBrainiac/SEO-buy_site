@@ -4,7 +4,7 @@ import AbstractBackground from '@image/heroAbstrractBackground.svg';
 
 const Hero: React.FC = () => {
   return (
-    <section className="hero">
+    <section id="hero" className="hero">
       <div className={style.container}>
         <div className={style.content}>
           <div className={style.tegline}>

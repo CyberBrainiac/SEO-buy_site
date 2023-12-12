@@ -9,10 +9,20 @@ const Tools: React.FC = () => {
       <div className={style.container}>
         <h1 className={style.heading}>Tools</h1>
         <div className={style.cardWrap}>
-          <ServiceCard backgroundImage={Spreadsheet}>
+          <ServiceCard
+            backgroundImage={Spreadsheet}
+            serviceLink="/tools/link-insertion"
+            onPageInformationLink="#target2"
+          >
             <h4 className={style.cardHeading}>Link Insertion</h4>
           </ServiceCard>
-          <ServiceCard backgroundImage={Spreadsheet}>
+
+          <ServiceCard
+            backgroundImage={Spreadsheet}
+            serviceLink="/tools/thematicity-index"
+            additionalInfo="This is very useful text.This is very useful text.This is very useful text.This is very useful text.This is very useful text."
+            onPageInformationLink="#target1"
+          >
             <h4 className={style.cardHeading}>Thematicity Index</h4>
           </ServiceCard>
         </div>

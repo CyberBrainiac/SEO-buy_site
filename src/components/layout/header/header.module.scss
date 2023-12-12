@@ -13,8 +13,8 @@
   }
 }
 .logoWrap {
-  width: 86px;
-  height: 86px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background-image: radial-gradient(75% 75% at 50% 50%, #6a87ca 50%, #fffc62 98%);
   display: flex;
@@ -24,7 +24,7 @@
 .logo {
   @include highlight-text();
   color: $highlight-main;
-  font-size: 68px;
+  font-size: 50px;
   cursor: pointer;
 }
 

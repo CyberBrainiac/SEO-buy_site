@@ -22,18 +22,69 @@
   }
 }
 
+.info {
+  @include card-shadow();
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 360px;
+  padding: 10px;
+  background-color: #fffc6281;
+  transform: translateY(100%);
+  border-radius: 36px;
+  text-align: center;
+  opacity: 0;
+  transition: $transition-main;
+
+  &More {
+    color: $highlight-additional;
+    font-size: 20px;
+    text-decoration: underline;
+    padding: 4px;
+  }
+}
+
 .modalWrap {
   @include absolute-container();
   z-index: 1;
   width: inherit;
   height: inherit;
+  border-radius: 36px;
 }
 
 .modal {
-  @include flex-column();
+  position: relative;
+  display: block;
   width: inherit;
   height: inherit;
   border-radius: 36px;
-  background-color: $page-bg-color-additional;
-  opacity: 0.6;
+
+  &CTA {
+    position: absolute;
+    width: 200px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    font-weight: 900;
+    color: $highlight-main;
+  }
+
+  &About {
+    position: absolute;
+    bottom: 18px;
+    right: 30px;
+    font-size: 26px;
+    color: $highlight-main;
+  }
+
+  &BG {
+    width: inherit;
+    height: inherit;
+    border-radius: 36px;
+    background-color: $page-bg-color-additional;
+    opacity: 0.6;
+    position: relative;
+    z-index: -1;
+  }
 }

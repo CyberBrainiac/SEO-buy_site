@@ -82,6 +82,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Subscribe to user profile for realtime update
   useEffect(() => {
     if (userProfile) {
+      console.log('Effect!');
       const userProflRef = doc(db, 'users', userProfile.uid);
       const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
         const updateUserProfl = querySnapshot.data();
