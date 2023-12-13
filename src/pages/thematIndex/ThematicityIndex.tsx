@@ -174,8 +174,6 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    console.log('Code commented');
-
     setToolRun(true);
     isUserUseTool.current = true;
     userQuery.current = inputKeyword;

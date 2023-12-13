@@ -1,19 +1,19 @@
 export const locKeys = {
   excelData: 'TI_userExcelData',
   userQuery: 'TI_userQuery',
-  user: 'SP_user',
+  userProfl: 'SP_user-profl',
 };
 
-function set(paramName: string, data: object) {
+function set(key: string, data: object) {
   try {
-    localStorage.setItem(paramName, JSON.stringify(data));
+    localStorage.setItem(key, JSON.stringify(data));
   } catch (error) {
     console.error('Parse Error "set to session storage"', error);
   }
 }
 
-function get(paramName: string) {
-  const data = localStorage.getItem(paramName);
+function get(key: string) {
+  const data = localStorage.getItem(key);
   if (!data) return null;
   return JSON.parse(data);
 }

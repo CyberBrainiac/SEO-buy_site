@@ -13,6 +13,7 @@
   }
 }
 .logoWrap {
+  position: relative;
   width: 70px;
   height: 70px;
   border-radius: 50%;
@@ -20,6 +21,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+
+  &:hover::before {
+    display: block;
+    position: absolute;
+    top: 85%;
+    left: -10px;
+    width: 90px;
+    color: $border-color-main;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 4px 0;
+    background-color: $highlight-main;
+    border-radius: 10px;
+    text-align: center;
+    opacity: 0.8;
+    content: 'Home page';
+  }
 }
 .logo {
   @include highlight-text();

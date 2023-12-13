@@ -7,7 +7,7 @@ interface FireTimestamp {
   nanoseconds: number;
 }
 
-export interface userProfile {
+export interface UserProfile {
   uid: string;
   displayName: string;
   email: string;
@@ -29,7 +29,7 @@ interface ModifyUserProps {
 
 interface ModifyUserBalanceProps {
   requestCount: number;
-  userProfile: userProfile;
+  userProfile: UserProfile;
 }
 
 async function isUserExist(uid: string) {
@@ -58,12 +58,18 @@ async function getUserProfl(uid: string) {
     console.error('Can`t get userProfl');
     return undefined;
   }
-  return data as userProfile;
+  return data as UserProfile;
 }
 
-async function modifyUser(userProfl: userProfile, modifyObj: ModifyUserProps) {
-  const userProflRef = doc(db, 'users', userProfl.uid);
-  await updateDoc(userProflRef, { ...modifyObj });
+async function modifyUser(userID: string, modifyObj: ModifyUserProps) {
+  const userProflRef = doc(db, 'users', userID);
+
+  try {
+    await updateDoc(userProflRef, { ...modifyObj });
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 async function modifyUserBalance({
@@ -86,11 +92,11 @@ async function modifyUserBalance({
     console.log('requestCount', requestCount);
 
     const newFreeRequest = userProfile.freeRequest - requestCount;
-    await modifyUser(userProfile, {
+    const modufyResult = await modifyUser(userProfile.uid, {
       freeRequest: newFreeRequest,
       allIndexCalculation: indexCalculation,
     });
-    return true;
+    return modufyResult;
   }
 
   const costOfRequests = paidRequest * pricePerRequest;
@@ -107,7 +113,7 @@ async function modifyUserBalance({
 
   const newWalletBalance =
     Math.trunc((userProfile.walletBalance - costOfRequests) * 10000000) / 10000000;
-  await modifyUser(userProfile, {
+  await modifyUser(userProfile.uid, {
     freeRequest: 0,
     walletBalance: newWalletBalance,
     allIndexCalculation: indexCalculation,

@@ -8,8 +8,7 @@ import { IconContext } from 'react-icons';
 
 const UserNav: React.FC = () => {
   const { setUser, deleteUser } = useContext(AuthContext);
-  // const userProfile = useSelector(selectUser);
-  const userProfile = true;
+  const userProfile = useSelector(selectUser);
 
   const handleAuthBtnClick = () => {
     setUser('Google');

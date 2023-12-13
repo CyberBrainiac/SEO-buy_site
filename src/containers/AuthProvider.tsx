@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import firebaseAuth from '@/services/fireAuth';
 import { AuthContext } from './AuthContext';
-import fireStore, { userProfile } from '@/services/fireStore';
+import fireStore, { UserProfile } from '@/services/fireStore';
 import { doc, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/services/config/firebase';
 import AuthError from '@/utils/errorHandlers/authError';
@@ -9,6 +9,7 @@ import { UserInfo } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, deleteUserProfl, setUserProfl } from '../containers/reducers/userSlice';
 import { AuthenticationArg } from './AuthContext';
+import locStorage, { locKeys } from '@/utils/localStorage';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -16,8 +17,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const dispatch = useDispatch();
-  const userProfile = useSelector(selectUser);
-  const [acc, setAcc] = useState(undefined);
+  const [acc, setAcc] = useState<UserProfile | undefined>(undefined);
 
   //
   const setUser = async (provider: AuthenticationArg) => {
@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  async function handleAuth(user: UserInfo | undefined): Promise<userProfile | undefined> {
+  async function handleAuth(user: UserInfo | undefined): Promise<UserProfile | undefined> {
     if (!user) {
       alert('Authorization error');
       return;
@@ -50,30 +50,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
 
+    if (isCustomer) {
+      modifyUserLogin(userProfl);
+    }
+
     dispatch(setUserProfl(userProfl));
-    modifyUser(userProfl);
+    setAcc(userProfl);
     return userProfl;
   }
 
   //
   const deleteUser = async () => {
-    dispatch(deleteUserProfl());
-    await firebaseAuth.logOut();
-    return true;
+    await dispatch(deleteUserProfl()); //if delete User Profl is async function
+    setAcc(undefined);
+    return await firebaseAuth.logOut();
   };
 
   //Modify login time and set free request
-  function modifyUser(userProfile: userProfile) {
+  function modifyUserLogin(userProfile: UserProfile) {
     const lastLoginDate = new Date(userProfile.lastLogIn.seconds * 1000); //*1000 because new Date() create timestamp from millisecond value
     const dayInMillSec = 86400000;
     let freeRequest = userProfile.freeRequest;
 
+    //take user additional free request
     if (Date.now() - lastLoginDate.getTime() >= dayInMillSec) {
       freeRequest = 20;
     }
 
     //Update lastLogIn every time user interact with site
-    fireStore.modifyUser(userProfile, {
+    fireStore.modifyUser(userProfile.uid, {
       freeRequest: freeRequest,
       lastLogIn: serverTimestamp(),
     });
@@ -81,9 +86,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Subscribe to user profile for realtime update
   useEffect(() => {
-    if (userProfile) {
-      console.log('Effect!');
-      const userProflRef = doc(db, 'users', userProfile.uid);
+    //get user Profile from Local Storage
+    const savedUserProfile = locStorage.get(locKeys.userProfl);
+    console.log("TRIGGER USE-EFFECT");
+    
+    if (acc || savedUserProfile) {
+      if (savedUserProfile) {
+        dispatch(setUserProfl(savedUserProfile));
+      }
+
+      const userId = acc?.uid || savedUserProfile?.uid;
+      const userProflRef = doc(db, 'users', userId);
       const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
         const updateUserProfl = querySnapshot.data();
         if (!updateUserProfl) return;
@@ -94,7 +107,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         unsubscribe();
       };
     }
-  }, [userProfile, dispatch]);
+  }, [acc, dispatch]);
 
   return <AuthContext.Provider value={{ setUser, deleteUser }}>{children}</AuthContext.Provider>;
 };
