@@ -2,6 +2,7 @@ export const locKeys = {
   excelData: 'TI_userExcelData',
   userQuery: 'TI_userQuery',
   userProfl: 'SP_user-profl',
+  inputData: 'SP_input-data',
 };
 
 function set(key: string, data: object) {

@@ -1,15 +1,15 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import firebaseAuth from '@/services/fireAuth';
-import { AuthContext } from './AuthContext';
 import fireStore, { UserProfile } from '@/services/fireStore';
-import { doc, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/services/config/firebase';
+import { doc, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import AuthError from '@/utils/errorHandlers/authError';
-import { UserInfo } from 'firebase/auth';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, deleteUserProfl, setUserProfl } from '../containers/reducers/userSlice';
-import { AuthenticationArg } from './AuthContext';
 import locStorage, { locKeys } from '@/utils/localStorage';
+import { UserInfo } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { deleteUserProfl, setUserProfl, modifyUserProfl } from '../containers/reducers/userSlice';
+import { AuthContext, AuthenticationArg } from './AuthContext';
+import { removeInputData } from './reducers/inputDataSlice';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -62,6 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   //
   const deleteUser = async () => {
     await dispatch(deleteUserProfl()); //if delete User Profl is async function
+    await dispatch(removeInputData());
     setAcc(undefined);
     return await firebaseAuth.logOut();
   };
@@ -84,23 +85,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
   }
 
-  // Subscribe to user profile for realtime update
   useEffect(() => {
     //get user Profile from Local Storage
     const savedUserProfile = locStorage.get(locKeys.userProfl);
-    console.log("TRIGGER USE-EFFECT");
-    
+    console.log('TRIGGER USE-EFFECT');
+
     if (acc || savedUserProfile) {
       if (savedUserProfile) {
         dispatch(setUserProfl(savedUserProfile));
       }
 
+      // Subscribe to user profile for realtime update
       const userId = acc?.uid || savedUserProfile?.uid;
       const userProflRef = doc(db, 'users', userId);
       const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
         const updateUserProfl = querySnapshot.data();
         if (!updateUserProfl) return;
-        dispatch(setUserProfl(updateUserProfl));
+        dispatch(modifyUserProfl(updateUserProfl));
       });
 
       return () => {

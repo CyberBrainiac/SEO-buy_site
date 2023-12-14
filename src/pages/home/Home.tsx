@@ -3,10 +3,12 @@ import style from './home.module.scss';
 import Hero from './hero/Hero';
 import Tools from './tools/Tools';
 import { useDispatch } from 'react-redux';
-import { setUserProfl } from '@/containers/reducers/userSlice';
+import { deleteUserProfl, setUserProfl } from '@/containers/reducers/userSlice';
+import { addInputData, removeInputData } from '@/containers/reducers/inputDataSlice';
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
+
   function handleClick() {
     dispatch(
       setUserProfl({
@@ -20,14 +22,54 @@ const Home: React.FC = () => {
     );
   }
 
+  function handleDelete() {
+    
+    dispatch(deleteUserProfl());
+  }
+
+  function addDataHandler() {
+    const singleData = { id: 0, name: 'single' };
+    const manyData = [
+      { id: 1, url: 'test1' },
+      { id: 2, url: 'test2' },
+      { id: 3, url: 'test3' },
+    ];
+    dispatch(addInputData(manyData));
+  }
+
+  function removeDataHandler() {
+    dispatch(removeInputData());
+  }
+
   return (
     <section className="home">
       <div className={style.container}>
         <div className={style.content}>
           <Hero />
           <Tools />
-          <button style={{ padding: '5px', backgroundColor: 'beige' }} onClick={handleClick}>
-            Change USer Profile
+          <button
+            style={{ padding: '5px', margin: '5px', backgroundColor: 'beige' }}
+            onClick={handleClick}
+          >
+            Change User Profile
+          </button>
+          <button
+            style={{ padding: '5px', margin: '5px', backgroundColor: 'beige' }}
+            onClick={handleDelete}
+          >
+            Delete User Profile
+          </button>
+          <button
+            style={{ padding: '5px', margin: '5px', backgroundColor: 'beige' }}
+            onClick={addDataHandler}
+          >
+            Add Data
+          </button>
+          <button
+            style={{ padding: '5px', margin: '5px', backgroundColor: 'beige' }}
+            onClick={removeDataHandler}
+          >
+            Remove Data
           </button>
           <h3>1</h3>
           <h3>1</h3>

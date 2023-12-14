@@ -10,11 +10,10 @@ import Excel from 'exceljs';
 import saveAs from 'file-saver';
 import { URLObjectProps } from './calcThematicityIndex';
 
-export interface ExcelDataType {
+export interface ExcelColumnInfoType {
   urlColumnIndex: number;
   thematicityColumnIndex: number;
   totalPageColumnIndex?: number;
-  urlObjects: URLObjectProps[];
 }
 
 export interface WriteExcelProperties {

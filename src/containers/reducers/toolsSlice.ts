@@ -1,14 +1,16 @@
+import { ExcelColumnInfoType } from '@/pages/thematIndex/fileExcel';
 import { createSlice } from '@reduxjs/toolkit/react';
 
-type ToolsStatusesValues = 'idle' | 'working' | 'succeeded' | 'failed';
+type ToolStatusValues = 'idle' | 'working' | 'succeeded' | 'failed';
 
 interface LinkInsertionsProps {
-  status: ToolsStatusesValues;
+  status: ToolStatusValues;
   request: string | undefined;
 }
 interface indexThematicityProps {
-  status: ToolsStatusesValues;
+  status: ToolStatusValues;
   request: string | undefined;
+  excelColumnInfo: ExcelColumnInfoType | undefined;
 }
 interface InitialStateProps {
   linkInsertions: LinkInsertionsProps;
@@ -23,6 +25,7 @@ const initialState: InitialStateProps = {
   indexThematicity: {
     status: 'idle',
     request: undefined,
+    excelColumnInfo: undefined,
   },
 };
 

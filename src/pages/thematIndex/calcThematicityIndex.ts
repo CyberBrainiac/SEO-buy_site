@@ -7,13 +7,6 @@
 
 import axios, { AxiosResponse } from 'axios';
 
-export interface URLObjectProps {
-  url: string;
-  totalPage?: number;
-  targetPage?: number;
-  thematicityIndex?: number;
-}
-
 interface CalcThematicityIndexProps {
   arrURL_objects: URLObjectProps[];
   query: string;
@@ -69,10 +62,10 @@ async function calcThematicityIndex({
       iteration++, siteURL = siteUrls[iteration]
     ) {
       //Await Iteration Delay
-      if (iteration % limit_package_urls == 0 && iteration !== 0) {
+      if (iteration % limit_package_urls === 0 && iteration !== 0) {
         //for last value
         if (onUpdate && iteration === siteUrls.length - 1) {
-          onUpdate(`Processed urls: ${iteration}`);
+          onUpdate(`All urls processed: ${iteration}`);
         } else if (onUpdate) {
           onUpdate(`Processed urls: ${iteration}`); //update value in real time after each iteration
         }
