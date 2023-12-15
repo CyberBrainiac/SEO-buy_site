@@ -70,9 +70,10 @@ const ThematicityIndex: React.FC = () => {
   //
   const readBuffer = async (buffer: ArrayBuffer) => {
     const data = await fileExcel.read(buffer);
+    console.log(data);
 
     if (!data) {
-      console.error('Can not read buffer data');
+      console.error('Can`t read buffer data');
       return null;
     }
     dispatchExcelData({ type: 'SET', excelData: data });

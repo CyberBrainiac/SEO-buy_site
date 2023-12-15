@@ -2,7 +2,7 @@ import { db } from './config/firebase';
 import { serverTimestamp, setDoc, doc, getDoc, updateDoc, FieldValue } from 'firebase/firestore';
 import { UserInfo } from 'firebase/auth/cordova';
 
-interface FireTimestamp {
+export interface FireTimestamp {
   seconds: number;
   nanoseconds: number;
 }
@@ -17,7 +17,7 @@ export interface UserProfile {
   freeRequest: number;
   walletBalance: number;
   allIndexCalculation: number;
-  lastLogIn: FireTimestamp;
+  lastLogIn: FireTimestamp | number;
 }
 
 interface ModifyUserProps {

@@ -1,10 +1,21 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { UserProfile } from '@/services/fireStore';
+import { UserProfile, FireTimestamp } from '@/services/fireStore';
 import { RootState } from '../storeRedux';
 import locStorage, { locKeys } from '@/utils/localStorage';
 
 interface InitialState {
   profile: UserProfile | undefined;
+}
+
+interface ModifyProfileProps {
+  displayName: string;
+  email: string;
+  phoneNumber: string | null;
+  photoURL: string;
+  freeRequest: number;
+  walletBalance: number;
+  allIndexCalculation: number;
+  lastLogIn: FireTimestamp | number;
 }
 
 const initialState: InitialState = {
@@ -18,19 +29,15 @@ const userSlice = createSlice({
     deleteUserProfl(state) {
       state.profile = undefined;
     },
-    modifyUserProfl(state, action) {
-      if (!state.profile) return;
-      state.profile = Object.assign(state.profile, action.payload);
-    },
   },
   extraReducers: builder => {
-    builder.addCase(setUserProfl.fulfilled, (state, action) => {
-      state.profile = action.payload;
-    });
+    builder
+      .addCase(setUserProfl.fulfilled, (state, action) => {
+        state.profile = action.payload;
+      });
   },
 });
 
-export const { modifyUserProfl } = userSlice.actions;
 export default userSlice.reducer;
 
 /** Selectors */
@@ -42,9 +49,34 @@ export const setUserProfl = createAsyncThunk('user/setUserProfl', async profile 
     console.error('only object can be sent to local storage');
     return;
   }
+
+
+  
+  profile.lastLogIn
+
+
+
   await locStorage.set(locKeys.userProfl, profile);
   return profile;
 });
+
+export function modifyUserProfl(modifyProfile: ModifyProfileProps) {
+  //creates and returns the async thunk function:
+  return async function saveNewTodoThunk(dispatch, getState: RootState) {
+    const state = getState;
+    const modifiedProfile = Object.assign({}, state.user.profile, modifyProfile);
+    dispatch(setUserProfl(modifiedProfile))
+  }
+}
+
+// export const modifyUserProfl = createAsyncThunk('user/modifyUserProfl', async modifyProfile => {
+//   if (typeof modifyProfile !== 'object') {
+//     console.error('only object can be sent to local storage');
+//     return;
+//   }
+//   await locStorage.set(locKeys.userProfl, modifyProfile);
+//   return modifyProfile;
+// });
 
 export const deleteUserProfl = () => {
   const { deleteUserProfl: actionCreatorDeleteUserProfl } = userSlice.actions;

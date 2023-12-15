@@ -8,127 +8,191 @@ materials:
 
 import Excel from 'exceljs';
 import saveAs from 'file-saver';
-import { URLObjectProps } from './calcThematicityIndex';
+import { InputData, UrlArr } from '@/containers/reducers/inputDataSlice';
+import { ExcelColumnInfoType } from '@/containers/reducers/toolsSlice';
+import isURL from '@/utils/isURL';
 
-export interface ExcelColumnInfoType {
-  urlColumnIndex: number;
-  thematicityColumnIndex: number;
-  totalPageColumnIndex?: number;
+interface InputExcelData {
+  inputData: InputData[];
+  excelColumnInfo: ExcelColumnInfoType | undefined;
 }
 
-export interface WriteExcelProperties {
-  file: ArrayBuffer;
-  excelData: ExcelDataType;
+interface WriteExtendExcelProps {
+  inputData: InputData[];
   query: string;
+  excelColumnInfo: ExcelColumnInfoType;
+  file: ArrayBuffer;
 }
 
 /**Used Static method to set object as value*/
-class URLObject {
-  static create(props: URLObjectProps) {
-    return { url: props.url, totalPage: props.totalPage, targetPage: 0, thematicityIndex: 0 };
+class Data {
+  static create(props: InputData) {
+    return { id: props.id, url: props.url, totalPage: props.totalPage };
   }
 }
 
-//
-async function read(buffer: ArrayBuffer): Promise<ExcelDataType | null> {
+/** READ Functions */
+
+async function read(buffer: ArrayBuffer): Promise<UrlArr | undefined> {
   const workbook = new Excel.Workbook();
-  const urlObjects: URLObjectProps[] = [];
+  await workbook.xlsx.load(buffer);
+  const worksheet = workbook.getWorksheet(1);
+  const urls: UrlArr = [];
 
-  let urlColumnIndex = 0;
-  let thematicityColumnIndex = 0;
-  let totalPageColumnIndex = 0;
+  const urlColumn = worksheet.getColumn(1);
+  const columnValues = urlColumn.values;
 
-  await workbook.xlsx
-    .load(buffer)
-    .then(() => {
-      const worksheet = workbook.getWorksheet('Site Data');
-      if (!worksheet) {
-        alert(
-          `Use an example\n\rRename your worksheet(Excel tab) with list of urls to:\n\rSite Data`
-        );
-        return null;
-      }
+  if (!columnValues.length) {
+    alert('Provide urls in first column, check Example.xlsx');
+    return undefined;
+  }
 
-      const headerRow = worksheet.getRow(1);
+  for (const value of columnValues) {
+    if (value === null) {
+      continue;
+    }
 
-      if (!headerRow.values.length) {
-        alert(`First worksheet row must contain column headers`);
-        return null;
-      }
-      headerRow.eachCell((cell, colNumber) => {
-        const value = cell.value?.toString().toLowerCase();
-        if (value === 'site url') urlColumnIndex = colNumber;
-        else if (value === 'thematicity index') thematicityColumnIndex = colNumber;
-        else if (value === 'total page') totalPageColumnIndex = colNumber;
-      });
+    //case for url object
+    if (typeof value === 'object' && 'hyperlink' in value) {
+      urls.push(value.hyperlink);
+    } else {
+      const url = String(value);
 
-      const urlColumn = worksheet.getColumn(urlColumnIndex);
-      const rowsCount = urlColumn.values.slice(2).length; //in Excel 0 row is undefind, 1 is header with capture
-      const rowsWithValues = worksheet.getRows(2, rowsCount);
+      if (!isURL(url)) continue;
+      urls.push(url);
+    }
+  }
 
-      if (!urlColumnIndex) {
-        alert(`Use an example\n\rProvide column with name: \n\rSite URL`);
-        return null;
-      }
-      if (!thematicityColumnIndex) {
-        alert(`Use an example\n\rProvide column with name: \n\rThematicity Index`);
-        return null;
-      }
-      if (!rowsWithValues) {
-        alert('You provide an empty file, provide urls as in example');
-        return null;
-      }
+  if (!urls.length) {
+    alert(
+      'Provided data isn`t url, check that your url in first column and every url store in different cell'
+    );
+  }
+  return urls;
+}
 
-      for (const row of rowsWithValues) {
-        const urlCell = row.getCell(urlColumnIndex);
-        let url: string = '';
-        let totalPage: number = 0;
+//can read default url and determine index of columns from ExcelColumnInfoType
+async function readWithExcelColumnInfo(buffer: ArrayBuffer): Promise<InputExcelData | undefined> {
+  const workbook = new Excel.Workbook();
+  await workbook.xlsx.load(buffer);
+  const worksheet = workbook.getWorksheet('Site Data');
 
-        if (urlCell.value === null) {
-          url = '';
-        } else if (typeof urlCell.value === 'object' && 'hyperlink' in urlCell.value) {
-          url = urlCell.hyperlink;
-        } else {
-          url = String(urlCell.value);
-        }
+  if (!worksheet) {
+    alert(
+      "In extend use of Index Thematicity, you must provide Excel Tab with name: 'Site Data'\n\rCheck Extend Example.xlsx"
+    );
+    return undefined;
+  }
 
-        if (!totalPageColumnIndex) {
-          totalPage = 0;
-          urlObjects.push(URLObject.create({ url, totalPage }));
-          continue;
-        }
+  const inputData = [];
+  let urlColumnIndex = 0; //need
+  let thematicityColumnIndex = 0; //need
+  let totalPageColumnIndex: number | undefined;
 
-        const totalPageCell = row.getCell(totalPageColumnIndex);
-        if (typeof totalPageCell.value === 'number' && !isNaN(totalPageCell.value)) {
-          totalPage = totalPageCell.value;
-        } else if (
-          typeof totalPageCell.value === 'string' &&
-          isFinite(parseInt(totalPageCell.value))
-        ) {
-          totalPage = parseInt(totalPageCell.value);
-        } else {
-          totalPage = 0;
-        }
+  const headerRow = worksheet.getRow(1);
 
-        urlObjects.push(URLObject.create({ url, totalPage }));
-      }
-    })
-    .catch(err => console.error(err));
+  if (!headerRow.values.length) {
+    alert(
+      `In extend use of Index Thematicity, First worksheet row must contain column headers\n\rCheck Extend Example.xlsx`
+    );
+    return undefined;
+  }
+  headerRow.eachCell((cell, colNumber) => {
+    const value = cell.value?.toString().toLowerCase();
+    if (value === 'site url') urlColumnIndex = colNumber;
+    else if (value === 'thematicity index') thematicityColumnIndex = colNumber;
+    else if (value === 'total page') totalPageColumnIndex = colNumber;
+  });
 
-  const fileExcelProperties = {
+  if (urlColumnIndex === 0) {
+    //check initial value, Excell has'nt 0 row or colomn
+    alert(`Check Extend Example.xlsx\n\rProvide column with name: \n\rSite URL`);
+    return undefined;
+  }
+  if (thematicityColumnIndex === 0) {
+    //check initial value, Excell has'nt 0 row or colomn
+    alert(`Check Extend Example.xlsx\n\rProvide column with name: \n\rThematicity Index`);
+    return undefined;
+  }
+
+  const urlColumn = worksheet.getColumn(urlColumnIndex);
+  const rowsCount = urlColumn.values.slice(2).length; //in Excel 0 row is undefind, 1 is header with capture
+  const rowsWithValues = worksheet.getRows(2, rowsCount);
+
+  if (!rowsWithValues) {
+    alert('You provide an empty file, provide urls as in example');
+    return undefined;
+  }
+
+  for (let i = 0; i < rowsWithValues.length; i++) {
+    const row = rowsWithValues[i];
+    const urlCell = row.getCell(urlColumnIndex);
+    const id: number = inputData.length;
+    let url = '';
+    let totalPage: number | undefined;
+
+    if (urlCell.value === null) {
+      continue;
+    }
+
+    if (typeof urlCell.value === 'object' && 'hyperlink' in urlCell.value) {
+      url = urlCell.hyperlink;
+    } else {
+      const mabyURL = String(urlCell.value);
+
+      if (!isURL(mabyURL)) continue;
+      url = mabyURL;
+    }
+
+    if (!totalPageColumnIndex) {
+      inputData.push(Data.create({ id, url }));
+      continue;
+    }
+    const totalPageCell = row.getCell(totalPageColumnIndex);
+    let totalPageValue = totalPageCell.value;
+
+    if (typeof totalPageValue !== 'number' || typeof totalPageValue !== 'string') {
+      totalPageValue = ''; //assign empty string because on next step: parseInt('') returns NaN
+    }
+    const parsedTotalPage = parseInt(totalPageValue);
+
+    if (!isNaN(parsedTotalPage)) {
+      totalPage = parsedTotalPage;
+    }
+    inputData.push(Data.create({ id, url, totalPage }));
+  }
+
+  const excelColumnInfo = {
     urlColumnIndex,
     thematicityColumnIndex,
     totalPageColumnIndex,
-    urlObjects,
   };
 
-  return fileExcelProperties;
+  const inputExcelData = {
+    excelColumnInfo,
+    inputData,
+  };
+
+  return inputExcelData;
 }
 
-//
-async function write({ file, excelData, query }: WriteExcelProperties) {
+/** WRITE Functions */
+
+async function write(inputData: InputData[], query: string): Promise<boolean> {
+  inputData;
+  query;
+  return false;
+}
+
+//can write default url and fill columns from ExcelColumnInfoType
+async function writeWithExcelColumnInfo({
+  file,
+  inputData,
+  query,
+  excelColumnInfo,
+}: WriteExtendExcelProps) {
   const workbook = new Excel.Workbook();
-  const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex, urlObjects } = excelData;
+  const { urlColumnIndex, thematicityColumnIndex, totalPageColumnIndex } = excelColumnInfo;
   const date = new Date();
   const fileName = `thematicity_${query}_${date.getDate()}-${
     date.getMonth() + 1
@@ -142,7 +206,9 @@ async function write({ file, excelData, query }: WriteExcelProperties) {
 
   const worksheet = workbook.getWorksheet('Site Data');
   if (!worksheet) {
-    alert(`Unexpected error, buffer Excel data not contain 'Site Data' tab`);
+    alert(
+      `In extend use of Index Thematicity, you must provide Excel Tab with name: 'Site Data'\n\rCheck Extend Example.xlsx`
+    );
     return null;
   }
 
@@ -165,13 +231,13 @@ async function write({ file, excelData, query }: WriteExcelProperties) {
   }
 
   //set new value
-  for (let tableRow = 2, urlObjRow = 0; urlObjRow < urlObjects.length; tableRow++, urlObjRow++) {
-    worksheet.getCell(tableRow, urlColumnIndex).value = urlObjects[urlObjRow].url;
+  for (let tableRow = 2, urlIndex = 0; urlIndex < inputData.length; tableRow++, urlIndex++) {
+    worksheet.getCell(tableRow, urlColumnIndex).value = inputData[urlIndex].url;
     worksheet.getCell(tableRow, thematicityColumnIndex).value =
-      urlObjects[urlObjRow].thematicityIndex;
+      inputData[urlIndex].thematicityIndex;
 
     if (!totalPageColumnIndex) continue;
-    worksheet.getCell(tableRow, totalPageColumnIndex).value = urlObjects[urlObjRow].totalPage;
+    worksheet.getCell(tableRow, totalPageColumnIndex).value = inputData[urlIndex].totalPage;
   }
 
   workbook.xlsx
@@ -183,6 +249,8 @@ async function write({ file, excelData, query }: WriteExcelProperties) {
       console.error(err.message);
     });
 }
+
+/** CREATE EXAMPLE Functions */
 
 //
 function createExample() {
@@ -266,7 +334,9 @@ function createExample() {
 
 const fileExcel = {
   read,
+  readWithExcelColumnInfo,
   write,
+  writeWithExcelColumnInfo,
   createExample,
 };
 

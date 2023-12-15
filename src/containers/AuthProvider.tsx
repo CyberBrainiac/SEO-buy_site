@@ -69,6 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   //Modify login time and set free request
   function modifyUserLogin(userProfile: UserProfile) {
+    console.log("Firestore modify user Login");
     const lastLoginDate = new Date(userProfile.lastLogIn.seconds * 1000); //*1000 because new Date() create timestamp from millisecond value
     const dayInMillSec = 86400000;
     let freeRequest = userProfile.freeRequest;
@@ -99,8 +100,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userId = acc?.uid || savedUserProfile?.uid;
       const userProflRef = doc(db, 'users', userId);
       const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
-        const updateUserProfl = querySnapshot.data();
-        if (!updateUserProfl) return;
+        const updateUserProfl = querySnapshot.data() as UserProfile;
+        console.log("updateUserProfl", updateUserProfl);
         dispatch(modifyUserProfl(updateUserProfl));
       });
 
