@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import firebaseAuth from '@/services/fireAuth';
 import fireStore, { UserProfile } from '@/services/fireStore';
 import { db } from '@/services/config/firebase';
-import { doc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import AuthError from '@/utils/errorHandlers/authError';
 import locStorage, { locKeys } from '@/utils/localStorage';
 import { UserInfo } from 'firebase/auth';
@@ -39,6 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
     const isCustomer = await fireStore.isUserExist(user.uid);
+    console.log('isUserExist', isCustomer);
 
     if (!isCustomer) {
       await fireStore.createUser(user);
@@ -68,41 +69,53 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   //Modify login time and set free request
-  function modifyUserLogin(userProfile: UserProfile) {
-    console.log("Firestore modify user Login");
-    const lastLoginDate = new Date(userProfile.lastLogIn.seconds * 1000); //*1000 because new Date() create timestamp from millisecond value
+  function modifyUserLogin(userProfileRaw: UserProfile): UserProfile {
+    const userProfile = { ...userProfileRaw }; //clone object
     const dayInMillSec = 86400000;
     let freeRequest = userProfile.freeRequest;
 
     //take user additional free request
-    if (Date.now() - lastLoginDate.getTime() >= dayInMillSec) {
+    if (Date.now() - userProfile.lastLogIn >= dayInMillSec) {
       freeRequest = 20;
     }
 
-    //Update lastLogIn every time user interact with site
-    fireStore.modifyUser(userProfile.uid, {
+    const modifyProps = {
       freeRequest: freeRequest,
-      lastLogIn: serverTimestamp(),
-    });
-  }
+      lastLogIn: Date.now(),
+    };
 
+    //Update lastLogIn every time user interact with site
+    fireStore.modifyUser(userProfile.uid, modifyProps);
+    const modifiedUserProfile = Object.assign({}, userProfile, modifyProps);
+    console.log('Firestore modify user Login', modifiedUserProfile);
+    return modifiedUserProfile;
+  }
   useEffect(() => {
     //get user Profile from Local Storage
-    const savedUserProfile = locStorage.get(locKeys.userProfl);
+    const savedUserProfile = locStorage.get(locKeys.userProfl) as UserProfile;
     console.log('TRIGGER USE-EFFECT');
 
     if (acc || savedUserProfile) {
       if (savedUserProfile) {
-        dispatch(setUserProfl(savedUserProfile));
+        console.log('Getting from LocalStorage');
+        const modifiedProflLogin = modifyUserLogin(savedUserProfile);
+        dispatch(setUserProfl(modifiedProflLogin));
       }
 
       // Subscribe to user profile for realtime update
       const userId = acc?.uid || savedUserProfile?.uid;
       const userProflRef = doc(db, 'users', userId);
       const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
-        const updateUserProfl = querySnapshot.data() as UserProfile;
-        console.log("updateUserProfl", updateUserProfl);
-        dispatch(modifyUserProfl(updateUserProfl));
+        const modifiedProfl = querySnapshot.data() as UserProfile;
+
+        if (!modifiedProfl) {
+          console.error('onSnapshot returns unexpected value');
+          return;
+        }
+
+        console.log('updateUserProfl', modifiedProfl);
+        const modifyUserProflThunk = modifyUserProfl(modifiedProfl);
+        dispatch(modifyUserProflThunk);
       });
 
       return () => {

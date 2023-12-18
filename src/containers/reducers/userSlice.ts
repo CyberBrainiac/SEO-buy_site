@@ -31,10 +31,9 @@ const userSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    builder
-      .addCase(setUserProfl.fulfilled, (state, action) => {
-        state.profile = action.payload;
-      });
+    builder.addCase(setUserProfl.fulfilled, (state, action) => {
+      state.profile = action.payload;
+    });
   },
 });
 
@@ -44,40 +43,29 @@ export default userSlice.reducer;
 export const selectUser = (state: RootState) => state.user.profile;
 
 /** Thunk functions */
+//
 export const setUserProfl = createAsyncThunk('user/setUserProfl', async profile => {
+  console.log('Set user Profile', profile);
   if (typeof profile !== 'object') {
     console.error('only object can be sent to local storage');
     return;
   }
 
-
-  
-  profile.lastLogIn
-
-
-
   await locStorage.set(locKeys.userProfl, profile);
   return profile;
 });
 
+//
 export function modifyUserProfl(modifyProfile: ModifyProfileProps) {
   //creates and returns the async thunk function:
-  return async function saveNewTodoThunk(dispatch, getState: RootState) {
-    const state = getState;
+  return async function modifyUserProflThunk(dispatch, getState) {
+    const state = getState();
     const modifiedProfile = Object.assign({}, state.user.profile, modifyProfile);
-    dispatch(setUserProfl(modifiedProfile))
-  }
+    dispatch(setUserProfl(modifiedProfile));
+  };
 }
 
-// export const modifyUserProfl = createAsyncThunk('user/modifyUserProfl', async modifyProfile => {
-//   if (typeof modifyProfile !== 'object') {
-//     console.error('only object can be sent to local storage');
-//     return;
-//   }
-//   await locStorage.set(locKeys.userProfl, modifyProfile);
-//   return modifyProfile;
-// });
-
+//
 export const deleteUserProfl = () => {
   const { deleteUserProfl: actionCreatorDeleteUserProfl } = userSlice.actions;
 

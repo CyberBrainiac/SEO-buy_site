@@ -1,5 +1,5 @@
 import { db } from './config/firebase';
-import { serverTimestamp, setDoc, doc, getDoc, updateDoc, FieldValue } from 'firebase/firestore';
+import { setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { UserInfo } from 'firebase/auth/cordova';
 
 export interface FireTimestamp {
@@ -17,14 +17,14 @@ export interface UserProfile {
   freeRequest: number;
   walletBalance: number;
   allIndexCalculation: number;
-  lastLogIn: FireTimestamp | number;
+  lastLogIn: number;
 }
 
 interface ModifyUserProps {
   freeRequest?: number;
   walletBalance?: number;
   allIndexCalculation?: number;
-  lastLogIn?: FieldValue;
+  lastLogIn?: number;
 }
 
 interface ModifyUserBalanceProps {
@@ -45,7 +45,7 @@ async function createUser(user: UserInfo) {
     freeRequest: 20,
     walletBalance: 0,
     allIndexCalculation: 0,
-    lastLogIn: serverTimestamp(),
+    lastLogIn: Date.now(),
   });
 }
 
