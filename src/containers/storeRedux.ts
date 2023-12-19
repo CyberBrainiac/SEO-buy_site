@@ -13,3 +13,5 @@ const storeRedux = configureStore({
 
 export default storeRedux;
 export type RootState = ReturnType<typeof storeRedux.getState>;
+export type AppDispatch = typeof storeRedux.dispatch;
+export type AppGetState = typeof storeRedux.getState;

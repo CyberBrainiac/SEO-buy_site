@@ -1,13 +1,8 @@
 import { db } from './config/firebase';
-import { setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { setDoc, doc, getDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { UserInfo } from 'firebase/auth/cordova';
 
-export interface FireTimestamp {
-  seconds: number;
-  nanoseconds: number;
-}
-
-export interface UserProfile {
+export interface FirestoreUserProfile {
   uid: string;
   displayName: string;
   email: string;
@@ -17,14 +12,21 @@ export interface UserProfile {
   freeRequest: number;
   walletBalance: number;
   allIndexCalculation: number;
+  lastLogIn: Timestamp;
+  whenFreebies: Timestamp;
+}
+
+export interface UserProfile extends Omit<FirestoreUserProfile, 'lastLogIn' | 'whenFreebies'> {
   lastLogIn: number;
+  whenFreebies: number;
 }
 
 interface ModifyUserProps {
   freeRequest?: number;
   walletBalance?: number;
   allIndexCalculation?: number;
-  lastLogIn?: number;
+  lastLogIn?: Timestamp;
+  whenFreebies?: Timestamp;
 }
 
 interface ModifyUserBalanceProps {
@@ -45,7 +47,8 @@ async function createUser(user: UserInfo) {
     freeRequest: 20,
     walletBalance: 0,
     allIndexCalculation: 0,
-    lastLogIn: Date.now(),
+    lastLogIn: Timestamp.now(),
+    whenFreebies: Timestamp.now(),
   });
 }
 
@@ -58,7 +61,7 @@ async function getUserProfl(uid: string) {
     console.error('Can`t get userProfl');
     return undefined;
   }
-  return data as UserProfile;
+  return data as FirestoreUserProfile;
 }
 
 async function modifyUser(userID: string, modifyObj: ModifyUserProps) {
@@ -120,6 +123,17 @@ async function modifyUserBalance({
   });
   return true;
 }
+
+export const serializeUserProfile = (userProfile: FirestoreUserProfile): UserProfile => {
+  const logInTimestamp = userProfile.lastLogIn.toMillis();
+  const freebiesTimestamp = userProfile.whenFreebies.toMillis();
+  const serializedUserProfile = {
+    ...userProfile,
+    lastLogIn: logInTimestamp,
+    whenFreebies: freebiesTimestamp,
+  };
+  return serializedUserProfile;
+};
 
 const fireStore = {
   isUserExist,

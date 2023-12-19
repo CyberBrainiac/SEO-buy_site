@@ -1,23 +1,28 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import firebaseAuth from '@/services/fireAuth';
-import fireStore, { UserProfile } from '@/services/fireStore';
+import fireStore, {
+  FirestoreUserProfile,
+  UserProfile,
+  serializeUserProfile,
+} from '@/services/fireStore';
 import { db } from '@/services/config/firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { Timestamp, doc, onSnapshot } from 'firebase/firestore';
 import AuthError from '@/utils/errorHandlers/authError';
 import locStorage, { locKeys } from '@/utils/localStorage';
 import { UserInfo } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
-import { deleteUserProfl, setUserProfl, modifyUserProfl } from '../containers/reducers/userSlice';
+import { deleteUserProfl, setUserProfl } from '../containers/reducers/userSlice';
 import { AuthContext, AuthenticationArg } from './AuthContext';
 import { removeInputData } from './reducers/inputDataSlice';
+import { AppDispatch } from './storeRedux';
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const dispatch = useDispatch();
-  const [acc, setAcc] = useState<UserProfile | undefined>(undefined);
+  const dispatch = useDispatch() as AppDispatch;
+  const [authentication, setAuthentication] = useState<UserProfile | undefined>(undefined);
 
   //
   const setUser = async (provider: AuthenticationArg) => {
@@ -39,90 +44,103 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return;
     }
     const isCustomer = await fireStore.isUserExist(user.uid);
-    console.log('isUserExist', isCustomer);
 
     if (!isCustomer) {
       await fireStore.createUser(user);
     }
-    const userProfl = await fireStore.getUserProfl(user.uid);
+    const FirestoreUserProfile = await fireStore.getUserProfl(user.uid);
 
-    if (!userProfl) {
+    if (!FirestoreUserProfile) {
       alert('Authorization error');
       return;
     }
+    const userProfl = serializeUserProfile(FirestoreUserProfile);
 
     if (isCustomer) {
       modifyUserLogin(userProfl);
     }
 
-    dispatch(setUserProfl(userProfl));
-    setAcc(userProfl);
+    setAuthentication(userProfl);
     return userProfl;
   }
 
   //
   const deleteUser = async () => {
-    await dispatch(deleteUserProfl()); //if delete User Profl is async function
-    await dispatch(removeInputData());
-    setAcc(undefined);
+    dispatch(await deleteUserProfl());
+    dispatch(await removeInputData());
+    setAuthentication(undefined);
     return await firebaseAuth.logOut();
   };
 
-  //Modify login time and set free request
-  function modifyUserLogin(userProfileRaw: UserProfile): UserProfile {
-    const userProfile = { ...userProfileRaw }; //clone object
-    const dayInMillSec = 86400000;
-    let freeRequest = userProfile.freeRequest;
-
-    //take user additional free request
-    if (Date.now() - userProfile.lastLogIn >= dayInMillSec) {
-      freeRequest = 20;
-    }
-
-    const modifyProps = {
-      freeRequest: freeRequest,
-      lastLogIn: Date.now(),
-    };
-
-    //Update lastLogIn every time user interact with site
-    fireStore.modifyUser(userProfile.uid, modifyProps);
-    const modifiedUserProfile = Object.assign({}, userProfile, modifyProps);
-    console.log('Firestore modify user Login', modifiedUserProfile);
-    return modifiedUserProfile;
-  }
+  //
   useEffect(() => {
     //get user Profile from Local Storage
-    const savedUserProfile = locStorage.get(locKeys.userProfl) as UserProfile;
-    console.log('TRIGGER USE-EFFECT');
+    let savedUserProfile;
+    if (!authentication) {
+      savedUserProfile = locStorage.get(locKeys.userProfl);
+    }
 
-    if (acc || savedUserProfile) {
-      if (savedUserProfile) {
-        console.log('Getting from LocalStorage');
-        const modifiedProflLogin = modifyUserLogin(savedUserProfile);
-        dispatch(setUserProfl(modifiedProflLogin));
-      }
+    if (authentication || savedUserProfile) {
+      /* 
+      Subscribe to user profile for realtime update
+      Will be called each time after using 'modifyUserProfl' function 
+      */
 
-      // Subscribe to user profile for realtime update
-      const userId = acc?.uid || savedUserProfile?.uid;
+      const userId = authentication?.uid || savedUserProfile?.uid;
       const userProflRef = doc(db, 'users', userId);
       const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
-        const modifiedProfl = querySnapshot.data() as UserProfile;
-
-        if (!modifiedProfl) {
+        const modifiedUserProfile = querySnapshot.data() as FirestoreUserProfile;
+        if (!modifiedUserProfile) {
           console.error('onSnapshot returns unexpected value');
           return;
         }
 
-        console.log('updateUserProfl', modifiedProfl);
-        const modifyUserProflThunk = modifyUserProfl(modifiedProfl);
-        dispatch(modifyUserProflThunk);
+        /**
+         * in all situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'! Why?
+         */
+        if (!modifiedUserProfile.lastLogIn) {
+          //du to 2 renders
+          console.log('too many request on Firebase');
+          return;
+        }
+
+        const userProfile = serializeUserProfile(modifiedUserProfile);
+        dispatch(setUserProfl(userProfile));
       });
+
+      if (savedUserProfile) {
+        modifyUserLogin(savedUserProfile);
+      }
 
       return () => {
         unsubscribe();
       };
     }
-  }, [acc, dispatch]);
+  }, [authentication, dispatch]);
+
+  //Modify login time and set free request
+  function modifyUserLogin(userProfileRaw: UserProfile) {
+    const userProfile = { ...userProfileRaw }; //clone object
+    const dayInMillSec = 86400000;
+    const lastLogIn = Timestamp.now();
+    let freeRequest = userProfile.freeRequest;
+    let whenFreebies = Timestamp.fromMillis(userProfile.whenFreebies);
+
+    //take user additional free request
+    if (Date.now() - userProfile.whenFreebies >= dayInMillSec) {
+      freeRequest = 20;
+      whenFreebies = Timestamp.now();
+    }
+
+    const modifyProps = {
+      lastLogIn,
+      freeRequest,
+      whenFreebies,
+    };
+
+    //Update lastLogIn every time user interact with site
+    return fireStore.modifyUser(userProfile.uid, modifyProps);
+  }
 
   return <AuthContext.Provider value={{ setUser, deleteUser }}>{children}</AuthContext.Provider>;
 };

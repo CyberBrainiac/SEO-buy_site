@@ -6,6 +6,7 @@
  * $0.005 per query, $0.01 for Index, $0.012 for Index + 20% profit*/
 
 import axios, { AxiosResponse } from 'axios';
+import throttling from '@/utils/throttling';
 
 interface CalcThematicityIndexProps {
   arrURL_objects: URLObjectProps[];
@@ -69,7 +70,7 @@ async function calcThematicityIndex({
         } else if (onUpdate) {
           onUpdate(`Processed urls: ${iteration}`); //update value in real time after each iteration
         }
-        await waitIteration();
+        await throttling(delay_between_iterations);
       }
 
       if (siteURL === '') {
@@ -188,11 +189,6 @@ async function calcThematicityIndex({
   //
   async function waitStep() {
     return new Promise(resolve => setTimeout(resolve, delay_between_steps));
-  }
-
-  //
-  async function waitIteration() {
-    return new Promise(resolve => setTimeout(resolve, delay_between_iterations));
   }
 
   //

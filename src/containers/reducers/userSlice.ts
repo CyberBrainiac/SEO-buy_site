@@ -1,21 +1,22 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { UserProfile, FireTimestamp } from '@/services/fireStore';
-import { RootState } from '../storeRedux';
+import { UserProfile } from '@/services/fireStore';
+import { AppGetState, RootState } from '../storeRedux';
 import locStorage, { locKeys } from '@/utils/localStorage';
 
 interface InitialState {
   profile: UserProfile | undefined;
 }
 
-interface ModifyProfileProps {
-  displayName: string;
-  email: string;
-  phoneNumber: string | null;
-  photoURL: string;
-  freeRequest: number;
-  walletBalance: number;
-  allIndexCalculation: number;
-  lastLogIn: FireTimestamp | number;
+export interface ModifyProfileProps {
+  displayName?: string;
+  email?: string;
+  phoneNumber?: string | null;
+  photoURL?: string;
+  freeRequest?: number;
+  walletBalance?: number;
+  allIndexCalculation?: number;
+  lastLogIn?: number;
+  whenFreebies?: number;
 }
 
 const initialState: InitialState = {
@@ -34,6 +35,9 @@ const userSlice = createSlice({
     builder.addCase(setUserProfl.fulfilled, (state, action) => {
       state.profile = action.payload;
     });
+    builder.addCase(modifyUserProfl.fulfilled, (state, action) => {
+      state.profile = action.payload;
+    });
   },
 });
 
@@ -43,30 +47,35 @@ export default userSlice.reducer;
 export const selectUser = (state: RootState) => state.user.profile;
 
 /** Thunk functions */
-//
-export const setUserProfl = createAsyncThunk('user/setUserProfl', async profile => {
+
+export const setUserProfl = createAsyncThunk('user/setUserProfl', async (profile: UserProfile) => {
   console.log('Set user Profile', profile);
-  if (typeof profile !== 'object') {
-    console.error('only object can be sent to local storage');
-    return;
-  }
 
   await locStorage.set(locKeys.userProfl, profile);
   return profile;
 });
 
-//
-export function modifyUserProfl(modifyProfile: ModifyProfileProps) {
-  //creates and returns the async thunk function:
-  return async function modifyUserProflThunk(dispatch, getState) {
+export const modifyUserProfl = createAsyncThunk(
+  'user/modifyUserProfl',
+  async (modifyProfile: ModifyProfileProps, thunkAPI) => {
+    console.log('Modify User Profile', modifyProfile);
+    const getState = thunkAPI.getState as AppGetState;
     const state = getState();
-    const modifiedProfile = Object.assign({}, state.user.profile, modifyProfile);
-    dispatch(setUserProfl(modifiedProfile));
-  };
-}
+    const userProfile = { ...state.user.profile }; //clone user
+
+    if (!userProfile) {
+      console.error('Unexpected Error: modifyUserProfl get undefined from AppState');
+      return undefined;
+    }
+
+    const modifiedUserProfile = Object.assign({}, userProfile, modifyProfile);
+
+    return modifiedUserProfile as UserProfile;
+  }
+);
 
 //
-export const deleteUserProfl = () => {
+export const deleteUserProfl = async () => {
   const { deleteUserProfl: actionCreatorDeleteUserProfl } = userSlice.actions;
 
   localStorage.removeItem(locKeys.userProfl);

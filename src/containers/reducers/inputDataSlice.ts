@@ -17,15 +17,16 @@ const initialState = inputDataAdapter.getInitialState();
 const inputDataSlice = createSlice({
   name: 'inputData',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    removeInputData(state) {
+      inputDataAdapter.removeAll(state);
+    },
+  },
+
   extraReducers: builder => {
-    builder
-      .addCase(addInputData.fulfilled, (state, action) => {
-        inputDataAdapter.addMany(state, action.payload);
-      })
-      .addCase(removeInputData.fulfilled, state => {
-        inputDataAdapter.removeAll(state);
-      });
+    builder.addCase(addInputData.fulfilled, (state, action) => {
+      inputDataAdapter.addMany(state, action.payload);
+    });
   },
 });
 
@@ -58,7 +59,10 @@ export const addInputData = createAsyncThunk(
   }
 );
 
-export const removeInputData = createAsyncThunk('inputData/removeInputData', async () => {
+//
+export const removeInputData = async () => {
+  const { removeInputData: actionCreator_removeInputData } = inputDataSlice.actions;
+
   await localStorage.removeItem(locKeys.inputData);
-  return;
-});
+  return actionCreator_removeInputData();
+};
