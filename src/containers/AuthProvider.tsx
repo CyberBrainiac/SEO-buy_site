@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   //
   const deleteUser = async () => {
-    dispatch(await deleteUserProfl());
+    dispatch(deleteUserProfl());
     dispatch(await removeInputData());
     setAuthentication(undefined);
     return await firebaseAuth.logOut();

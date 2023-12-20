@@ -8,8 +8,10 @@ import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 import reducerExelData from './reducerExelData';
 import locStorage, { locKeys } from '@/utils/localStorage';
 import fireStore from '@/services/fireStore';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '@/containers/reducers/userSlice';
+import { AppDispatch } from '@/containers/storeRedux';
+import { addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
 
 const ThematicityIndex: React.FC = () => {
   const userProfile = useSelector(selectUser);
@@ -23,6 +25,8 @@ const ThematicityIndex: React.FC = () => {
 
   const isUserUseTool = useRef(false);
   const userQuery = useRef('');
+  const dispatch = useDispatch() as AppDispatch;
+  const inputData = useSelector(selectInputData)
 
   //get previous calculation result
   useEffect(() => {
@@ -67,16 +71,15 @@ const ThematicityIndex: React.FC = () => {
     reader.readAsArrayBuffer(file);
   };
 
-  //
+  //Read Excel file
   const readBuffer = async (buffer: ArrayBuffer) => {
     const data = await fileExcel.read(buffer);
-    console.log(data);
 
     if (!data) {
       console.error('Can`t read buffer data');
       return null;
     }
-    dispatchExcelData({ type: 'SET', excelData: data });
+    dispatch(addInputData(data));
   };
 
   //Create new Excel file
@@ -91,19 +94,17 @@ const ThematicityIndex: React.FC = () => {
       );
       return null;
     }
-
+    
     if (!isUserUseTool.current) {
-      fileExcel.write({
+      fileExcel.writeWithExcelColumnInfo({
         file: fileBinaryData,
-        excelData: locStorage.get(locKeys.excelData),
         query: userQuery.current,
       });
       return;
     }
 
-    fileExcel.write({
+    fileExcel.writeWithExcelColumnInfo({
       file: fileBinaryData,
-      excelData: excelData,
       query: userQuery.current,
     });
   };

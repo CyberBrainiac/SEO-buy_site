@@ -1,5 +1,6 @@
 import locStorage, { locKeys } from '@/utils/localStorage';
 import { createEntityAdapter, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { AppRootState } from '../storeRedux';
 
 export type UrlArr = string[];
 
@@ -17,20 +18,26 @@ const initialState = inputDataAdapter.getInitialState();
 const inputDataSlice = createSlice({
   name: 'inputData',
   initialState: initialState,
-  reducers: {
-    removeInputData(state) {
-      inputDataAdapter.removeAll(state);
-    },
-  },
+  reducers: {},
 
   extraReducers: builder => {
-    builder.addCase(addInputData.fulfilled, (state, action) => {
+    builder
+    .addCase(addInputData.fulfilled, (state, action) => {
+      inputDataAdapter.removeAll(state);
       inputDataAdapter.addMany(state, action.payload);
+    })
+    .addCase(removeInputData.fulfilled, state => {
+      inputDataAdapter.removeAll(state);
     });
   },
 });
 
 export default inputDataSlice.reducer;
+
+/** Selectors */
+// export const selectEntity = (state: AppRootState) => state.inputData.entities;
+
+export const { selectAll: selectInputData, selectById: selectInputDataById } = inputDataAdapter.getSelectors<AppRootState>(state => state.inputData)
 
 /** Thunk functions */
 export const addInputData = createAsyncThunk(
@@ -59,10 +66,6 @@ export const addInputData = createAsyncThunk(
   }
 );
 
-//
-export const removeInputData = async () => {
-  const { removeInputData: actionCreator_removeInputData } = inputDataSlice.actions;
-
+export const removeInputData = createAsyncThunk('inputData/removeInputData', async () => {
   await localStorage.removeItem(locKeys.inputData);
-  return actionCreator_removeInputData();
-};
+});

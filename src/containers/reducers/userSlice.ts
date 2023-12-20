@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { UserProfile } from '@/services/fireStore';
-import { AppGetState, RootState } from '../storeRedux';
+import { AppGetState, AppRootState } from '../storeRedux';
 import locStorage, { locKeys } from '@/utils/localStorage';
 
 interface InitialState {
@@ -38,13 +38,16 @@ const userSlice = createSlice({
     builder.addCase(modifyUserProfl.fulfilled, (state, action) => {
       state.profile = action.payload;
     });
+    builder.addCase(deleteUserProfl.fulfilled, state => {
+      state.profile = undefined;
+    });
   },
 });
 
 export default userSlice.reducer;
 
 /** Selectors */
-export const selectUser = (state: RootState) => state.user.profile;
+export const selectUser = (state: AppRootState) => state.user.profile;
 
 /** Thunk functions */
 
@@ -75,9 +78,6 @@ export const modifyUserProfl = createAsyncThunk(
 );
 
 //
-export const deleteUserProfl = async () => {
-  const { deleteUserProfl: actionCreatorDeleteUserProfl } = userSlice.actions;
-
-  localStorage.removeItem(locKeys.userProfl);
-  return actionCreatorDeleteUserProfl();
-};
+export const deleteUserProfl = createAsyncThunk('user/deleteUserProfl', async () => {
+  await localStorage.removeItem(locKeys.userProfl);
+});

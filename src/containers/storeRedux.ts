@@ -8,10 +8,10 @@ const storeRedux = configureStore({
     user: userReducer,
     tools: toolsReducer,
     inputData: inputDataReducer,
-  },
+  }
 });
 
 export default storeRedux;
-export type RootState = ReturnType<typeof storeRedux.getState>;
+export type AppRootState = ReturnType<typeof storeRedux.getState>;
 export type AppDispatch = typeof storeRedux.dispatch;
 export type AppGetState = typeof storeRedux.getState;
