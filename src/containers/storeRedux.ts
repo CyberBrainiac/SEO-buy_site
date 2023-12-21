@@ -8,7 +8,7 @@ const storeRedux = configureStore({
     user: userReducer,
     tools: toolsReducer,
     inputData: inputDataReducer,
-  }
+  },
 });
 
 export default storeRedux;

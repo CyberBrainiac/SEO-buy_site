@@ -13,17 +13,27 @@ import locStorage, { locKeys } from './utils/localStorage';
 import { addInputData } from './containers/reducers/inputDataSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './containers/storeRedux';
+import { setExcelColumnInfo, setRequestIndexThematicity } from './containers/reducers/toolsSlice';
 
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
 
+  async function loadSavedData() {
+    const urls = await locStorage.get(locKeys.inputData);
+    if (urls) dispatch(addInputData(urls));
+
+    const excelColumnInfo = await locStorage.get(locKeys.excelColumnInfo);
+    if (excelColumnInfo) dispatch(setExcelColumnInfo(excelColumnInfo));
+
+    const requestIndxT = await locStorage.get(locKeys.indexThematicityRequest);
+    const unpackReqestIndxT = requestIndxT?.request;
+    if (unpackReqestIndxT) dispatch(setRequestIndexThematicity(unpackReqestIndxT));
+    return { urls, excelColumnInfo, unpackReqestIndxT };
+  }
+
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<RootLayout />} errorElement={<ErrorPage />} loader={async () => {
-        const data = await locStorage.get(locKeys.inputData);
-        dispatch(addInputData(data));
-        return data;
-      }}>
+      <Route path="/" element={<RootLayout />} errorElement={<ErrorPage />} loader={loadSavedData}>
         <Route index element={<Home />} />
         <Route path="/tools/thematicity-index" element={<ThematicityIndex />} />
         <Route path="*" element={<ErrorPage />} />

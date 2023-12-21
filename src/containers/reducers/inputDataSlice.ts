@@ -22,22 +22,22 @@ const inputDataSlice = createSlice({
 
   extraReducers: builder => {
     builder
-    .addCase(addInputData.fulfilled, (state, action) => {
-      inputDataAdapter.removeAll(state);
-      inputDataAdapter.addMany(state, action.payload);
-    })
-    .addCase(removeInputData.fulfilled, state => {
-      inputDataAdapter.removeAll(state);
-    });
+      .addCase(addInputData.fulfilled, (state, action) => {
+        inputDataAdapter.removeAll(state);
+        inputDataAdapter.addMany(state, action.payload);
+      })
+      .addCase(removeInputData.fulfilled, state => {
+        inputDataAdapter.removeAll(state);
+      });
   },
 });
 
 export default inputDataSlice.reducer;
 
 /** Selectors */
-// export const selectEntity = (state: AppRootState) => state.inputData.entities;
-
-export const { selectAll: selectInputData, selectById: selectInputDataById } = inputDataAdapter.getSelectors<AppRootState>(state => state.inputData)
+//selectAll automatically converts 'object' to 'arr' then returns state value
+export const { selectAll: selectInputData, selectById: selectInputDataById } =
+  inputDataAdapter.getSelectors<AppRootState>(state => state.inputData);
 
 /** Thunk functions */
 export const addInputData = createAsyncThunk(

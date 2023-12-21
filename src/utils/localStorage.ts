@@ -3,6 +3,8 @@ export const locKeys = {
   userQuery: 'TI_userQuery',
   userProfl: 'SP_userProfl',
   inputData: 'SP_inputData',
+  excelColumnInfo: 'SP_excelColumnInfo',
+  indexThematicityRequest: 'SP_indexThematicityRequest',
 };
 
 function set(key: string, data: object) {

@@ -19,7 +19,7 @@ interface InputExcelData {
 
 interface WriteExtendExcelProps {
   inputData: InputData[];
-  query: string;
+  query?: string;
   excelColumnInfo: ExcelColumnInfoType;
   file: ArrayBuffer;
 }
@@ -188,7 +188,7 @@ async function write(inputData: InputData[], query: string): Promise<boolean> {
 async function writeWithExcelColumnInfo({
   file,
   inputData,
-  query,
+  query = '',
   excelColumnInfo,
 }: WriteExtendExcelProps) {
   const workbook = new Excel.Workbook();

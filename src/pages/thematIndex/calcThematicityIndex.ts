@@ -7,16 +7,17 @@
 
 import axios, { AxiosResponse } from 'axios';
 import throttling from '@/utils/throttling';
+import { InputData } from '@/containers/reducers/inputDataSlice';
 
 interface CalcThematicityIndexProps {
-  arrURL_objects: URLObjectProps[];
+  inputDataArr: InputData[];
   query: string;
-  onUpdate?: (progress: string, siteData?: URLObjectProps[]) => void;
+  onUpdate?: (progress: string) => void;
   onError?: (errorMessage: string, response?: AxiosResponse) => void;
 }
 
 async function calcThematicityIndex({
-  arrURL_objects,
+  inputDataArr,
   query,
   onUpdate,
   onError,
@@ -41,14 +42,14 @@ async function calcThematicityIndex({
   const delay_between_steps = 150; //value set delay before each request in MILLISECONDS. 130 milliseconds = 0.13 second
   const siteUrls: string[] = [];
 
-  arrURL_objects = JSON.parse(JSON.stringify(arrURL_objects)); //clone arrURL_objects
-  for (const arrURL_object of arrURL_objects) {
-    const siteUrl = arrURL_object.url;
+  inputDataArr = JSON.parse(JSON.stringify(inputDataArr)); //clone inputData
+  for (const inputData of inputDataArr) {
+    const siteUrl = inputData.url;
     siteUrls.push(siteUrl);
   }
 
   try {
-    return await calculateIndex(arrURL_objects);
+    return await calculateIndex(inputDataArr);
   } catch (error) {
     alert('something in calcThematicityIndex broken ;(');
     console.error(error);
@@ -56,7 +57,7 @@ async function calcThematicityIndex({
   }
 
   //
-  async function calculateIndex(arrURL_objects: URLObjectProps[]) {
+  async function calculateIndex(inputDataArr: InputData[]) {
     for (
       let iteration = 0, siteURL = siteUrls[0];
       iteration < siteUrls.length;
@@ -83,7 +84,7 @@ async function calcThematicityIndex({
       await waitStep();
       let thematicIndex = 0;
 
-      for (const obj of arrURL_objects) {
+      for (const obj of inputDataArr) {
         if (obj.url !== siteURL) {
           continue;
         }
@@ -118,7 +119,7 @@ async function calcThematicityIndex({
         break;
       }
     }
-    return arrURL_objects;
+    return inputDataArr;
   }
 
   //

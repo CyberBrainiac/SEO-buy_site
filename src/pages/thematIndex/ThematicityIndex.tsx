@@ -1,52 +1,39 @@
-import React, { FormEvent, useState, useReducer, useEffect, useRef } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
 import fileExcel from '@/pages/thematIndex/fileExcel';
 import calcThematicityIndex from '@/pages/thematIndex/calcThematicityIndex';
 import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
-import reducerExelData from './reducerExelData';
-import locStorage, { locKeys } from '@/utils/localStorage';
 import fireStore from '@/services/fireStore';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '@/containers/reducers/userSlice';
 import { AppDispatch } from '@/containers/storeRedux';
-import { addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
+import { InputData, addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
+import {
+  ExcelColumnInfoType,
+  selectExcelColumnInfo,
+  selectIndexThematicityRequest,
+  selectIndexThematicityStatus,
+  setExcelColumnInfo,
+  setRequestIndexThematicity,
+  setStatusIndexThematicity,
+  toolStatusValues,
+} from '@/containers/reducers/toolsSlice';
 
 const ThematicityIndex: React.FC = () => {
-  const userProfile = useSelector(selectUser);
-  const [excelData, dispatchExcelData] = useReducer(reducerExelData, null);
-
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isToolRun, setToolRun] = useState(false);
 
-  const isUserUseTool = useRef(false);
-  const userQuery = useRef('');
   const dispatch = useDispatch() as AppDispatch;
-  const inputData = useSelector(selectInputData)
-
-  //get previous calculation result
-  useEffect(() => {
-    if (!excelData) {
-      const data = locStorage.get(locKeys.excelData);
-      let savedQuery = locStorage.get(locKeys.userQuery);
-
-      if (!data) return;
-      if (!savedQuery) savedQuery = { query: '' };
-
-      dispatchExcelData({ type: 'SET', excelData: data });
-      userQuery.current = savedQuery.query;
-      return;
-    }
-
-    setToolRun(false);
-    if (!isUserUseTool.current) return; // check 1 load, if data empty this is first load and not need to set data in storage
-    locStorage.set(locKeys.excelData, excelData);
-    locStorage.set(locKeys.userQuery, { query: userQuery.current });
-  }, [excelData]);
+  const userProfile = useSelector(selectUser);
+  const inputData = useSelector(selectInputData) as InputData[];
+  const excelColumnInfo = useSelector(selectExcelColumnInfo) as ExcelColumnInfoType;
+  const userQuery = useSelector(selectIndexThematicityRequest) as string;
+  const toolStatus = useSelector(selectIndexThematicityStatus);
+  console.log('InputData', inputData);
 
   //
   const handleFileUpload = (file: File) => {
@@ -73,18 +60,21 @@ const ThematicityIndex: React.FC = () => {
 
   //Read Excel file
   const readBuffer = async (buffer: ArrayBuffer) => {
-    const data = await fileExcel.read(buffer);
+    const data = await fileExcel.readWithExcelColumnInfo(buffer);
 
     if (!data) {
       console.error('Can`t read buffer data');
       return null;
     }
-    dispatch(addInputData(data));
+    dispatch(addInputData(data.inputData));
+    /*DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE */
+    if (!data.excelColumnInfo) return;
+    dispatch(setExcelColumnInfo(data.excelColumnInfo));
   };
 
   //Create new Excel file
   const handleLoadResult = async () => {
-    if (!excelData) {
+    if (!inputData) {
       alert('Upload your file.xlsx or use Example file');
       return null;
     }
@@ -94,18 +84,12 @@ const ThematicityIndex: React.FC = () => {
       );
       return null;
     }
-    
-    if (!isUserUseTool.current) {
-      fileExcel.writeWithExcelColumnInfo({
-        file: fileBinaryData,
-        query: userQuery.current,
-      });
-      return;
-    }
 
     fileExcel.writeWithExcelColumnInfo({
       file: fileBinaryData,
-      query: userQuery.current,
+      query: userQuery,
+      inputData: inputData,
+      excelColumnInfo: excelColumnInfo,
     });
   };
 
@@ -149,8 +133,9 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
     const request = `intitle:"${inputKeyword}"`;
+    dispatch(setRequestIndexThematicity(request));
 
-    if (!excelData || !fileBinaryData) {
+    if (!inputData) {
       alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
       return null;
     }
@@ -160,12 +145,7 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    const currentRequestCount = (() => {
-      return excelData.urlObjects.reduce((sum, urlObj) => {
-        if (urlObj.url === '') return sum;
-        return ++sum;
-      }, 0);
-    })();
+    const currentRequestCount = inputData.length;
 
     const modifyResult = await fireStore.modifyUserBalance({
       userProfile: userProfile,
@@ -176,18 +156,18 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    setToolRun(true);
-    isUserUseTool.current = true;
-    userQuery.current = inputKeyword;
+    dispatch(setStatusIndexThematicity(toolStatusValues.Working));
 
-    const resultURLObjects = await calcThematicityIndex({
-      arrURL_objects: excelData.urlObjects,
+    const calculatedData = await calcThematicityIndex({
+      inputDataArr: inputData,
       query: request,
       onUpdate: progressHandler,
       onError: errorHandler,
     });
 
-    dispatchExcelData({ type: 'MODIFY', urlObjects: resultURLObjects });
+    if (!calculatedData) return;
+    dispatch(addInputData(calculatedData));
+    dispatch(setStatusIndexThematicity(toolStatusValues.Idle));
   };
 
   const userInf = userProfile ? (
@@ -227,9 +207,13 @@ const ThematicityIndex: React.FC = () => {
               required
             />
             <ButtonCommon
-              className={isToolRun ? style.formBtn_active : ''}
+              className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
               type="submit"
-              text={isToolRun ? 'Index Is Calculated' : 'Get Thematicity Index'}
+              text={
+                toolStatus === toolStatusValues.Working
+                  ? 'Index Is Calculated'
+                  : 'Get Thematicity Index'
+              }
             />
           </div>
         </form>
@@ -238,19 +222,7 @@ const ThematicityIndex: React.FC = () => {
         <div className={style.logContainer}>{logProgress}</div>
         <div className={style.loadBtnContainer}>
           <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
-          {isUserUseTool.current ? (
-            <ButtonCommon
-              id="buttonLoadIndexThemat"
-              onClick={handleLoadResult}
-              text="Load Result"
-            />
-          ) : !locStorage.get(locKeys.excelData) ? null : (
-            <ButtonCommon
-              id="buttonLoadIndexThemat"
-              onClick={handleLoadResult}
-              text="Load Previous Result"
-            />
-          )}
+          <ButtonCommon id="buttonLoadIndexThemat" onClick={handleLoadResult} text="Load Result" />
         </div>
       </div>
     </section>
