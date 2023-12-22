@@ -91,9 +91,6 @@ async function modifyUserBalance({
   }
 
   if (paidRequest <= 0) {
-    console.log('no paid');
-    console.log('requestCount', requestCount);
-
     const newFreeRequest = userProfile.freeRequest - requestCount;
     const modufyResult = await modifyUser(userProfile.uid, {
       freeRequest: newFreeRequest,
@@ -101,9 +98,7 @@ async function modifyUserBalance({
     });
     return modufyResult;
   }
-
   const costOfRequests = paidRequest * pricePerRequest;
-  console.log('cost', costOfRequests);
 
   if (userProfile.walletBalance - costOfRequests < 0) {
     alert(

@@ -1,8 +1,7 @@
 export const locKeys = {
-  excelData: 'TI_userExcelData',
-  userQuery: 'TI_userQuery',
   userProfl: 'SP_userProfl',
   inputData: 'SP_inputData',
+  linkInsertion: 'SP_linkInsertion',
   excelColumnInfo: 'SP_excelColumnInfo',
   indexThematicityRequest: 'SP_indexThematicityRequest',
 };

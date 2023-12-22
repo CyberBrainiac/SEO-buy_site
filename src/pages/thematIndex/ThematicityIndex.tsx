@@ -4,36 +4,28 @@ import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
 import fileExcel from '@/pages/thematIndex/fileExcel';
 import calcThematicityIndex from '@/pages/thematIndex/calcThematicityIndex';
-import UnvalidValueError from '@/utils/errorHandlers/unvalidValueError';
 import fireStore from '@/services/fireStore';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '@/containers/reducers/userSlice';
 import { AppDispatch } from '@/containers/storeRedux';
 import { InputData, addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
 import {
-  ExcelColumnInfoType,
-  selectExcelColumnInfo,
   selectIndexThematicityRequest,
   selectIndexThematicityStatus,
-  setExcelColumnInfo,
   setRequestIndexThematicity,
-  setStatusIndexThematicity,
   toolStatusValues,
 } from '@/containers/reducers/toolsSlice';
 
 const ThematicityIndex: React.FC = () => {
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
-  const [fileBinaryData, setFileBinaryData] = useState<ArrayBuffer | null>(null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const dispatch = useDispatch() as AppDispatch;
   const userProfile = useSelector(selectUser);
   const inputData = useSelector(selectInputData) as InputData[];
-  const excelColumnInfo = useSelector(selectExcelColumnInfo) as ExcelColumnInfoType;
   const userQuery = useSelector(selectIndexThematicityRequest) as string;
   const toolStatus = useSelector(selectIndexThematicityStatus);
-  console.log('InputData', inputData);
 
   //
   const handleFileUpload = (file: File) => {
@@ -42,7 +34,6 @@ const ThematicityIndex: React.FC = () => {
     //Create binary ArrayBuffer
     reader.onload = onReady => {
       const buffer = onReady.target?.result as ArrayBuffer;
-      setFileBinaryData(buffer);
       readBuffer(buffer);
     };
     reader.onerror = error => {
@@ -60,37 +51,23 @@ const ThematicityIndex: React.FC = () => {
 
   //Read Excel file
   const readBuffer = async (buffer: ArrayBuffer) => {
-    const data = await fileExcel.readWithExcelColumnInfo(buffer);
+    const data = await fileExcel.read(buffer);
 
     if (!data) {
       console.error('Can`t read buffer data');
       return null;
     }
-    dispatch(addInputData(data.inputData));
-    /*DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE */
-    if (!data.excelColumnInfo) return;
-    dispatch(setExcelColumnInfo(data.excelColumnInfo));
+    dispatch(addInputData(data));
   };
 
-  //Create new Excel file
+  //Write new Excel file
   const handleLoadResult = async () => {
     if (!inputData) {
       alert('Upload your file.xlsx or use Example file');
       return null;
     }
-    if (!fileBinaryData) {
-      alert(
-        'Upload Example.xlsx or similar file to load previous result index thematicity calculation'
-      );
-      return null;
-    }
 
-    fileExcel.writeWithExcelColumnInfo({
-      file: fileBinaryData,
-      query: userQuery,
-      inputData: inputData,
-      excelColumnInfo: excelColumnInfo,
-    });
+    fileExcel.write(inputData, userQuery);
   };
 
   //
@@ -112,14 +89,10 @@ const ThematicityIndex: React.FC = () => {
   const formHandler = async (event: FormEvent) => {
     event.preventDefault();
     setErrorMessage('');
-
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-    let inputKeyword = formData.get('request');
 
-    if (typeof inputKeyword !== 'string') {
-      throw new UnvalidValueError("expected type for user inputKeyword is 'string'");
-    }
+    let inputKeyword = formData.get('request') as string;
     inputKeyword = inputKeyword.trim();
 
     if (!inputKeyword) {
@@ -156,8 +129,6 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    dispatch(setStatusIndexThematicity(toolStatusValues.Working));
-
     const calculatedData = await calcThematicityIndex({
       inputDataArr: inputData,
       query: request,
@@ -167,7 +138,8 @@ const ThematicityIndex: React.FC = () => {
 
     if (!calculatedData) return;
     dispatch(addInputData(calculatedData));
-    dispatch(setStatusIndexThematicity(toolStatusValues.Idle));
+    // dispatch(userMessage('Successfully done'));
+    console.log("ADD USER MESSAGE");
   };
 
   const userInf = userProfile ? (

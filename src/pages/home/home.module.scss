@@ -4,7 +4,7 @@
 .container {
   color: $text-color-main;
   padding: $offset-block-padding;
-  padding-top: 240px;
+  padding-top: 140px;
 
   @media screen and (min-width: $max-app-width) {
     max-width: $max-app-width;

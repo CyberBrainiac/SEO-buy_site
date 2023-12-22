@@ -178,10 +178,47 @@ async function readWithExcelColumnInfo(buffer: ArrayBuffer): Promise<InputExcelD
 
 /** WRITE Functions */
 
-async function write(inputData: InputData[], query: string): Promise<boolean> {
-  inputData;
-  query;
-  return false;
+async function write(inputData: InputData[], query: string = ''): Promise<boolean> {
+  const workbook = new Excel.Workbook();
+  const worksheet = workbook.addWorksheet('Index Thematicity Data');
+  const date = new Date();
+
+  if (query) {
+    query = query.slice(query.indexOf(`"`), query.length);
+  }
+
+  const fileName = `thematicity_${query}_${date.getDate()}-${
+    date.getMonth() + 1
+  }-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}.xlsx`;
+
+  // const rows = inputData.map(data => Object.values(data).slice(1));
+  const rows = inputData.map(data => {
+    const { url, thematicityIndex, targetPage, totalPage } = data; //in object STRING! data key save in alphabetical order
+    return [url, thematicityIndex, targetPage, totalPage];
+  });
+
+  worksheet.columns = [
+    { header: 'Url', key: 'url', width: 26 },
+    { header: 'Thematicity Index', key: 'thematicityIndex', width: 18 },
+    { header: 'Target Pages', key: 'targetPage', width: 14 },
+    { header: 'Total Site Pages', key: 'totalPage', width: 16 },
+  ];
+  worksheet.getRow(1).alignment = { horizontal: 'center' };
+  worksheet.getRow(1).font = { bold: true };
+  worksheet.addRows(rows);
+
+  return workbook.xlsx
+    .writeBuffer()
+    .then(buffer => {
+      saveAs(new Blob([buffer], { type: 'application/octet-stream' }), fileName);
+    })
+    .then(() => {
+      return true;
+    })
+    .catch(err => {
+      console.error(err.message);
+      return false;
+    });
 }
 
 //can write default url and fill columns from ExcelColumnInfoType
@@ -252,9 +289,39 @@ async function writeWithExcelColumnInfo({
 
 /** CREATE EXAMPLE Functions */
 
-//
 function createExample() {
   const fileName = 'example.xlsx';
+  const workbook = new Excel.Workbook();
+  const worksheet = workbook.addWorksheet('No Matter What');
+  const data = [
+    'washingtonpost.com',
+    'www.businessinsider.com/',
+    'https://www.who.int/',
+    'http://macobserver.com',
+    'edition.cnn.com',
+    '... next url',
+  ];
+
+  workbook.creator = 'ThematicityIndex';
+  workbook.lastModifiedBy = 'ThematicityIndex';
+  workbook.created = new Date();
+
+  worksheet.getColumn(1).values = data;
+  worksheet.getColumn(1).width = 30;
+
+  workbook.xlsx
+    .writeBuffer()
+    .then(buffer => {
+      saveAs(new Blob([buffer], { type: 'application/octet-stream' }), fileName);
+    })
+    .catch(err => {
+      console.error(err.message);
+    });
+}
+
+//
+function createExtendExample() {
+  const fileName = 'extendExample.xlsx';
   const workbook = new Excel.Workbook();
   const worksheet = workbook.addWorksheet('Site Data');
   const data = [
@@ -338,6 +405,7 @@ const fileExcel = {
   write,
   writeWithExcelColumnInfo,
   createExample,
+  createExtendExample,
 };
 
 export default fileExcel;

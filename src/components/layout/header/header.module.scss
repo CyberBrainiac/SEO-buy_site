@@ -12,6 +12,10 @@
     margin: 0 auto;
   }
 }
+.blankHeaderLayout {
+  height: $header-height;
+}
+
 .logoWrap {
   position: relative;
   width: 70px;
@@ -40,6 +44,7 @@
     content: 'Home page';
   }
 }
+
 .logo {
   @include highlight-text();
   color: $highlight-main;

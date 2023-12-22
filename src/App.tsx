@@ -14,6 +14,7 @@ import { addInputData } from './containers/reducers/inputDataSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './containers/storeRedux';
 import { setExcelColumnInfo, setRequestIndexThematicity } from './containers/reducers/toolsSlice';
+import LinkInsertion from './pages/linkInsert/LinkInsertion';
 
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
@@ -36,6 +37,7 @@ const App: React.FC = () => {
       <Route path="/" element={<RootLayout />} errorElement={<ErrorPage />} loader={loadSavedData}>
         <Route index element={<Home />} />
         <Route path="/tools/thematicity-index" element={<ThematicityIndex />} />
+        <Route path="/tools/link-insertion" element={<LinkInsertion />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     )

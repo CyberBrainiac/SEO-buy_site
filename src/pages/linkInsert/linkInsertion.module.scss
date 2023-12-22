@@ -1,0 +1,31 @@
+@import '@style/variables';
+@import '@style/mixins';
+
+.container {
+  background-color: $page-bg-color-main;
+}
+
+.showTopResult {
+  height: 50vh;
+}
+
+.form {
+  padding: 20px;
+
+  &Container {
+    @include flex-column();
+    width: 50%;
+    margin: 0 auto;
+  }
+
+  &Input {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  &Btn {
+    &_active {
+      background-color: rgb(76, 212, 76);
+    }
+  }
+}
