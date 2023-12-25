@@ -5,9 +5,10 @@
  * Additional requests cost $5 per 1000 queries, up to 10k queries per day.
  * $0.005 per query, $0.01 for Index, $0.012 for Index + 20% profit*/
 
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import throttling from '@/utils/throttling';
 import { InputData } from '@/containers/reducers/inputDataSlice';
+import googleSearch from '@/services/googleSearch';
 
 interface CalcThematicityIndexProps {
   inputDataArr: InputData[];
@@ -22,14 +23,6 @@ async function calcThematicityIndex({
   onUpdate,
   onError,
 }: CalcThematicityIndexProps) {
-  //
-  /**CHANGE 2 VALUES BELOW AND SAVE*/
-  // const cx = '62fa1c39e6b7f4a66'; //first identeficator of programmatic seach engine
-  const cx = '1242d7aa3ba0f4a28'; //second identeficator of programmatic seach engine
-  // const apiKey = 'AIzaSyB6jxLovSRB87xAoxImfXzweaf3kKUWexg'; //first API key
-  const apiKey = 'AIzaSyDpoWIqtGP4SlVAsAEjAel84a58694785A'; //second API key
-  /**CHANGE 2 VALUES ABOVE AND SAVE*/
-
   /**
    *    ABOUT DELAY SETTINGS
    *
@@ -40,13 +33,8 @@ async function calcThematicityIndex({
   const limit_package_urls = 10; //value set limit for count of site urls, which process in one iteration.
   const delay_between_iterations = 300; //value set delay after finish each iteration in MILLISECONDS. 66000 milliseconds = 66 seconds
   const delay_between_steps = 150; //value set delay before each request in MILLISECONDS. 130 milliseconds = 0.13 second
-  const siteUrls: string[] = [];
 
   inputDataArr = JSON.parse(JSON.stringify(inputDataArr)); //clone inputData
-  for (const inputData of inputDataArr) {
-    const siteUrl = inputData.url;
-    siteUrls.push(siteUrl);
-  }
 
   try {
     return await calculateIndex(inputDataArr);
@@ -58,6 +46,13 @@ async function calcThematicityIndex({
 
   //
   async function calculateIndex(inputDataArr: InputData[]) {
+    const siteUrls: string[] = [];
+
+    for (const inputData of inputDataArr) {
+      const siteUrl = inputData.url;
+      siteUrls.push(siteUrl);
+    }
+
     for (
       let iteration = 0, siteURL = siteUrls[0];
       iteration < siteUrls.length;
@@ -65,23 +60,32 @@ async function calcThematicityIndex({
     ) {
       //Await Iteration Delay
       if (iteration % limit_package_urls === 0 && iteration !== 0) {
-        //for last value
-        if (onUpdate && iteration === siteUrls.length - 1) {
-          onUpdate(`All urls processed: ${iteration}`);
-        } else if (onUpdate) {
+        if (onUpdate) {
           onUpdate(`Processed urls: ${iteration}`); //update value in real time after each iteration
         }
         await throttling(delay_between_iterations);
+      }
+      //for last value
+      if (onUpdate && iteration === siteUrls.length - 1) {
+        onUpdate(`All urls processed: ${siteUrls.length}`);
       }
 
       if (siteURL === '') {
         continue;
       }
 
-      const targetPageStr = await searchWithQuery(siteURL);
+      // const targetPageStr = await searchWithQuery(siteURL);
+      const searchResult = await googleSearch.withQuery(siteURL, query);
+
+      if (searchResult instanceof Error && onError) {
+        onError(searchResult.message);
+      }
+      console.log(searchResult);
+      
+      // const targetPageStr = 
       const targetPage = Number(targetPageStr);
 
-      await waitStep();
+      await throttling(delay_between_steps);
       let thematicIndex = 0;
 
       for (const obj of inputDataArr) {
@@ -104,7 +108,7 @@ async function calcThematicityIndex({
         }
 
         const totalPage = await searchSite(siteURL);
-        await waitStep();
+        await throttling(delay_between_steps);
 
         if (totalPage === null || totalPage === 0) {
           obj.totalPage = 0;
@@ -122,127 +126,122 @@ async function calcThematicityIndex({
     return inputDataArr;
   }
 
-  //
-  async function searchWithQuery(siteURL: string) {
-    if (typeof query !== 'string') {
-      console.error(new TypeError("Parameter 'query' must be a 'string'"));
-      return null;
-    }
+  // //
+  // async function searchWithQuery(siteURL: string) {
+  //   if (typeof query !== 'string') {
+  //     console.error(new TypeError("Parameter 'query' must be a 'string'"));
+  //     return null;
+  //   }
 
-    //fields=searchInformation/totalResults used to optimize the query
-    const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(
-      query
-    )}%20site:${siteURL}&fields=searchInformation/totalResults`;
-    let response;
+  //   //fields=searchInformation/totalResults used to optimize the query
+  //   const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(
+  //     query
+  //   )}%20site:${siteURL}&fields=searchInformation/totalResults`;
+  //   let response;
 
-    try {
-      response = await axios.get(url);
-    } catch (error) {
-      const axiosError = error as AxiosResponse;
+  //   try {
+  //     response = await axios.get(url);
+  //   } catch (error) {
+  //     const axiosError = error as AxiosResponse;
 
-      if (axios.isAxiosError(axiosError)) {
-        handleHTTPError(axiosError, siteURL);
-      } else {
-        console.error(error);
-      }
-      return null;
-    }
+  //     if (axios.isAxiosError(axiosError)) {
+  //       handleHTTPError(axiosError, siteURL);
+  //     } else {
+  //       console.error(error);
+  //     }
+  //     return null;
+  //   }
 
-    if (response && response.status === 200) {
-      const res = response.data;
-      // console.log(siteURL, 'target: ', res.searchInformation.totalResults);
-      return res.searchInformation.totalResults;
-    } else {
-      handleHTTPError(response, siteURL);
-      return null;
-    }
-  }
+  //   if (response && response.status === 200) {
+  //     const res = response.data;
+  //     // console.log(siteURL, 'target: ', res.searchInformation.totalResults);
+  //     return res.searchInformation.totalResults;
+  //   } else {
+  //     handleHTTPError(response, siteURL);
+  //     return null;
+  //   }
+  // }
 
-  //
-  async function searchSite(siteURL: string) {
-    //fields=searchInformation/totalResults used to optimize the query
-    const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}&fields=searchInformation/totalResults`;
-    let response;
+  // //
+  // async function searchSite(siteURL: string) {
+  //   //fields=searchInformation/totalResults used to optimize the query
+  //   const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}&fields=searchInformation/totalResults`;
+  //   let response;
 
-    try {
-      response = await axios.get(url);
-    } catch (error) {
-      const axiosError = error as AxiosResponse;
+  //   try {
+  //     response = await axios.get(url);
+  //   } catch (error) {
+  //     const axiosError = error as AxiosResponse;
 
-      if (axios.isAxiosError(axiosError)) {
-        handleHTTPError(axiosError, siteURL);
-      } else {
-        console.error(error);
-      }
-      return null;
-    }
+  //     if (axios.isAxiosError(axiosError)) {
+  //       handleHTTPError(axiosError, siteURL);
+  //     } else {
+  //       console.error(error);
+  //     }
+  //     return null;
+  //   }
 
-    if (response && response.status === 200) {
-      const json = await response.data;
-      // console.log(siteURL, 'total: ', json.searchInformation.totalResults);
-      return json.searchInformation.totalResults;
-    } else {
-      handleHTTPError(response, siteURL);
-      return null;
-    }
-  }
+  //   if (response && response.status === 200) {
+  //     const json = await response.data;
+  //     // console.log(siteURL, 'total: ', json.searchInformation.totalResults);
+  //     return json.searchInformation.totalResults;
+  //   } else {
+  //     handleHTTPError(response, siteURL);
+  //     return null;
+  //   }
+  // }
 
-  //
-  async function waitStep() {
-    return new Promise(resolve => setTimeout(resolve, delay_between_steps));
-  }
+  // //
+  // function handleHTTPError(response: AxiosResponse | undefined, siteURL: string) {
+  //   let errorMessage: string;
 
-  //
-  function handleHTTPError(response: AxiosResponse | undefined, siteURL: string) {
-    let errorMessage: string;
+  //   if (!response) {
+  //     console.error('Bad request to google search engine');
+  //     if (onError) onError('Bad request to google search engine');
+  //     return null;
+  //   }
 
-    if (!response) {
-      console.error('Bad request to google search engine');
-      if (onError) onError('Bad request to google search engine');
-      return null;
-    }
+  //   //Axios Error Handler
+  //   if (axios.isAxiosError(response)) {
+  //     const errResponse = response.code;
 
-    //Axios Error Handler
-    if (axios.isAxiosError(response)) {
-      const errResponse = response.code;
+  //     if (errResponse === 'ERR_NETWORK') {
+  //       errorMessage = `Error: Network error, check your WI-FI connection`;
+  //     } else if (errResponse === 'ERR_BAD_REQUEST') {
+  //       const status = response.response?.status;
 
-      if (errResponse === 'ERR_NETWORK') {
-        errorMessage = `Error: Network error, check your WI-FI connection`;
-      } else if (errResponse === 'ERR_BAD_REQUEST') {
-        const status = response.response?.status;
+  //       if (status === 403) {
+  //         errorMessage = `Error with credentials. Error code: ${status}`;
+  //       } else if (status === 429) {
+  //         errorMessage = `Site: ${siteURL}  ||  Error: quota for requests has run out. Error code: ${status}`;
+  //       } else {
+  //         errorMessage = `ERR_BAD_REQUEST: ${status}`;
+  //       }
+  //     } else {
+  //       errorMessage = `Axios Error`;
+  //     }
 
-        if (status === 403) {
-          errorMessage = `Error with credentials. Error code: ${status}`;
-        } else if (status === 429) {
-          errorMessage = `Site: ${siteURL}  ||  Error: quota for requests has run out. Error code: ${status}`;
-        } else {
-          errorMessage = `ERR_BAD_REQUEST: ${status}`;
-        }
-      } else {
-        errorMessage = `Axios Error`;
-      }
+  //     if (onError) {
+  //       onError(errorMessage, response);
+  //     }
+  //     console.error(errorMessage);
+  //     return null;
+  //   }
 
-      if (onError) {
-        onError(errorMessage, response);
-      }
-      console.error(errorMessage);
-      return null;
-    }
+  //   //HTTP Answer Handler
+  //   const errCode = response.status;
 
-    //HTTP Answer Handler
-    const errCode = response.status;
+  //   if (errCode === 500) {
+  //     errorMessage = `Site: ${siteURL}  ||  Error: internal server error`;
+  //   } else {
+  //     errorMessage = `Site: ${siteURL}  ||  Error code: ${errCode}`;
+  //   }
 
-    if (errCode === 500) {
-      errorMessage = `Site: ${siteURL}  ||  Error: internal server error`;
-    } else {
-      errorMessage = `Site: ${siteURL}  ||  Error code: ${errCode}`;
-    }
-
-    if (onError) {
-      onError(errorMessage, response);
-    }
-    console.error(errorMessage);
-  }
+  //   if (onError) {
+  //     onError(errorMessage, response);
+  //   }
+  //   console.error(errorMessage);
+  // }
 }
 
 export default calcThematicityIndex;

@@ -5,6 +5,7 @@ import locStorage, { locKeys } from '@/utils/localStorage';
 
 interface InitialState {
   profile: UserProfile | undefined;
+  informMessage: string | undefined;
 }
 
 export interface ModifyProfileProps {
@@ -21,14 +22,15 @@ export interface ModifyProfileProps {
 
 const initialState: InitialState = {
   profile: undefined,
+  informMessage: undefined,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    deleteUserProfl(state) {
-      state.profile = undefined;
+    setInformMessage(state, action) {
+      state.informMessage = action.payload;
     },
   },
   extraReducers: builder => {
@@ -44,10 +46,12 @@ const userSlice = createSlice({
   },
 });
 
+export const { setInformMessage } = userSlice.actions;
 export default userSlice.reducer;
 
 /** Selectors */
 export const selectUser = (state: AppRootState) => state.user.profile;
+export const selectInformMessage = (state: AppRootState) => state.user.informMessage;
 
 /** Thunk functions */
 

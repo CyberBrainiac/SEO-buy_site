@@ -90,9 +90,9 @@ const Home: React.FC = () => {
           <h3>1</h3>
           <h3>1</h3>
           <h3>1</h3>
-          <h2 id="target1">
-            This is target <br /> This is target
-          </h2>
+          <div id="target1">
+            <h2 style={{ paddingTop: '100px' }}>This is target-1</h2>
+          </div>
           <h3>1</h3>
           <h3>1</h3>
           <h3>1</h3>

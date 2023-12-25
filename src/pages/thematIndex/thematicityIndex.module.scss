@@ -5,10 +5,15 @@
   background-color: $page-bg-color-main;
 }
 
+.mainHeading {
+  padding-top: 10px;
+  text-align: center;
+}
+
 .userInf {
   font-size: 24px;
   text-align: center;
-  padding-top: 40px;
+  padding-top: 24px;
   padding-bottom: 40px;
 
   &__freeReq {

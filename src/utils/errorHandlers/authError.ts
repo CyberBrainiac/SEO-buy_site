@@ -1,6 +1,6 @@
 class AuthError extends Error {
   constructor(value: string) {
-    super(`AuthError: ${JSON.stringify(value)}`);
+    super(`Auth Error: ${JSON.stringify(value)}`);
   }
 }
 

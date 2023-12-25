@@ -48,6 +48,9 @@ const toolsSlice = createSlice({
     setStatusLinkInsertion(state, action) {
       state.linkInsertion.status = action.payload;
     },
+    setStatusIndexThematicity(state, action) {
+      state.linkInsertion.status = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -57,22 +60,18 @@ const toolsSlice = createSlice({
       .addCase(setExcelColumnInfo.fulfilled, (state, action) => {
         state.indexThematicity.excelColumnInfo = action.payload;
       })
-      .addCase(setRequestIndexThematicity.pending, state => {
-        state.indexThematicity.status = 'working';
-      })
       .addCase(setRequestIndexThematicity.fulfilled, (state, action) => {
         state.indexThematicity.request = action.payload;
-        state.indexThematicity.status = 'idle';
       });
   },
 });
 
-export const { setStatusLinkInsertion } =
-  toolsSlice.actions;
+export const { setStatusLinkInsertion, setStatusIndexThematicity } = toolsSlice.actions;
 export default toolsSlice.reducer;
 
 /** Selectors */
 
+export const selectLinkInsertionStatus = (state: AppRootState) => state.tools.linkInsertion.status;
 export const selectExcelColumnInfo = (state: AppRootState) =>
   state.tools.indexThematicity.excelColumnInfo;
 export const selectIndexThematicityRequest = (state: AppRootState) =>
@@ -82,10 +81,13 @@ export const selectIndexThematicityStatus = (state: AppRootState) =>
 
 /** Thunk functions */
 
-export const setRequestLinkInsertion = createAsyncThunk('tools/linkInsertion/setRequest', async (data: string) => {
-  await locStorage.set(locKeys.linkInsertion, { request: data });
-  return data;
-});
+export const setRequestLinkInsertion = createAsyncThunk(
+  'tools/linkInsertion/setRequest',
+  async (data: string) => {
+    await locStorage.set(locKeys.linkInsertionRequest, { request: data });
+    return data;
+  }
+);
 export const setExcelColumnInfo = createAsyncThunk(
   'tools/indexThematicity/setExcelColumnInfo',
   async (data: ExcelColumnInfoType) => {

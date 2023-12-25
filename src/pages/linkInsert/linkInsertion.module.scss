@@ -5,8 +5,42 @@
   background-color: $page-bg-color-main;
 }
 
-.showTopResult {
-  height: 50vh;
+.mainHeading {
+  padding-top: 10px;
+  text-align: center;
+}
+
+.userInf {
+  font-size: 20px;
+  text-align: center;
+  padding-top: 24px;
+  padding-bottom: 40px;
+
+  &__freeReq {
+    color: rgb(4, 129, 4);
+  }
+
+  &__walletBal {
+    color: $highlight-additional;
+  }
+
+  &__unAuthMessage {
+    font-size: 28px;
+    color: $highlight-additional;
+  }
+}
+
+.acceptedFiles {
+  height: 40px;
+  row-gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.acceptedDescription {
+  @include bold-text(20px);
+  margin-right: 20px;
 }
 
 .form {
@@ -28,4 +62,8 @@
       background-color: rgb(76, 212, 76);
     }
   }
+}
+
+.showTopResult {
+  height: 50vh;
 }

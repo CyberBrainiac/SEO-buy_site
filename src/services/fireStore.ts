@@ -2,6 +2,8 @@ import { db } from './config/firebase';
 import { setDoc, doc, getDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { UserInfo } from 'firebase/auth/cordova';
 
+type ToolNames = "LinkInsertion" | "ThematicityIndex";
+
 export interface FirestoreUserProfile {
   uid: string;
   displayName: string;
@@ -32,6 +34,7 @@ interface ModifyUserProps {
 interface ModifyUserBalanceProps {
   requestCount: number;
   userProfile: UserProfile;
+  toolName: ToolNames;
 }
 
 async function isUserExist(uid: string) {
@@ -78,10 +81,21 @@ async function modifyUser(userID: string, modifyObj: ModifyUserProps) {
 async function modifyUserBalance({
   userProfile,
   requestCount,
+  toolName,
 }: ModifyUserBalanceProps): Promise<boolean> {
-  const pricePerRequest = 0.012;
   const paidRequest = requestCount - userProfile.freeRequest;
   const indexCalculation = userProfile.allIndexCalculation + requestCount;
+  const pricePerRequest = (() => {
+    switch (toolName) {
+      case "LinkInsertion":
+        return 0.006;
+      case "ThematicityIndex":
+        return 0.012;
+      default:
+        alert(`Tool: ${toolName} doesn't exist`);
+        return 0;
+    }
+  })();
 
   if (requestCount > 5000) {
     alert(

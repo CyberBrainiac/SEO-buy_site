@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const userProfl = serializeUserProfile(FirestoreUserProfile);
 
     if (isCustomer) {
-      modifyUserLogin(userProfl);
+      modifyUserLogin(userProfl.uid);
     }
 
     setAuthentication(userProfl);
@@ -76,6 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     //get user Profile from Local Storage
     let savedUserProfile;
+
     if (!authentication) {
       savedUserProfile = locStorage.get(locKeys.userProfl);
     }
@@ -96,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         /**
-         * in all situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'! Why?
+         * in same situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'! Why?
          */
         if (!modifiedUserProfile.lastLogIn) {
           //du to 2 renders
@@ -109,7 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (savedUserProfile) {
-        modifyUserLogin(savedUserProfile);
+        modifyUserLogin(savedUserProfile.uid);
       }
 
       return () => {
@@ -119,27 +120,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [authentication, dispatch]);
 
   //Modify login time and set free request
-  function modifyUserLogin(userProfileRaw: UserProfile) {
-    const userProfile = { ...userProfileRaw }; //clone object
+  async function modifyUserLogin(uid: string) {
+    const FirestoreUserProfile = await fireStore.getUserProfl(uid);
+
+    if (!FirestoreUserProfile) {
+      alert('Authorization error');
+      return;
+    }
+    const userProfl = serializeUserProfile(FirestoreUserProfile);
     const dayInMillSec = 86400000;
     const lastLogIn = Timestamp.now();
-    let freeRequest = userProfile.freeRequest;
-    let whenFreebies = Timestamp.fromMillis(userProfile.whenFreebies);
 
     //take user additional free request
-    if (Date.now() - userProfile.whenFreebies >= dayInMillSec) {
-      freeRequest = 20;
-      whenFreebies = Timestamp.now();
+    if (Date.now() - userProfl.whenFreebies >= dayInMillSec) {
+      return fireStore.modifyUser(userProfl.uid, {
+        lastLogIn,
+        freeRequest: 20,
+        whenFreebies: Timestamp.now(),
+      });
     }
 
-    const modifyProps = {
-      lastLogIn,
-      freeRequest,
-      whenFreebies,
-    };
-
     //Update lastLogIn every time user interact with site
-    return fireStore.modifyUser(userProfile.uid, modifyProps);
+    return fireStore.modifyUser(userProfl.uid, { lastLogIn });
   }
 
   return <AuthContext.Provider value={{ setUser, deleteUser }}>{children}</AuthContext.Provider>;

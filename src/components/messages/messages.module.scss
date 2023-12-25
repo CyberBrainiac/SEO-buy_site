@@ -1,0 +1,21 @@
+@import '/src/assets/style/variables';
+@import '/src/assets/style/mixins';
+
+.container {
+  position: absolute;
+  top: -60px;
+  left: 39%;
+  width: 200px;
+  text-align: center;
+  padding: 5px;
+  font-size: 20px;
+  font-weight: 500;
+  border-radius: 6px;
+  background-color: $text-color-main;
+  color: $highlight-main;
+  transition: $transition-fast;
+
+  &_active {
+    top: 104px;
+  }
+}

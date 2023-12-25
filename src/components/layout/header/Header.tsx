@@ -2,6 +2,7 @@ import React from 'react';
 import style from './header.module.scss';
 import { Link } from 'react-router-dom';
 import UserNav from '@/components/userNav/UserNav';
+import Messages from '@/components/messages/Messages';
 
 const Header: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const Header: React.FC = () => {
           </div>
 
           <UserNav />
+          <Messages />
         </div>
         <div className={style.background}></div>
       </header>

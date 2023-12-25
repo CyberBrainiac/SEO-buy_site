@@ -1,9 +1,9 @@
 export const locKeys = {
   userProfl: 'SP_userProfl',
   inputData: 'SP_inputData',
-  linkInsertion: 'SP_linkInsertion',
   excelColumnInfo: 'SP_excelColumnInfo',
   indexThematicityRequest: 'SP_indexThematicityRequest',
+  linkInsertionRequest: 'SP_linkInsertionRequest',
 };
 
 function set(key: string, data: object) {

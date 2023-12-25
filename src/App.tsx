@@ -13,25 +13,33 @@ import locStorage, { locKeys } from './utils/localStorage';
 import { addInputData } from './containers/reducers/inputDataSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './containers/storeRedux';
-import { setExcelColumnInfo, setRequestIndexThematicity } from './containers/reducers/toolsSlice';
+import { setExcelColumnInfo, setRequestIndexThematicity, setRequestLinkInsertion } from './containers/reducers/toolsSlice';
 import LinkInsertion from './pages/linkInsert/LinkInsertion';
 
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
 
+  //
   async function loadSavedData() {
     const urls = await locStorage.get(locKeys.inputData);
+
     if (urls) dispatch(addInputData(urls));
-
     const excelColumnInfo = await locStorage.get(locKeys.excelColumnInfo);
-    if (excelColumnInfo) dispatch(setExcelColumnInfo(excelColumnInfo));
 
+    if (excelColumnInfo) dispatch(setExcelColumnInfo(excelColumnInfo));
     const requestIndxT = await locStorage.get(locKeys.indexThematicityRequest);
     const unpackReqestIndxT = requestIndxT?.request;
+
     if (unpackReqestIndxT) dispatch(setRequestIndexThematicity(unpackReqestIndxT));
+    const requestLinkIns = await locStorage.get(locKeys.linkInsertionRequest);
+    const unpackRequestLinkIns = requestLinkIns?.request;
+
+    if (unpackRequestLinkIns) dispatch(setRequestLinkInsertion(unpackRequestLinkIns));
+
     return { urls, excelColumnInfo, unpackReqestIndxT };
   }
 
+  //
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />} errorElement={<ErrorPage />} loader={loadSavedData}>

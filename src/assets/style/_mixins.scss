@@ -8,6 +8,7 @@
   font-weight: 700;
   font-family: $Kanit;
   letter-spacing: 0.5px;
+  line-height: 1.2;
 }
 
 @mixin bold-text($font-size, $font-weight: 500) {

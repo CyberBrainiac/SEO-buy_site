@@ -6,13 +6,14 @@ import fileExcel from '@/pages/thematIndex/fileExcel';
 import calcThematicityIndex from '@/pages/thematIndex/calcThematicityIndex';
 import fireStore from '@/services/fireStore';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '@/containers/reducers/userSlice';
+import { selectUser, setInformMessage } from '@/containers/reducers/userSlice';
 import { AppDispatch } from '@/containers/storeRedux';
 import { InputData, addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
 import {
   selectIndexThematicityRequest,
   selectIndexThematicityStatus,
   setRequestIndexThematicity,
+  setStatusIndexThematicity,
   toolStatusValues,
 } from '@/containers/reducers/toolsSlice';
 
@@ -105,24 +106,25 @@ const ThematicityIndex: React.FC = () => {
       alert('too many words');
       return null;
     }
-    const request = `intitle:"${inputKeyword}"`;
-    dispatch(setRequestIndexThematicity(request));
 
     if (!inputData) {
       alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
       return null;
     }
-
     if (!userProfile) {
       alert('First you need to register');
       return null;
     }
 
+    const request = `intitle:"${inputKeyword}"`;
+    dispatch(setRequestIndexThematicity(request));
     const currentRequestCount = inputData.length;
+    dispatch(setStatusIndexThematicity(toolStatusValues.Working));
 
     const modifyResult = await fireStore.modifyUserBalance({
       userProfile: userProfile,
       requestCount: currentRequestCount,
+      toolName: 'ThematicityIndex',
     });
 
     if (!modifyResult) {
@@ -137,9 +139,9 @@ const ThematicityIndex: React.FC = () => {
     });
 
     if (!calculatedData) return;
-    dispatch(addInputData(calculatedData));
-    // dispatch(userMessage('Successfully done'));
-    console.log("ADD USER MESSAGE");
+    await dispatch(addInputData(calculatedData));
+    dispatch(setStatusIndexThematicity(toolStatusValues.Idle));
+    dispatch(setInformMessage('Successfully done'));
   };
 
   const userInf = userProfile ? (
@@ -158,6 +160,7 @@ const ThematicityIndex: React.FC = () => {
   return (
     <section className="thematicityIndex">
       <div className={style.container}>
+        <h1 className={style.mainHeading}>Thematicity Index Tool</h1>
         <div className={style.userInf}>{userInf}</div>
 
         <InputFile onFileUpload={handleFileUpload} />
