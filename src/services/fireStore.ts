@@ -2,7 +2,7 @@ import { db } from './config/firebase';
 import { setDoc, doc, getDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { UserInfo } from 'firebase/auth/cordova';
 
-type ToolNames = "LinkInsertion" | "ThematicityIndex";
+type ToolNames = 'LinkInsertion' | 'ThematicityIndex';
 
 export interface FirestoreUserProfile {
   uid: string;
@@ -87,9 +87,9 @@ async function modifyUserBalance({
   const indexCalculation = userProfile.allIndexCalculation + requestCount;
   const pricePerRequest = (() => {
     switch (toolName) {
-      case "LinkInsertion":
+      case 'LinkInsertion':
         return 0.006;
-      case "ThematicityIndex":
+      case 'ThematicityIndex':
         return 0.012;
       default:
         alert(`Tool: ${toolName} doesn't exist`);

@@ -5,10 +5,13 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '@/containers/reducers/userSlice';
 import { BiUser } from 'react-icons/bi';
 import { IconContext } from 'react-icons';
+import { ButtonCommon } from '../buttons/Buttons';
+import { Link } from 'react-router-dom';
 
 const UserNav: React.FC = () => {
   const { setUser } = useContext(AuthContext);
   const userProfile = useSelector(selectUser);
+  const { deleteUser } = useContext(AuthContext);
 
   const handleAuthBtnClick = () => {
     setUser('Google');
@@ -22,38 +25,31 @@ const UserNav: React.FC = () => {
     );
   }
 
+  function handleSignOut() {
+    deleteUser();
+  }
+
   return (
-    <div className={style.userNav}>
+    <div className={style.container}>
       <IconContext.Provider value={{ color: '#fffc62', size: '3em' }}>
         <div>
           <BiUser />
         </div>
       </IconContext.Provider>
-    </div>
 
-    // <div className="userNav">
-    //   <div className={style.auth}>
-    //     {userProfile ? (
-    //       <div className={style.authProfile}>
-    //         <img
-    //           className={style.authImg}
-    //           src={userProfile.photoURL}
-    //           alt="user avatar"
-    //           referrerPolicy="no-referrer"
-    //         />
-    //         {/* <div onClick={deleteUser}>Sign OUT</div> */}
-    //         <button onClick={deleteUser}>Sign Out</button>
-    //       </div>
-    //     ) : (
-    //       <div onClick={handleAuthBtnClick} className={style.authBtn}>
-    //         <p>Sign In</p>
-    //         <div className={style.authBtn_highlight}>
-    //           <p>Sign Up</p>
-    //         </div>
-    //       </div>
-    //     )}
-    //   </div>
-    // </div>
+      <div className={`${style.menu} ${style.menu_active}`}>
+        <div className={style.menu_topDecore}></div>
+        <div className={style.menuItemWrap}>
+          <div className={style.menuItem}>
+            <Link to={'/user/payment'}>Payment Details</Link>
+          </div>
+          <div className={style.menuItem}>
+            <Link to={'/contact-us'}>Contact Us</Link>
+          </div>
+          <ButtonCommon onClick={handleSignOut} className={style.signOutBtn} text="Sign out" />
+        </div>
+      </div>
+    </div>
   );
 };
 

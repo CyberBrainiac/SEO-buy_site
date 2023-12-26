@@ -81,8 +81,8 @@ async function calcThematicityIndex({
         onError(searchResult.message);
       }
       console.log(searchResult);
-      
-      // const targetPageStr = 
+
+      // const targetPageStr =
       const targetPage = Number(targetPageStr);
 
       await throttling(delay_between_steps);

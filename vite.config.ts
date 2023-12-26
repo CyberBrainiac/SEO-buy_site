@@ -8,9 +8,6 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/',
-  server: {
-    port: 4200,
-  },
 
   resolve: {
     alias: {
@@ -39,9 +36,9 @@ export default defineConfig({
         const componentName = filename.slice(filename.lastIndexOf('/') + 1, filename.indexOf('.'));
 
         // Generate hash
-        const hash = crypto.createHash('md5').update(css).digest('base64url').substring(0, 2);
+        const hash = crypto.createHash('md5').update(css).digest('base64url').substring(0, 3);
 
-        return `${componentName}__${name}-${hash}${getRandom.numberInRange(10, 100)}`;
+        return `${componentName}__${name}-${hash}`;
       },
     },
   },

@@ -13,7 +13,11 @@ import locStorage, { locKeys } from './utils/localStorage';
 import { addInputData } from './containers/reducers/inputDataSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './containers/storeRedux';
-import { setExcelColumnInfo, setRequestIndexThematicity, setRequestLinkInsertion } from './containers/reducers/toolsSlice';
+import {
+  setExcelColumnInfo,
+  setRequestIndexThematicity,
+  setRequestLinkInsertion,
+} from './containers/reducers/toolsSlice';
 import LinkInsertion from './pages/linkInsert/LinkInsertion';
 
 const App: React.FC = () => {

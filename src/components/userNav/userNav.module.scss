@@ -7,7 +7,7 @@
   padding: 6px 6px 8px 6px;
   border: 2px solid $highlight-main;
   border-radius: 10px;
-  transition: all 0.2s ease-in;
+  transition: background-color, color 0.2s ease-in;
   font-weight: 500;
   cursor: pointer;
 
@@ -18,8 +18,63 @@
   }
 }
 
-.userNav {
-  width: 54px;
-  height: 54px;
-  cursor: pointer;
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100%;
+
+  &:hover {
+    .menu_active {
+      left: initial;
+    }
+  }
+}
+
+.menu {
+  position: absolute;
+  top: 0;
+  left: 100vw;
+  right: 0;
+  width: 240px;
+  transform: translateX(28%);
+
+  &_topDecore {
+    height: $header-height;
+    width: 100%;
+    background-color: $page-bg-color-additional;
+    opacity: 0.5;
+    border-right: 1px dotted $border-color-main;
+    border-left: 1px dotted $border-color-main;
+  }
+
+  &Item {
+    width: 100%;
+    padding: 12px 4px;
+    border-bottom: 1px solid $border-color-main;
+    font-weight: 500;
+    color: $highlight-main;
+    font-size: 24px;
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+
+    &Wrap {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      border: 1px solid $border-color-main;
+      background-color: $page-bg-color-additional;
+    }
+
+    &:hover {
+      color: $page-bg-color-main;
+      background-color: $highlight-additional;
+    }
+  }
+}
+
+.signOutBtn {
+  margin-top: 60px;
 }

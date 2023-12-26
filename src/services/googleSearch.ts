@@ -6,12 +6,8 @@ import googleSearchConfig from './config/customGoogleSearch';
 async function withQuery(siteURL: string, query: string) {
   const apiKey = googleSearchConfig.apiKey;
   const cx = googleSearchConfig.cx;
-  console.log(
-    siteURL, 
-    query,
-  );
+  console.log(siteURL, query);
   console.log('CHANGE TIMEOUT AFTER STEP TO 0.3 S!!!');
-  
 
   //fields=searchInformation/totalResults used to optimize the query
   const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(
