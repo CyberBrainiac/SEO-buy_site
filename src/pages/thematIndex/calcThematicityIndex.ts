@@ -39,7 +39,6 @@ async function calcThematicityIndex({
   try {
     return await calculateIndex(inputDataArr);
   } catch (error) {
-    alert('something in calcThematicityIndex broken ;(');
     console.error(error);
     return null;
   }
@@ -79,10 +78,10 @@ async function calcThematicityIndex({
 
       if (searchResult instanceof Error && onError) {
         onError(searchResult.message);
+        return searchResult;
       }
-      console.log(searchResult);
-      
-      // const targetPageStr = 
+
+      const targetPageStr = searchResult.searchInformation.totalResults;
       const targetPage = Number(targetPageStr);
 
       await throttling(delay_between_steps);
@@ -107,7 +106,12 @@ async function calcThematicityIndex({
           break;
         }
 
-        const totalPage = await searchSite(siteURL);
+        const totalPage = await googleSearch.site(siteURL);
+
+        if (totalPage instanceof Error && onError) {
+          onError(totalPage.message);
+          return totalPage;
+        }
         await throttling(delay_between_steps);
 
         if (totalPage === null || totalPage === 0) {

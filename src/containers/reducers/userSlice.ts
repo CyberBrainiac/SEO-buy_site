@@ -56,8 +56,6 @@ export const selectInformMessage = (state: AppRootState) => state.user.informMes
 /** Thunk functions */
 
 export const setUserProfl = createAsyncThunk('user/setUserProfl', async (profile: UserProfile) => {
-  console.log('Set user Profile', profile);
-
   await locStorage.set(locKeys.userProfl, profile);
   return profile;
 });

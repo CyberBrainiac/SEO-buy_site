@@ -77,7 +77,7 @@ const LinkInsertion: React.FC = () => {
       return null;
     }
 
-    const request = inputKeyword;
+    const request = `"${inputKeyword}"`;
     dispatch(setRequestLinkInsertion(request));
     const currentRequestCount = inputData.length;
     dispatch(setStatusLinkInsertion(toolStatusValues.Working));

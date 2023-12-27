@@ -8,6 +8,7 @@
 import { AxiosResponse } from 'axios';
 import throttling from '@/utils/throttling';
 import { InputData } from '@/containers/reducers/inputDataSlice';
+import googleSearch from '@/services/googleSearch';
 
 interface GetLinkInsertionProps {
   inputDataArr: InputData[];
@@ -38,7 +39,6 @@ async function getLinkInsertion ({
   try {
     return await getInsertion(inputDataArr);
   } catch (error) {
-    alert('something in calcThematicityIndex broken ;(');
     console.error(error);
     return null;
   }
@@ -71,6 +71,12 @@ async function getLinkInsertion ({
 
       if (siteURL === '') {
         continue;
+      }
+
+      googleSearch.withQuery(siteURL, query);
+      if (searchResult instanceof Error && onError) {
+        onError(searchResult.message);
+        return searchResult;
       }
     }
   }

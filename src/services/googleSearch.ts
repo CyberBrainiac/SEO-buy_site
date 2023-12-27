@@ -10,9 +10,8 @@ async function withQuery(siteURL: string, query: string) {
     siteURL, 
     query,
   );
-  console.log('CHANGE TIMEOUT AFTER STEP TO 0.3 S!!!');
-  
 
+  /** Search time ~ 0.33s */
   //fields=searchInformation/totalResults used to optimize the query
   const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(
     query
@@ -47,7 +46,7 @@ async function site(siteURL: string) {
   const cx = googleSearchConfig.cx;
 
   //fields=searchInformation/totalResults used to optimize the query
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}&fields=searchInformation`;
+  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}&fields=searchInformation/totalResults`;
   let response;
 
   try {
@@ -64,9 +63,8 @@ async function site(siteURL: string) {
   }
 
   if (response && response.status === 200) {
-    const json = await response.data;
-    // console.log(siteURL, 'total: ', json.searchInformation.totalResults);
-    return json.searchInformation.totalResults;
+    const res = await response.data;
+    return res.searchInformation.totalResults;
   } else {
     handleHTTPError(response, siteURL);
     return null;
