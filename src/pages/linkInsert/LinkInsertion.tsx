@@ -1,7 +1,12 @@
 import React, { FormEvent, useState } from 'react';
 import style from './linkInsertion.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectLinkInsertionStatus, setRequestLinkInsertion, setStatusLinkInsertion, toolStatusValues } from '@/containers/reducers/toolsSlice';
+import {
+  selectLinkInsertionStatus,
+  setRequestLinkInsertion,
+  setStatusLinkInsertion,
+  toolStatusValues,
+} from '@/containers/reducers/toolsSlice';
 import { AppDispatch } from '@/containers/storeRedux';
 import { addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
 import { selectUser, setInformMessage } from '@/containers/reducers/userSlice';
@@ -113,14 +118,14 @@ const LinkInsertion: React.FC = () => {
     <section className="linkInsertion">
       <div className={style.container}>
         <h1 className={style.mainHeading}>Link Insertion Tool</h1>
-      <div className={style.userInf}>{userInf}</div>
+        <div className={style.userInf}>{userInf}</div>
 
-      <InputFile onFileUpload={handleFileUpload} />
-      <aside className={style.acceptedFiles}>
-        <div className={style.acceptedDescription}>
-          {upLoadedFile ? <p>{`Uploaded file: ${upLoadedFile?.name}`}</p> : null}
-        </div>
-      </aside>
+        <InputFile onFileUpload={handleFileUpload} />
+        <aside className={style.acceptedFiles}>
+          <div className={style.acceptedDescription}>
+            {upLoadedFile ? <p>{`Uploaded file: ${upLoadedFile?.name}`}</p> : null}
+          </div>
+        </aside>
 
         <form onSubmit={formHandler} className={style.form}>
           <div className={style.formContainer}>

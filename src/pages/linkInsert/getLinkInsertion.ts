@@ -17,12 +17,7 @@ interface GetLinkInsertionProps {
   onError?: (errorMessage: string, response?: AxiosResponse) => void;
 }
 
-async function getLinkInsertion ({
-  inputDataArr,
-  query,
-  onUpdate,
-  onError,
-}: GetLinkInsertionProps) {
+async function getLinkInsertion({ inputDataArr, query, onUpdate, onError }: GetLinkInsertionProps) {
   /**
    *    ABOUT DELAY SETTINGS
    *
