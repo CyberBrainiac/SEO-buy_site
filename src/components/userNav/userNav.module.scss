@@ -7,7 +7,9 @@
   padding: 6px 6px 8px 6px;
   border: 2px solid $highlight-main;
   border-radius: 10px;
-  transition: background-color, color 0.2s ease-in;
+  transition:
+    background-color,
+    color 0.2s ease-in;
   font-weight: 500;
   cursor: pointer;
 

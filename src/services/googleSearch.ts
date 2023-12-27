@@ -6,10 +6,7 @@ import googleSearchConfig from './config/customGoogleSearch';
 async function withQuery(siteURL: string, query: string) {
   const apiKey = googleSearchConfig.apiKey;
   const cx = googleSearchConfig.cx;
-  console.log(
-    siteURL, 
-    query,
-  );
+  console.log(siteURL, query);
 
   /** Search time ~ 0.33s */
   //fields=searchInformation/totalResults used to optimize the query
