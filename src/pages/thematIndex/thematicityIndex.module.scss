@@ -3,6 +3,11 @@
 
 .container {
   background-color: $page-bg-color-main;
+
+  @media screen and (min-width: $max-app-width) {
+    max-width: $max-app-width;
+    margin: 0 auto;
+  }
 }
 
 .mainHeading {
@@ -31,16 +36,24 @@
 }
 
 .acceptedFiles {
-  height: 40px;
+  position: relative;
+  height: 50px;
   row-gap: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 6px;
 }
 
 .acceptedDescription {
-  @include bold-text(20px);
   margin-right: 20px;
+  color: $border-color-main;
+}
+
+.exampleBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .form {
@@ -52,9 +65,19 @@
     margin: 0 auto;
   }
 
+  &Label {
+    @include highlight-text();
+    color: $highlight-additional;
+  }
+
   &Input {
     width: 100%;
     margin: 10px 0;
+    border-width: 3px;
+    border-style: groove;
+    border-color: $page-bg-color-additional;
+    padding: 3px 7px;
+    font-size: 18px;
   }
 
   &Btn {
@@ -64,19 +87,17 @@
   }
 }
 
+.loadBtn {
+  margin-top: 10px;
+}
+
 .errorContainer {
   width: 100%;
   color: #ff0000;
 }
 
 .logContainer {
+  height: 20px;
   width: 100%;
   text-align: center;
-}
-
-.loadBtnContainer {
-  @include flex-column();
-  row-gap: 10px;
-  height: 104px;
-  padding: 5px 0;
 }

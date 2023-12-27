@@ -17,6 +17,12 @@ interface GetLinkInsertionProps {
   onError?: (errorMessage: string, response?: AxiosResponse) => void;
 }
 
+interface SiteFields {
+  link: string;
+  title: string;
+  snippet: string;
+}
+
 async function getLinkInsertion({ inputDataArr, query, onUpdate, onError }: GetLinkInsertionProps) {
   /**
    *    ABOUT DELAY SETTINGS
@@ -29,21 +35,20 @@ async function getLinkInsertion({ inputDataArr, query, onUpdate, onError }: GetL
   const delay_between_iterations = 300; //value set delay after finish each iteration in MILLISECONDS. 66000 milliseconds = 66 seconds
   const delay_between_steps = 150; //value set delay before each request in MILLISECONDS. 130 milliseconds = 0.13 second
 
-  inputDataArr = JSON.parse(JSON.stringify(inputDataArr)); //clone inputData
-
   try {
-    return await getInsertion(inputDataArr);
+    const cloneDataArr = JSON.parse(JSON.stringify(inputDataArr)); //clone inputData
+    return await getInsertion(cloneDataArr);
   } catch (error) {
     console.error(error);
-    return null;
+    return undefined;
   }
 
   //
-  async function getInsertion(inputDataArr: InputData[]) {
+  async function getInsertion(cloneDataArr: InputData[]): Promise<InputData[]> {
     const siteUrls: string[] = [];
 
-    for (const inputData of inputDataArr) {
-      const siteUrl = inputData.url;
+    for (const cloneData of cloneDataArr) {
+      const siteUrl = cloneData.url;
       siteUrls.push(siteUrl);
     }
 
@@ -68,12 +73,28 @@ async function getLinkInsertion({ inputDataArr, query, onUpdate, onError }: GetL
         continue;
       }
 
-      googleSearch.withQuery(siteURL, query);
-      if (searchResult instanceof Error && onError) {
-        onError(searchResult.message);
-        return searchResult;
+      const searchResult = await googleSearch.withQuery(siteURL, query);
+console.log(searchResult);
+
+      if (searchResult instanceof Error) {
+        if (onError) onError(searchResult.message);
+        continue;
       }
+      if (!searchResult.items || searchResult.items.length === 0) {
+        cloneDataArr[iteration].targetPage = 0;
+        cloneDataArr[iteration].links = [];
+        continue;
+      }
+
+      await throttling(delay_between_steps);
+      const siteInformation = searchResult.items as SiteFields[];
+
+      if (siteInformation.length > 5) siteInformation.length = 5; //cut to 5 entities
+      const links = siteInformation.map(site => site.link);
+      cloneDataArr[iteration].links = links;
+      cloneDataArr[iteration].targetPage = Number(searchResult.searchInformation.totalResults);
     }
+    return cloneDataArr;
   }
 }
 

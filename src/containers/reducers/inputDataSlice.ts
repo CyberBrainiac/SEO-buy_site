@@ -10,6 +10,7 @@ export interface InputData {
   totalPage?: number;
   targetPage?: number;
   thematicityIndex?: number;
+  links?: string[];
 }
 
 const inputDataAdapter = createEntityAdapter();

@@ -9,12 +9,18 @@ materials:
 import Excel from 'exceljs';
 import saveAs from 'file-saver';
 import { InputData, UrlArr } from '@/containers/reducers/inputDataSlice';
-import { ExcelColumnInfoType } from '@/containers/reducers/toolsSlice';
+import { ExcelColumnInfoType, ToolsName } from '@/containers/reducers/toolsSlice';
 import isURL from '@/utils/isURL';
 
 interface InputExcelData {
   inputData: InputData[];
   excelColumnInfo: ExcelColumnInfoType | undefined;
+}
+
+interface WriteProps {
+  inputData: InputData[];
+  query?: string;
+  toolName: ToolsName;
 }
 
 interface WriteExtendExcelProps {
@@ -178,32 +184,59 @@ async function readWithExcelColumnInfo(buffer: ArrayBuffer): Promise<InputExcelD
 
 /** WRITE Functions */
 
-async function write(inputData: InputData[], query: string = ''): Promise<boolean> {
+async function write({ inputData, query = '', toolName }: WriteProps): Promise<boolean> {
   const workbook = new Excel.Workbook();
   const worksheet = workbook.addWorksheet('Index Thematicity Data');
   const date = new Date();
 
-  if (query) {
-    query = query.slice(query.indexOf(`"`), query.length);
-  }
+  const LinkInsertionColumns = [
+    { header: 'Url', key: 'url', width: 26 },
+    { header: 'All pages with insertion', key: 'targetPage', width: 26 },
+    { header: 'Top link 1', key: 'topLink1', width: 20 },
+    { header: 'Link 2', key: 'topLink2', width: 20 },
+    { header: 'Link 3', key: 'topLink3', width: 20 },
+    { header: 'Link 4', key: 'topLink4', width: 20 },
+    { header: 'Link 5', key: 'topLink5', width: 20 },
+  ];
 
-  const fileName = `thematicity_${query}_${date.getDate()}-${
-    date.getMonth() + 1
-  }-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}.xlsx`;
-
-  // const rows = inputData.map(data => Object.values(data).slice(1));
-  const rows = inputData.map(data => {
-    const { url, thematicityIndex, targetPage, totalPage } = data; //in object STRING! data key save in alphabetical order
-    return [url, thematicityIndex, targetPage, totalPage];
-  });
-
-  worksheet.columns = [
+  const IndexThematicityColumns = [
     { header: 'Url', key: 'url', width: 26 },
     { header: 'Thematicity Index', key: 'thematicityIndex', width: 18 },
     { header: 'Target Pages', key: 'targetPage', width: 14 },
     { header: 'Total Site Pages', key: 'totalPage', width: 16 },
   ];
+
+  if (query) {
+    query = query.slice(query.indexOf(`"`), query.length);
+  }
+
+  const fileName = `${toolName}_${query}_${date.getDate()}-${
+    date.getMonth() + 1
+  }-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}.xlsx`;
+
+  const rows = inputData.map(data => {
+    const { url, thematicityIndex, targetPage, totalPage, links } = data; //in object STRING! data key save in alphabetical order
+
+    if (toolName === 'LinkInsertion') {
+      const sitesLink = links as string[];
+      return [url, targetPage, ...sitesLink];
+    } else {
+      //case for IndexThematicity
+      return [url, thematicityIndex, targetPage, totalPage];
+    }
+  });
+
+  worksheet.columns = (() => {
+    if (toolName === 'LinkInsertion') {
+      return LinkInsertionColumns;
+    } else {
+      //case for IndexThematicity
+      return IndexThematicityColumns;
+    }
+  })();
+
   worksheet.getRow(1).alignment = { horizontal: 'center' };
+  worksheet.getColumn(2).alignment = { horizontal: 'center' };
   worksheet.getRow(1).font = { bold: true };
   worksheet.addRows(rows);
 

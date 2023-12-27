@@ -6,13 +6,12 @@ import googleSearchConfig from './config/customGoogleSearch';
 async function withQuery(siteURL: string, query: string) {
   const apiKey = googleSearchConfig.apiKey;
   const cx = googleSearchConfig.cx;
-  console.log(siteURL, query);
 
   /** Search time ~ 0.33s */
   //fields=searchInformation/totalResults used to optimize the query
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(
+  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}%20${encodeURIComponent(
     query
-  )}%20site:${siteURL}`;
+  )}`;
   let response;
 
   try {
@@ -20,21 +19,17 @@ async function withQuery(siteURL: string, query: string) {
   } catch (error) {
     const axiosError = error as AxiosResponse;
 
-    if (axios.isAxiosError(axiosError)) {
-      handleHTTPError(axiosError, siteURL);
-    } else {
-      console.error(error);
+    if (!axios.isAxiosError(axiosError)) {
+      return error;
     }
-    return null;
+    return handleHTTPError(axiosError, siteURL);
   }
 
-  if (response && response.status === 200) {
-    const res = response.data;
-    return res;
-  } else {
-    handleHTTPError(response, siteURL);
-    return null;
+  if (response.status !== 200) {
+    return handleHTTPError(response, siteURL);
   }
+  const res = response.data;
+  return res;
 }
 
 //
@@ -51,21 +46,17 @@ async function site(siteURL: string) {
   } catch (error) {
     const axiosError = error as AxiosResponse;
 
-    if (axios.isAxiosError(axiosError)) {
-      handleHTTPError(axiosError, siteURL);
-    } else {
-      console.error(error);
+    if (!axios.isAxiosError(axiosError)) {
+      return error;
     }
-    return null;
+    return handleHTTPError(axiosError, siteURL);
   }
 
-  if (response && response.status === 200) {
-    const res = await response.data;
-    return res.searchInformation.totalResults;
-  } else {
-    handleHTTPError(response, siteURL);
-    return null;
+  if (response.status !== 200) {
+    return handleHTTPError(response, siteURL);
   }
+  const res = response.data;
+  return res;
 }
 
 //

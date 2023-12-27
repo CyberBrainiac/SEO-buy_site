@@ -4,7 +4,7 @@
 .container {
   position: absolute;
   top: -60px;
-  left: 39%;
+  left: 50%;
   width: 200px;
   text-align: center;
   padding: 5px;
@@ -14,6 +14,7 @@
   background-color: $text-color-main;
   color: $highlight-main;
   transition: $transition-fast;
+  transform: translateX(-50%);
 
   &_active {
     top: 104px;

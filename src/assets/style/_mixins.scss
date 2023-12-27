@@ -23,6 +23,7 @@
   font-style: normal;
   text-transform: capitalize;
   font-weight: 400;
+  line-height: 1.2;
 }
 
 @mixin common-text($font-weight: 400) {
@@ -31,6 +32,7 @@
   font-style: normal;
   font-weight: 400;
   font-family: $Open-Sans;
+  line-height: 1.2;
 }
 
 /*Images*/
@@ -93,9 +95,8 @@
 /*Shadows*/
 @mixin card-shadow() {
   box-shadow:
-    0 2px 4px 0 rgba(0, 0, 0, 0.2),
-    5px 15px 20px 0 rgba(0, 0, 0, 0.1),
-    0 25px 50px 0 rgba(0, 0, 0, 0.1);
+    0 2px 4px #0003,
+    0 4px 8px #0004;
 }
 
 /*Container*/

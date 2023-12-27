@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
-import fileExcel from '@/pages/thematIndex/fileExcel';
+import fileExcel from '@/utils/fileExcel';
 import calcThematicityIndex from '@/pages/thematIndex/calcThematicityIndex';
 import fireStore from '@/services/fireStore';
 import { useDispatch, useSelector } from 'react-redux';
@@ -68,7 +68,7 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    fileExcel.write(inputData, userQuery);
+    fileExcel.write({ inputData: inputData, query: userQuery, toolName: 'IndexThematicity' });
   };
 
   //
@@ -168,11 +168,18 @@ const ThematicityIndex: React.FC = () => {
           <div className={style.acceptedDescription}>
             {upLoadedFile ? <p>{`Uploaded file: ${upLoadedFile?.name}`}</p> : null}
           </div>
+          <ButtonCommon
+            className={style.exampleBtn}
+            onClick={handleCreateExample}
+            text={'Load Example'}
+          />
         </aside>
 
         <form onSubmit={formHandler} className={style.form}>
           <div className={style.formContainer}>
-            <label htmlFor="ThemIndRequest">Write keyword or theme</label>
+            <label className={style.formLabel} htmlFor="ThemIndRequest">
+              Write keyword
+            </label>
             <input
               id="ThemIndRequest"
               name="request"
@@ -190,15 +197,18 @@ const ThematicityIndex: React.FC = () => {
                   : 'Get Thematicity Index'
               }
             />
+            <ButtonCommon
+              type='button'
+              className={style.loadBtn}
+              id="buttonLoadIndexThemat"
+              onClick={handleLoadResult}
+              text="Load Result"
+            />
           </div>
         </form>
 
-        <div className={style.errorContainer}>{errorMessage}</div>
         <div className={style.logContainer}>{logProgress}</div>
-        <div className={style.loadBtnContainer}>
-          <ButtonCommon onClick={handleCreateExample} text={'Download Example'} />
-          <ButtonCommon id="buttonLoadIndexThemat" onClick={handleLoadResult} text="Load Result" />
-        </div>
+        <div className={style.errorContainer}>{errorMessage}</div>
       </div>
     </section>
   );

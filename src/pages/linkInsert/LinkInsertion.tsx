@@ -2,25 +2,30 @@ import React, { FormEvent, useState } from 'react';
 import style from './linkInsertion.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  selectLinkInsertionRequest,
   selectLinkInsertionStatus,
   setRequestLinkInsertion,
   setStatusLinkInsertion,
   toolStatusValues,
 } from '@/containers/reducers/toolsSlice';
 import { AppDispatch } from '@/containers/storeRedux';
-import { addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
+import { InputData, addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
 import { selectUser, setInformMessage } from '@/containers/reducers/userSlice';
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import InputFile from '@/components/inputFile/InputFile';
-import fileExcel from '../thematIndex/fileExcel';
+import fileExcel from '../../utils/fileExcel';
 import fireStore from '@/services/fireStore';
+import getLinkInsertion from './getLinkInsertion';
 
 const LinkInsertion: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
-  const inputData = useSelector(selectInputData);
+  const inputData = useSelector(selectInputData) as InputData[];
   const userProfile = useSelector(selectUser);
   const toolStatus = useSelector(selectLinkInsertionStatus);
+  const userQuery = useSelector(selectLinkInsertionRequest);
   const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
+  const [logProgress, setLogProgress] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   //
   const handleFileUpload = (file: File) => {
@@ -53,6 +58,21 @@ const LinkInsertion: React.FC = () => {
       return null;
     }
     dispatch(addInputData(data));
+  };
+
+  //Write new Excel file
+  const handleLoadResult = async () => {
+    if (!inputData) {
+      alert('Upload your file.xlsx or use Example file');
+      return null;
+    }
+
+    fileExcel.write({ inputData: inputData, query: userQuery, toolName: 'LinkInsertion' });
+  };
+
+  //
+  const handleCreateExample = () => {
+    fileExcel.createExample();
   };
 
   const formHandler = async (event: FormEvent) => {
@@ -97,8 +117,27 @@ const LinkInsertion: React.FC = () => {
       return null;
     }
 
+    const calculatedData = await getLinkInsertion({
+      inputDataArr: inputData,
+      query: request,
+      onUpdate: progressHandler,
+      onError: errorHandler,
+    });
+
+    if (!calculatedData) return undefined;
+    dispatch(addInputData(calculatedData));
     dispatch(setStatusLinkInsertion(toolStatusValues.Idle));
     dispatch(setInformMessage('Successfully done'));
+  };
+
+  //
+  const progressHandler = (value: string) => {
+    setLogProgress(value);
+  };
+
+  //
+  const errorHandler = (errorMessage: string) => {
+    setErrorMessage(errorMessage);
   };
 
   const userInf = userProfile ? (
@@ -125,11 +164,18 @@ const LinkInsertion: React.FC = () => {
           <div className={style.acceptedDescription}>
             {upLoadedFile ? <p>{`Uploaded file: ${upLoadedFile?.name}`}</p> : null}
           </div>
+          <ButtonCommon
+            className={style.exampleBtn}
+            onClick={handleCreateExample}
+            text={'Load Example'}
+          />
         </aside>
 
         <form onSubmit={formHandler} className={style.form}>
           <div className={style.formContainer}>
-            <label htmlFor="ThemIndRequest">Write keyword or theme</label>
+            <label className={style.formLabel} htmlFor="ThemIndRequest">
+              Write keyword
+            </label>
             <input
               id="ThemIndRequest"
               name="request"
@@ -144,13 +190,20 @@ const LinkInsertion: React.FC = () => {
               text={
                 toolStatus === toolStatusValues.Working
                   ? 'Index Is Calculated'
-                  : 'Get Thematicity Index'
+                  : 'Get Link Insertion'
               }
+            />
+            <ButtonCommon
+              type='button'
+              className={style.loadBtn}
+              id="buttonLoadIndexThemat"
+              onClick={handleLoadResult}
+              text="Load Result"
             />
           </div>
         </form>
-
-        <div className={style.showTopResult}></div>
+        <div className={style.logContainer}>{logProgress}</div>
+        <div className={style.errorContainer}>{errorMessage}</div>
       </div>
     </section>
   );

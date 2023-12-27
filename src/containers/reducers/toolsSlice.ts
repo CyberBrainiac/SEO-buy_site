@@ -3,6 +3,8 @@ import { AppRootState } from '../storeRedux';
 import locStorage, { locKeys } from '@/utils/localStorage';
 
 type ToolStatusValues = 'idle' | 'working' | 'succeeded' | 'failed';
+export type ToolsName = 'LinkInsertion' | 'IndexThematicity';
+
 export const toolStatusValues = {
   Idle: 'idle',
   Working: 'working',
@@ -19,14 +21,14 @@ interface LinkInsertionProps {
   status: ToolStatusValues;
   request?: string;
 }
-interface indexThematicityProps {
+interface IndexThematicityProps {
   status: ToolStatusValues;
   request?: string;
   excelColumnInfo?: ExcelColumnInfoType;
 }
 interface InitialStateProps {
   linkInsertion: LinkInsertionProps;
-  indexThematicity: indexThematicityProps;
+  indexThematicity: IndexThematicityProps;
 }
 
 const initialState: InitialStateProps = {
@@ -72,6 +74,8 @@ export default toolsSlice.reducer;
 /** Selectors */
 
 export const selectLinkInsertionStatus = (state: AppRootState) => state.tools.linkInsertion.status;
+export const selectLinkInsertionRequest = (state: AppRootState) =>
+  state.tools.linkInsertion.request;
 export const selectExcelColumnInfo = (state: AppRootState) =>
   state.tools.indexThematicity.excelColumnInfo;
 export const selectIndexThematicityRequest = (state: AppRootState) =>
