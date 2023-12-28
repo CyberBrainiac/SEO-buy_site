@@ -76,7 +76,7 @@ export const addInputData = createAsyncThunk(
   }
 );
 export const removeInputData = createAsyncThunk('inputData/removeInputData', async () => {
-  await localStorage.removeItem(locKeys.inputData);
+  await locStorage.remove(locKeys.inputData);
 });
 
 export const setFileName = createAsyncThunk('inputData/setFileName', async (name: string) => {
@@ -84,5 +84,5 @@ export const setFileName = createAsyncThunk('inputData/setFileName', async (name
   return name;
 });
 export const removeFileName = createAsyncThunk('inputData/removeFileName', async () => {
-  await localStorage.removeItem(locKeys.fileName);
+  await locStorage.remove(locKeys.fileName);
 });

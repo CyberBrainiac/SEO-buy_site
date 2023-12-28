@@ -81,5 +81,5 @@ export const modifyUserProfl = createAsyncThunk(
 
 //
 export const deleteUserProfl = createAsyncThunk('user/deleteUserProfl', async () => {
-  await localStorage.removeItem(locKeys.userProfl);
+  await locStorage.remove(locKeys.userProfl);
 });
