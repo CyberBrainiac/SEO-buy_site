@@ -9,7 +9,12 @@ import {
   toolStatusValues,
 } from '@/containers/reducers/toolsSlice';
 import { AppDispatch } from '@/containers/storeRedux';
-import { InputData, addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
+import {
+  InputData,
+  addInputData,
+  selectFileName,
+  selectInputData,
+} from '@/containers/reducers/inputDataSlice';
 import { selectUser, setInformMessage } from '@/containers/reducers/userSlice';
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import InputFile from '@/components/inputFile/InputFile';
@@ -20,10 +25,10 @@ import getLinkInsertion from './getLinkInsertion';
 const LinkInsertion: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
   const inputData = useSelector(selectInputData) as InputData[];
+  const loadedFileName = useSelector(selectFileName);
   const userProfile = useSelector(selectUser);
   const toolStatus = useSelector(selectLinkInsertionStatus);
   const userQuery = useSelector(selectLinkInsertionRequest);
-  const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -39,13 +44,6 @@ const LinkInsertion: React.FC = () => {
     reader.onerror = error => {
       console.error('Error in File Reader', error);
     };
-
-    if (!file) {
-      alert("Please, provide Excel file with correct extension: 'example.xlsx'");
-      return null;
-    }
-
-    setUpLoadedFile(file);
     reader.readAsArrayBuffer(file);
   };
 
@@ -83,16 +81,16 @@ const LinkInsertion: React.FC = () => {
     let inputKeyword = formData.get('request') as string;
     inputKeyword = inputKeyword.trim();
 
-    if (!inputData) {
-      alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
+    if (!inputData.length) {
+      alert('Upload list of url');
       return null;
     }
     if (!userProfile) {
-      alert('First you need to register');
+      alert('Need to sign in');
       return null;
     }
     if (!inputKeyword) {
-      alert('Empty request detected');
+      alert('Empty request');
       return;
     }
 
@@ -141,14 +139,14 @@ const LinkInsertion: React.FC = () => {
   };
 
   const userInf = userProfile ? (
-    <>
+    <div className={style.userInf}>
       <div className={style.userInf__freeReq}>
         You have: {userProfile.freeRequest} free calculations
       </div>
       <div className={style.userInf__walletBal}>Wallet balance: {userProfile.walletBalance}$</div>
-    </>
+    </div>
   ) : (
-    <div className={style.userInf__unAuthMessage}>
+    <div className={style.userInfNonAuth}>
       Sign up now and get 20 free thematicity index calculation per day!
     </div>
   );
@@ -157,12 +155,12 @@ const LinkInsertion: React.FC = () => {
     <section className="linkInsertion">
       <div className={style.container}>
         <h1 className={style.mainHeading}>Link Insertion Tool</h1>
-        <div className={style.userInf}>{userInf}</div>
+        {userInf}
 
         <InputFile onFileUpload={handleFileUpload} />
         <aside className={style.acceptedFiles}>
           <div className={style.acceptedDescription}>
-            {upLoadedFile ? <p>{`Uploaded file: ${upLoadedFile?.name}`}</p> : null}
+            {loadedFileName ? <p>{`Uploaded file: ${loadedFileName}`}</p> : null}
           </div>
           <ButtonCommon
             className={style.exampleBtn}
@@ -194,7 +192,7 @@ const LinkInsertion: React.FC = () => {
               }
             />
             <ButtonCommon
-              type='button'
+              type="button"
               className={style.loadBtn}
               id="buttonLoadIndexThemat"
               onClick={handleLoadResult}

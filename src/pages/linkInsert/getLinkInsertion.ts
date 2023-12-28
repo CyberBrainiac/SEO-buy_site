@@ -74,13 +74,12 @@ async function getLinkInsertion({ inputDataArr, query, onUpdate, onError }: GetL
       }
 
       const searchResult = await googleSearch.withQuery(siteURL, query);
-console.log(searchResult);
 
       if (searchResult instanceof Error) {
         if (onError) onError(searchResult.message);
         continue;
       }
-      if (!searchResult.items || searchResult.items.length === 0) {
+      if (!searchResult.items?.length) {
         cloneDataArr[iteration].targetPage = 0;
         cloneDataArr[iteration].links = [];
         continue;

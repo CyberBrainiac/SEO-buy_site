@@ -59,11 +59,20 @@ const toolsSlice = createSlice({
       .addCase(setRequestLinkInsertion.fulfilled, (state, action) => {
         state.linkInsertion.request = action.payload;
       })
+      .addCase(deleteRequestLinkInsertion.fulfilled, state => {
+        state.linkInsertion.request = undefined;
+      })
       .addCase(setExcelColumnInfo.fulfilled, (state, action) => {
         state.indexThematicity.excelColumnInfo = action.payload;
       })
       .addCase(setRequestIndexThematicity.fulfilled, (state, action) => {
         state.indexThematicity.request = action.payload;
+      })
+      .addCase(deleteRequestIndexThematicity.fulfilled, state => {
+        state.indexThematicity.request = undefined;
+      })
+      .addCase(deleteExcelColumnInfo.fulfilled, state => {
+        state.indexThematicity.excelColumnInfo = undefined;
       });
   },
 });
@@ -92,6 +101,13 @@ export const setRequestLinkInsertion = createAsyncThunk(
     return data;
   }
 );
+export const deleteRequestLinkInsertion = createAsyncThunk(
+  'deleteRequestLinkInsertion',
+  async () => {
+    await locStorage.remove(locKeys.linkInsertionRequest);
+  }
+);
+
 export const setExcelColumnInfo = createAsyncThunk(
   'tools/indexThematicity/setExcelColumnInfo',
   async (data: ExcelColumnInfoType) => {
@@ -106,3 +122,12 @@ export const setRequestIndexThematicity = createAsyncThunk(
     return data;
   }
 );
+export const deleteRequestIndexThematicity = createAsyncThunk(
+  'deleteRequestIndexThematicity',
+  async () => {
+    await locStorage.remove(locKeys.indexThematicityRequest);
+  }
+);
+export const deleteExcelColumnInfo = createAsyncThunk('deleteExcelColumnInfo', async () => {
+  await locStorage.remove(locKeys.excelColumnInfo);
+});

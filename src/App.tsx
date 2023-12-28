@@ -10,7 +10,7 @@ import RootLayout from './components/layout/RootLayout';
 import Home from './pages/home/Home';
 import ThematicityIndex from './pages/thematIndex/ThematicityIndex';
 import locStorage, { locKeys } from './utils/localStorage';
-import { addInputData } from './containers/reducers/inputDataSlice';
+import { addInputData, setFileName } from './containers/reducers/inputDataSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './containers/storeRedux';
 import {
@@ -23,24 +23,35 @@ import LinkInsertion from './pages/linkInsert/LinkInsertion';
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
 
-  //
+  //Layout preloader
   async function loadSavedData() {
-    const urls = await locStorage.get(locKeys.inputData);
+    /** This error handler is VERY! IMPORTANT!
+     *  If error occurs in this loader, the application crashed without any information
+     * */
+    try {
+      const urls = await locStorage.get(locKeys.inputData);
 
-    if (urls) dispatch(addInputData(urls));
-    const excelColumnInfo = await locStorage.get(locKeys.excelColumnInfo);
+      if (urls) dispatch(addInputData(urls));
+      const savedFileName = await locStorage.get(locKeys.fileName);
+      const fileName = savedFileName?.fileName;
 
-    if (excelColumnInfo) dispatch(setExcelColumnInfo(excelColumnInfo));
-    const requestIndxT = await locStorage.get(locKeys.indexThematicityRequest);
-    const unpackReqestIndxT = requestIndxT?.request;
+      if (fileName) dispatch(setFileName(fileName));
+      const excelColumnInfo = await locStorage.get(locKeys.excelColumnInfo);
 
-    if (unpackReqestIndxT) dispatch(setRequestIndexThematicity(unpackReqestIndxT));
-    const requestLinkIns = await locStorage.get(locKeys.linkInsertionRequest);
-    const unpackRequestLinkIns = requestLinkIns?.request;
+      if (excelColumnInfo) dispatch(setExcelColumnInfo(excelColumnInfo));
+      const requestIndxT = await locStorage.get(locKeys.indexThematicityRequest);
+      const unpackReqestIndxT = requestIndxT?.request;
 
-    if (unpackRequestLinkIns) dispatch(setRequestLinkInsertion(unpackRequestLinkIns));
+      if (unpackReqestIndxT) dispatch(setRequestIndexThematicity(unpackReqestIndxT));
+      const requestLinkIns = await locStorage.get(locKeys.linkInsertionRequest);
+      const unpackRequestLinkIns = requestLinkIns?.request;
 
-    return { urls, excelColumnInfo, unpackReqestIndxT };
+      if (unpackRequestLinkIns) dispatch(setRequestLinkInsertion(unpackRequestLinkIns));
+
+      return { urls, fileName, excelColumnInfo, unpackReqestIndxT, unpackRequestLinkIns };
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   //

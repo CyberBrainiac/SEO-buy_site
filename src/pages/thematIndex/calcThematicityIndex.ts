@@ -72,18 +72,13 @@ async function calcThematicityIndex({
       if (siteURL === '') {
         continue;
       }
-
-      // const targetPageStr = await searchWithQuery(siteURL);
       const searchResult = await googleSearch.withQuery(siteURL, query);
 
       if (searchResult instanceof Error) {
         if (onError) onError(searchResult.message);
         continue;
       }
-
-      const targetPageStr = searchResult.searchInformation.totalResults;
-      const targetPage = Number(targetPageStr);
-
+      const targetPage = Number(searchResult.searchInformation.totalResults);
       await throttling(delay_between_steps);
       let thematicIndex = 0;
 
@@ -106,13 +101,14 @@ async function calcThematicityIndex({
           break;
         }
 
-        const totalPage = await googleSearch.site(siteURL);
+        const searchResult = await googleSearch.site(siteURL);
 
-        if (totalPage instanceof Error) {
-          if (onError) onError(totalPage.message);
+        if (searchResult instanceof Error) {
+          if (onError) onError(searchResult.message);
           continue;
         }
         await throttling(delay_between_steps);
+        const totalPage = Number(searchResult.searchInformation.totalResults);
 
         if (totalPage === null || totalPage === 0) {
           obj.totalPage = 0;

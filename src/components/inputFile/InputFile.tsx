@@ -1,17 +1,27 @@
+import { setFileName } from '@/containers/reducers/inputDataSlice';
+import { AppDispatch } from '@/containers/storeRedux';
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useDispatch } from 'react-redux';
 
 interface InputFileProps {
   onFileUpload: (file: File) => void;
 }
 
 const InputFile: React.FC<InputFileProps> = ({ onFileUpload }) => {
+  const dispatch = useDispatch() as AppDispatch;
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      if (!acceptedFiles.length) {
+        alert("Provide Excel file with correct extension: '.xlsx'");
+        return;
+      }
       const uploadedFile = acceptedFiles[0];
+      dispatch(setFileName(uploadedFile.name));
       onFileUpload(uploadedFile);
     },
-    [onFileUpload]
+    [onFileUpload, dispatch]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

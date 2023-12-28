@@ -13,8 +13,13 @@ import { UserInfo } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { deleteUserProfl, setUserProfl } from '../containers/reducers/userSlice';
 import { AuthContext, AuthenticationArg } from './AuthContext';
-import { removeInputData } from './reducers/inputDataSlice';
+import { removeFileName, removeInputData } from './reducers/inputDataSlice';
 import { AppDispatch } from './storeRedux';
+import {
+  deleteExcelColumnInfo,
+  deleteRequestIndexThematicity,
+  deleteRequestLinkInsertion,
+} from './reducers/toolsSlice';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -66,8 +71,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   //
   const deleteUser = async () => {
-    dispatch(deleteUserProfl());
-    dispatch(await removeInputData());
+    const promiseTuple = [
+      dispatch(deleteUserProfl()),
+      dispatch(removeInputData()),
+      dispatch(removeFileName()),
+      dispatch(deleteRequestLinkInsertion()),
+      dispatch(deleteRequestIndexThematicity()),
+      dispatch(deleteExcelColumnInfo()),
+    ];
+
+    await Promise.all(promiseTuple);
     setAuthentication(undefined);
     return await firebaseAuth.logOut();
   };
@@ -77,46 +90,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     //get user Profile from Local Storage
     let savedUserProfile;
 
-    if (!authentication) {
-      savedUserProfile = locStorage.get(locKeys.userProfl);
-    }
-
-    if (authentication || savedUserProfile) {
-      /* 
-      Subscribe to user profile for realtime update
-      Will be called each time after using 'modifyUserProfl' function 
-      */
-
-      const userId = authentication?.uid || savedUserProfile?.uid;
-      const userProflRef = doc(db, 'users', userId);
-      const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
-        const modifiedUserProfile = querySnapshot.data() as FirestoreUserProfile;
-        if (!modifiedUserProfile) {
-          console.error('onSnapshot returns unexpected value');
-          return;
-        }
-
-        /**
-         * in same situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'! Why?
-         */
-        if (!modifiedUserProfile.lastLogIn) {
-          //du to 2 renders
-          console.log('too many request on Firebase');
-          return;
-        }
-
-        const userProfile = serializeUserProfile(modifiedUserProfile);
-        dispatch(setUserProfl(userProfile));
-      });
-
-      if (savedUserProfile) {
-        modifyUserLogin(savedUserProfile.uid);
+    (async () => {
+      if (!authentication) {
+        savedUserProfile = (await locStorage.get(locKeys.userProfl)) as UserProfile;
       }
 
-      return () => {
-        unsubscribe();
-      };
-    }
+      if (authentication || savedUserProfile) {
+        /* 
+        Subscribe to user profile for realtime update
+        Will be called each time after using 'modifyUserProfl' function 
+        */
+
+        const userId = authentication?.uid || savedUserProfile?.uid;
+
+        if (!userId) return;
+        const userProflRef = doc(db, 'users', userId);
+        const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
+          const modifiedUserProfile = querySnapshot.data() as FirestoreUserProfile;
+          if (!modifiedUserProfile) {
+            console.error('onSnapshot returns unexpected value');
+            return;
+          }
+
+          /**
+           * in same situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'! Why?
+           */
+          if (!modifiedUserProfile.lastLogIn) {
+            //du to 2 renders
+            console.log('too many request on Firebase');
+            return;
+          }
+
+          const userProfile = serializeUserProfile(modifiedUserProfile);
+          dispatch(setUserProfl(userProfile));
+        });
+
+        if (savedUserProfile) {
+          modifyUserLogin(savedUserProfile.uid);
+        }
+
+        return () => {
+          unsubscribe();
+        };
+      }
+    })();
   }, [authentication, dispatch]);
 
   //Modify login time and set free request

@@ -14,7 +14,9 @@ export interface InputData {
 }
 
 const inputDataAdapter = createEntityAdapter();
-const initialState = inputDataAdapter.getInitialState();
+const initialState = inputDataAdapter.getInitialState({
+  fileName: '',
+});
 
 const inputDataSlice = createSlice({
   name: 'inputData',
@@ -29,6 +31,12 @@ const inputDataSlice = createSlice({
       })
       .addCase(removeInputData.fulfilled, state => {
         inputDataAdapter.removeAll(state);
+      })
+      .addCase(setFileName.fulfilled, (state, action) => {
+        state.fileName = action.payload;
+      })
+      .addCase(removeFileName.fulfilled, state => {
+        state.fileName = '';
       });
   },
 });
@@ -39,6 +47,7 @@ export default inputDataSlice.reducer;
 //selectAll automatically converts 'object' to 'arr' then returns state value
 export const { selectAll: selectInputData, selectById: selectInputDataById } =
   inputDataAdapter.getSelectors<AppRootState>(state => state.inputData);
+export const selectFileName = (state: AppRootState) => state.inputData.fileName;
 
 /** Thunk functions */
 export const addInputData = createAsyncThunk(
@@ -66,7 +75,14 @@ export const addInputData = createAsyncThunk(
     return convertedInputData;
   }
 );
-
 export const removeInputData = createAsyncThunk('inputData/removeInputData', async () => {
   await localStorage.removeItem(locKeys.inputData);
+});
+
+export const setFileName = createAsyncThunk('inputData/setFileName', async (name: string) => {
+  await locStorage.set(locKeys.fileName, { fileName: name });
+  return name;
+});
+export const removeFileName = createAsyncThunk('inputData/removeFileName', async () => {
+  await localStorage.removeItem(locKeys.fileName);
 });

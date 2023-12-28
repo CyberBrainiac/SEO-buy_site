@@ -29,7 +29,8 @@
     color: $highlight-additional;
   }
 
-  &__unAuthMessage {
+  &NonAuth {
+    @include common-text();
     font-size: 28px;
     color: $highlight-additional;
   }

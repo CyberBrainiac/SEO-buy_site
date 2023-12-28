@@ -8,7 +8,7 @@ async function withQuery(siteURL: string, query: string) {
   const cx = googleSearchConfig.cx;
 
   /** Search time ~ 0.33s */
-  //fields=searchInformation/totalResults used to optimize the query
+  //fields=searchInformation/totalResults used to optimize the query. This is Filter, but response structure will be the same
   const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}%20${encodeURIComponent(
     query
   )}`;
@@ -37,7 +37,7 @@ async function site(siteURL: string) {
   const apiKey = googleSearchConfig.apiKey;
   const cx = googleSearchConfig.cx;
 
-  //fields=searchInformation/totalResults used to optimize the query
+  //fields=searchInformation/totalResults used to optimize the query. This is Filter, but response structure will be the same
   const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}&fields=searchInformation/totalResults`;
   let response;
 

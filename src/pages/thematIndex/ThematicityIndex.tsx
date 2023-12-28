@@ -8,7 +8,12 @@ import fireStore from '@/services/fireStore';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setInformMessage } from '@/containers/reducers/userSlice';
 import { AppDispatch } from '@/containers/storeRedux';
-import { InputData, addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
+import {
+  InputData,
+  addInputData,
+  selectFileName,
+  selectInputData,
+} from '@/containers/reducers/inputDataSlice';
 import {
   selectIndexThematicityRequest,
   selectIndexThematicityStatus,
@@ -18,7 +23,6 @@ import {
 } from '@/containers/reducers/toolsSlice';
 
 const ThematicityIndex: React.FC = () => {
-  const [upLoadedFile, setUpLoadedFile] = useState<File | null>(null);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -27,6 +31,7 @@ const ThematicityIndex: React.FC = () => {
   const inputData = useSelector(selectInputData) as InputData[];
   const userQuery = useSelector(selectIndexThematicityRequest) as string;
   const toolStatus = useSelector(selectIndexThematicityStatus);
+  const loadedFileName = useSelector(selectFileName);
 
   //
   const handleFileUpload = (file: File) => {
@@ -41,12 +46,6 @@ const ThematicityIndex: React.FC = () => {
       console.error('Error in File Reader', error);
     };
 
-    if (!file) {
-      alert("Please, provide Excel file with correct extension: 'example.xlsx'");
-      return null;
-    }
-
-    setUpLoadedFile(file);
     reader.readAsArrayBuffer(file);
   };
 
@@ -97,7 +96,7 @@ const ThematicityIndex: React.FC = () => {
     inputKeyword = inputKeyword.trim();
 
     if (!inputKeyword) {
-      alert('Empty request detected');
+      alert('Empty request');
       return;
     }
 
@@ -107,12 +106,12 @@ const ThematicityIndex: React.FC = () => {
       return null;
     }
 
-    if (!inputData) {
-      alert('First upload your file.xlsx \n\rYou can use example.xlsx for correct data structure');
+    if (!inputData.length) {
+      alert('Upload list of url');
       return null;
     }
     if (!userProfile) {
-      alert('First you need to register');
+      alert('Need to sign in');
       return null;
     }
 
@@ -166,7 +165,7 @@ const ThematicityIndex: React.FC = () => {
         <InputFile onFileUpload={handleFileUpload} />
         <aside className={style.acceptedFiles}>
           <div className={style.acceptedDescription}>
-            {upLoadedFile ? <p>{`Uploaded file: ${upLoadedFile?.name}`}</p> : null}
+            {loadedFileName ? <p>{`Uploaded file: ${loadedFileName}`}</p> : null}
           </div>
           <ButtonCommon
             className={style.exampleBtn}
@@ -198,7 +197,7 @@ const ThematicityIndex: React.FC = () => {
               }
             />
             <ButtonCommon
-              type='button'
+              type="button"
               className={style.loadBtn}
               id="buttonLoadIndexThemat"
               onClick={handleLoadResult}
