@@ -10,6 +10,7 @@ export type AuthenticationArg = 'Google' | 'Facebook';
 interface AuthContextProps {
   setUser: (provider: AuthenticationArg) => Promise<UserProfile | undefined>;
   deleteUser: () => Promise<boolean>;
+  setAuthentication: React.Dispatch<React.SetStateAction<UserProfile | undefined>>;
 }
 
 const initialProps = {
@@ -19,6 +20,7 @@ const initialProps = {
   deleteUser: async () => {
     return false;
   },
+  setAuthentication: () => {},
 };
 
 export const AuthContext = createContext<AuthContextProps>(initialProps);

@@ -6,9 +6,8 @@ import fireStore, {
   serializeUserProfile,
 } from '@/services/fireStore';
 import { db } from '@/services/config/firebase';
-import { Timestamp, doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import AuthError from '@/utils/errorHandlers/authError';
-import locStorage, { locKeys } from '@/utils/localStorage';
 import { UserInfo } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { deleteUserProfl, setUserProfl } from '../containers/reducers/userSlice';
@@ -62,7 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const userProfl = serializeUserProfile(FirestoreUserProfile);
 
     if (isCustomer) {
-      modifyUserLogin(userProfl.uid);
+      await fireStore.modifyFreeRequest(userProfl.uid);
     }
 
     setAuthentication(userProfl);
@@ -88,78 +87,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   //
   useEffect(() => {
     //get user Profile from Local Storage
-    let savedUserProfile;
+    if (authentication) {
+      /* 
+      Subscribe to user profile for realtime update
+      Will be called each time after using 'modifyUserProfl' function 
+      */
 
-    (async () => {
-      if (!authentication) {
-        savedUserProfile = (await locStorage.get(locKeys.userProfl)) as UserProfile;
-      }
+      const userId = authentication.uid;
+      const userProflRef = doc(db, 'users', userId);
+      const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
+        const modifiedUserProfile = querySnapshot.data() as FirestoreUserProfile;
 
-      if (authentication || savedUserProfile) {
-        /* 
-        Subscribe to user profile for realtime update
-        Will be called each time after using 'modifyUserProfl' function 
-        */
-
-        const userId = authentication?.uid || savedUserProfile?.uid;
-
-        if (!userId) return;
-        const userProflRef = doc(db, 'users', userId);
-        const unsubscribe = onSnapshot(userProflRef, querySnapshot => {
-          const modifiedUserProfile = querySnapshot.data() as FirestoreUserProfile;
-          if (!modifiedUserProfile) {
-            console.error('onSnapshot returns unexpected value');
-            return;
-          }
-
-          /**
-           * in same situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'! Why?
-           */
-          if (!modifiedUserProfile.lastLogIn) {
-            //du to 2 renders
-            console.log('too many request on Firebase');
-            return;
-          }
-
-          const userProfile = serializeUserProfile(modifiedUserProfile);
-          dispatch(setUserProfl(userProfile));
-        });
-
-        if (savedUserProfile) {
-          modifyUserLogin(savedUserProfile.uid);
+        if (!modifiedUserProfile) {
+          console.error('onSnapshot returns unexpected value');
+          return;
+        }
+        /**
+         * in same situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'! Why?
+         */
+        if (!modifiedUserProfile.lastLogIn) {
+          //du to 2 renders
+          console.log('too many request on Firebase');
+          return;
         }
 
-        return () => {
-          unsubscribe();
-        };
-      }
-    })();
+        const userProfile = serializeUserProfile(modifiedUserProfile);
+        dispatch(setUserProfl(userProfile));
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
   }, [authentication, dispatch]);
 
-  //Modify login time and set free request
-  async function modifyUserLogin(uid: string) {
-    const FirestoreUserProfile = await fireStore.getUserProfl(uid);
-
-    if (!FirestoreUserProfile) {
-      alert('Authorization error');
-      return;
-    }
-    const userProfl = serializeUserProfile(FirestoreUserProfile);
-    const dayInMillSec = 86400000;
-    const lastLogIn = Timestamp.now();
-
-    //take user additional free request
-    if (Date.now() - userProfl.whenFreebies >= dayInMillSec) {
-      return fireStore.modifyUser(userProfl.uid, {
-        lastLogIn,
-        freeRequest: 20,
-        whenFreebies: Timestamp.now(),
-      });
-    }
-
-    //Update lastLogIn every time user interact with site
-    return fireStore.modifyUser(userProfl.uid, { lastLogIn });
-  }
-
-  return <AuthContext.Provider value={{ setUser, deleteUser }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ setUser, deleteUser, setAuthentication }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

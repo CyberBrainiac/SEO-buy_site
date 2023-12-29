@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useRef } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -10,18 +10,23 @@ import RootLayout from './components/layout/RootLayout';
 import Home from './pages/home/Home';
 import ThematicityIndex from './pages/thematIndex/ThematicityIndex';
 import locStorage, { locKeys } from './utils/localStorage';
-import { addInputData, setFileName } from './containers/reducers/inputDataSlice';
+import { addInputData, InputData, setFileName } from './containers/reducers/inputDataSlice';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './containers/storeRedux';
 import {
+  ExcelColumnInfoType,
   setExcelColumnInfo,
   setRequestIndexThematicity,
   setRequestLinkInsertion,
 } from './containers/reducers/toolsSlice';
 import LinkInsertion from './pages/linkInsert/LinkInsertion';
+import fireStore, { UserProfile } from './services/fireStore';
+import { AuthContext } from './containers/AuthContext';
 
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
+  const { setAuthentication } = useContext(AuthContext);
+  const firstLoad = useRef(true);
 
   //Layout preloader
   async function loadSavedData() {
@@ -29,35 +34,53 @@ const App: React.FC = () => {
      *  If error occurs in this loader, the application crashed without any information
      * */
     try {
-      const urls = await locStorage.get(locKeys.inputData);
+      const savedUserProfile = (await locStorage.get(locKeys.userProfl)) as UserProfile;
 
-      if (urls) dispatch(addInputData(urls));
-      const savedFileName = await locStorage.get(locKeys.fileName);
-      const fileName = savedFileName?.fileName;
+      if (savedUserProfile) {
+        setAuthentication(savedUserProfile);
+        fireStore.modifyFreeRequest(savedUserProfile.uid);
+      }
 
-      if (fileName) dispatch(setFileName(fileName));
-      const excelColumnInfo = await locStorage.get(locKeys.excelColumnInfo);
+      const promiseTuple = [
+        locStorage.get(locKeys.inputData),
+        locStorage.get(locKeys.fileName),
+        locStorage.get(locKeys.excelColumnInfo),
+        locStorage.get(locKeys.indexThematicityRequest),
+        locStorage.get(locKeys.linkInsertionRequest),
+      ];
 
-      if (excelColumnInfo) dispatch(setExcelColumnInfo(excelColumnInfo));
-      const requestIndxT = await locStorage.get(locKeys.indexThematicityRequest);
-      const unpackReqestIndxT = requestIndxT?.request;
+      Promise.all(promiseTuple)
+        .then(resArr => {
+          const [urls, fileName, excelColumnInfo, requestIndxT, requestLinkIns] = resArr;
 
-      if (unpackReqestIndxT) dispatch(setRequestIndexThematicity(unpackReqestIndxT));
-      const requestLinkIns = await locStorage.get(locKeys.linkInsertionRequest);
-      const unpackRequestLinkIns = requestLinkIns?.request;
-
-      if (unpackRequestLinkIns) dispatch(setRequestLinkInsertion(unpackRequestLinkIns));
-
-      return { urls, fileName, excelColumnInfo, unpackReqestIndxT, unpackRequestLinkIns };
+          if (urls) dispatch(addInputData(urls as InputData[]));
+          if (fileName) dispatch(setFileName(fileName as string));
+          if (excelColumnInfo) dispatch(setExcelColumnInfo(excelColumnInfo as ExcelColumnInfoType));
+          if (requestIndxT) dispatch(setRequestIndexThematicity(requestIndxT as string));
+          if (requestLinkIns) dispatch(setRequestLinkInsertion(requestLinkIns as string));
+        })
+        .catch(err => console.error(err));
     } catch (error) {
       console.error(error);
     }
+    return true;
   }
 
   //
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<RootLayout />} errorElement={<ErrorPage />} loader={loadSavedData}>
+      <Route
+        path="/"
+        element={<RootLayout />}
+        errorElement={<ErrorPage />}
+        loader={() => {
+          if (firstLoad.current) {
+            firstLoad.current = false;
+            loadSavedData();
+          }
+          return false;
+        }}
+      >
         <Route index element={<Home />} />
         <Route path="/tools/thematicity-index" element={<ThematicityIndex />} />
         <Route path="/tools/link-insertion" element={<LinkInsertion />} />

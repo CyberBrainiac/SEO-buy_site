@@ -3,19 +3,22 @@ import axios, { AxiosResponse } from 'axios';
 import googleSearchConfig from './config/customGoogleSearch';
 
 //
-async function withQuery(siteURL: string, query: string) {
+async function withQuery(siteURL: string, query: string, keyWord = '', region = '') {
   const apiKey = googleSearchConfig.apiKey;
   const cx = googleSearchConfig.cx;
+  const location = region !== '' ? `%20location%3A${region}` : '';
 
   /** Search time ~ 0.33s */
   //fields=searchInformation/totalResults used to optimize the query. This is Filter, but response structure will be the same
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}%20${encodeURIComponent(
-    query
-  )}`;
+
+  /** First cUrl shows worst result then second maybe "exactTerms" helps */
+  // const cUrl = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site%3A${encodeURI(siteURL)}%20${encodeURI(query)}`;
+  const cUrl = `https://customsearch.googleapis.com/customsearch/v1?cx=${cx}&exactTerms=${keyWord}&q=site%3A${encodeURI(siteURL)}%20${encodeURI(query)}${location}&key=${apiKey}`;
   let response;
 
   try {
-    response = await axios.get(url);
+    response = await axios.get(cUrl);
+    
   } catch (error) {
     const axiosError = error as AxiosResponse;
 
@@ -29,6 +32,7 @@ async function withQuery(siteURL: string, query: string) {
     return handleHTTPError(response, siteURL);
   }
   const res = response.data;
+  console.log(res);
   return res;
 }
 
@@ -38,11 +42,11 @@ async function site(siteURL: string) {
   const cx = googleSearchConfig.cx;
 
   //fields=searchInformation/totalResults used to optimize the query. This is Filter, but response structure will be the same
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}&fields=searchInformation/totalResults`;
+  const cUrl = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site:${siteURL}&fields=searchInformation/totalResults`;
   let response;
 
   try {
-    response = await axios.get(url);
+    response = await axios.get(cUrl);
   } catch (error) {
     const axiosError = error as AxiosResponse;
 

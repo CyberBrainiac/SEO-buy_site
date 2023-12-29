@@ -71,7 +71,7 @@ async function modifyUser(userID: string, modifyObj: ModifyUserProps) {
   const userProflRef = doc(db, 'users', userID);
 
   try {
-    await updateDoc(userProflRef, { ...modifyObj });
+    await updateDoc(userProflRef, { ...modifyObj, lastLogIn: Timestamp.now() });
     return true;
   } catch (error) {
     return false;
@@ -133,6 +133,28 @@ async function modifyUserBalance({
   return true;
 }
 
+//Modify login time and set free request
+async function modifyFreeRequest(uid: string) {
+  const FirestoreUserProfile = await fireStore.getUserProfl(uid);
+
+  if (!FirestoreUserProfile) {
+    alert('Authorization error');
+    return;
+  }
+  const userProfl = serializeUserProfile(FirestoreUserProfile);
+  const dayInMillSec = 86400000;
+
+  //take user additional free request
+  if (Date.now() - userProfl.whenFreebies >= dayInMillSec) {
+    fireStore.modifyUser(userProfl.uid, {
+      freeRequest: 20,
+      whenFreebies: Timestamp.now(),
+    });
+    return;
+  }
+  fireStore.modifyUser(userProfl.uid, {}); //modify user logIn time
+}
+
 export const serializeUserProfile = (userProfile: FirestoreUserProfile): UserProfile => {
   const logInTimestamp = userProfile.lastLogIn.toMillis();
   const freebiesTimestamp = userProfile.whenFreebies.toMillis();
@@ -150,6 +172,7 @@ const fireStore = {
   getUserProfl,
   modifyUser,
   modifyUserBalance,
+  modifyFreeRequest,
 };
 
 export default fireStore;

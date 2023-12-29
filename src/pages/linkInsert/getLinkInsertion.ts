@@ -13,6 +13,7 @@ import googleSearch from '@/services/googleSearch';
 interface GetLinkInsertionProps {
   inputDataArr: InputData[];
   query: string;
+  keyWord?: string;
   onUpdate?: (progress: string) => void;
   onError?: (errorMessage: string, response?: AxiosResponse) => void;
 }
@@ -23,7 +24,7 @@ interface SiteFields {
   snippet: string;
 }
 
-async function getLinkInsertion({ inputDataArr, query, onUpdate, onError }: GetLinkInsertionProps) {
+async function getLinkInsertion({ inputDataArr, query, keyWord, onUpdate, onError }: GetLinkInsertionProps) {
   /**
    *    ABOUT DELAY SETTINGS
    *
@@ -73,7 +74,7 @@ async function getLinkInsertion({ inputDataArr, query, onUpdate, onError }: GetL
         continue;
       }
 
-      const searchResult = await googleSearch.withQuery(siteURL, query);
+      const searchResult = await googleSearch.withQuery(siteURL, query, keyWord);
 
       if (searchResult instanceof Error) {
         if (onError) onError(searchResult.message);
@@ -98,3 +99,4 @@ async function getLinkInsertion({ inputDataArr, query, onUpdate, onError }: GetL
 }
 
 export default getLinkInsertion;
+

@@ -118,6 +118,7 @@ const LinkInsertion: React.FC = () => {
     const calculatedData = await getLinkInsertion({
       inputDataArr: inputData,
       query: request,
+      keyWord: inputKeyword,
       onUpdate: progressHandler,
       onError: errorHandler,
     });

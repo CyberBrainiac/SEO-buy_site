@@ -97,7 +97,7 @@ export const selectIndexThematicityStatus = (state: AppRootState) =>
 export const setRequestLinkInsertion = createAsyncThunk(
   'tools/linkInsertion/setRequest',
   async (data: string) => {
-    await locStorage.set(locKeys.linkInsertionRequest, { request: data });
+    await locStorage.set(locKeys.linkInsertionRequest, data);
     return data;
   }
 );
@@ -118,7 +118,7 @@ export const setExcelColumnInfo = createAsyncThunk(
 export const setRequestIndexThematicity = createAsyncThunk(
   'tools/indexThematicity/setRequest',
   async (data: string) => {
-    await locStorage.set(locKeys.indexThematicityRequest, { request: data });
+    await locStorage.set(locKeys.indexThematicityRequest, data);
     return data;
   }
 );
