@@ -10,7 +10,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import AuthError from '@/utils/errorHandlers/authError';
 import { UserInfo } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
-import { deleteUserProfl, setUserProfl } from '../containers/reducers/userSlice';
+import { deleteUserProfl, setInformMessage, setUserProfl } from '../containers/reducers/userSlice';
 import { AuthContext, AuthenticationArg } from './AuthContext';
 import { removeFileName, removeInputData } from './reducers/inputDataSlice';
 import { AppDispatch } from './storeRedux';
@@ -65,6 +65,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     setAuthentication(userProfl);
+    dispatch(setInformMessage('Successful Authorisation'));
     return userProfl;
   }
 

@@ -1,6 +1,6 @@
 /**SOURCE https://developers.google.com/custom-search/docs/json_api_reference#countryCodes */
 
-export default function check(value: string) {
+function code(value: string) {
   const fullNameInclude = fullNameCountryList.indexOf(value);
   const shortNameInclude = shortNameCountryList.indexOf(value);
   const valueIndex = [fullNameInclude, shortNameInclude].filter(elem => elem > -1)[0];
@@ -8,6 +8,12 @@ export default function check(value: string) {
   if (!valueIndex) return undefined;
   return shortNameCountryList[valueIndex];
 }
+
+const countryList = {
+  code,
+};
+
+export default countryList;
 
 //All country names and abbreviations set to same position in lists
 const fullNameCountryList = [

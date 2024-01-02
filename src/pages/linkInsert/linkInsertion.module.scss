@@ -61,9 +61,18 @@
   padding: 20px;
 
   &Container {
-    @include flex-column();
-    width: 50%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    justify-items: center;
+    align-items: start;
     margin: 0 auto;
+  }
+
+  &GridInput {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    text-align: center;
   }
 
   &Label {
@@ -73,6 +82,7 @@
 
   &Input {
     width: 100%;
+    max-width: 600px;
     margin: 10px 0;
     border-width: 3px;
     border-style: groove;
@@ -81,24 +91,70 @@
     font-size: 18px;
   }
 
+  &Setting {
+    font-weight: 500;
+    width: 100%;
+    padding-right: 40px;
+
+    &Toggle {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
+
+      Input {
+        margin-left: 10px;
+        margin-right: 0;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+      }
+    }
+
+    &Content {
+      margin-top: 10px;
+    }
+
+    &Elem {
+      display: flex;
+      column-gap: 10px;
+      justify-content: flex-end;
+
+      &Layout {
+        height: 24px;
+        width: 100%;
+      }
+    }
+  }
+
   &Btn {
+    position: relative;
+
+    &Wrap {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+      transform: translateX(-50%);
+      width: 230px;
+    }
+
     &_active {
       background-color: rgb(76, 212, 76);
     }
   }
 }
 
-.loadBtn {
-  margin-top: 10px;
-}
-
 .errorContainer {
   width: 100%;
+  text-align: center;
   color: #ff0000;
+  font-size: 22px;
+  padding: 4px;
 }
 
 .logContainer {
-  height: 20px;
   width: 100%;
   text-align: center;
+  height: 22px;
+  padding: 4px;
 }

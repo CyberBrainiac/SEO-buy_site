@@ -9,11 +9,13 @@ import { AxiosResponse } from 'axios';
 import throttling from '@/utils/throttling';
 import { InputData } from '@/containers/reducers/inputDataSlice';
 import googleSearch from '@/services/googleSearch';
+import countryList from '@/services/config/countryList';
 
 interface GetLinkInsertionProps {
   inputDataArr: InputData[];
   query: string;
   keyWord?: string;
+  location?: string;
   onUpdate?: (progress: string) => void;
   onError?: (errorMessage: string, response?: AxiosResponse) => void;
 }
@@ -24,7 +26,14 @@ interface SiteFields {
   snippet: string;
 }
 
-async function getLinkInsertion({ inputDataArr, query, keyWord, onUpdate, onError }: GetLinkInsertionProps) {
+async function getLinkInsertion({
+  inputDataArr,
+  query,
+  keyWord,
+  location,
+  onUpdate,
+  onError,
+}: GetLinkInsertionProps) {
   /**
    *    ABOUT DELAY SETTINGS
    *
@@ -45,8 +54,21 @@ async function getLinkInsertion({ inputDataArr, query, keyWord, onUpdate, onErro
   }
 
   //
-  async function getInsertion(cloneDataArr: InputData[]): Promise<InputData[]> {
+  async function getInsertion(cloneDataArr: InputData[]): Promise<InputData[] | undefined> {
     const siteUrls: string[] = [];
+    let countryCode;
+
+    if (location && location !== '') {
+      countryCode = countryList.code(location);
+
+      if (!countryCode) {
+        if (onError)
+          onError(
+            'Enter the correct country name or country code. Full list of countries:\n\rhttps://rextheme.com/google-country-codes-list/'
+          );
+        return undefined; //return data without changes
+      }
+    }
 
     for (const cloneData of cloneDataArr) {
       const siteUrl = cloneData.url;
@@ -74,7 +96,7 @@ async function getLinkInsertion({ inputDataArr, query, keyWord, onUpdate, onErro
         continue;
       }
 
-      const searchResult = await googleSearch.withQuery(siteURL, query, keyWord);
+      const searchResult = await googleSearch.withQuery(siteURL, query, keyWord, countryCode);
 
       if (searchResult instanceof Error) {
         if (onError) onError(searchResult.message);
@@ -99,4 +121,3 @@ async function getLinkInsertion({ inputDataArr, query, keyWord, onUpdate, onErro
 }
 
 export default getLinkInsertion;
-

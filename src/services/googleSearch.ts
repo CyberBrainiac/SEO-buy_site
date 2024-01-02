@@ -3,22 +3,24 @@ import axios, { AxiosResponse } from 'axios';
 import googleSearchConfig from './config/customGoogleSearch';
 
 //
-async function withQuery(siteURL: string, query: string, keyWord = '', region = '') {
+async function withQuery(siteURL: string, query: string, keyWord = '', countryCode = '') {
   const apiKey = googleSearchConfig.apiKey;
   const cx = googleSearchConfig.cx;
-  const location = region !== '' ? `%20location%3A${region}` : '';
+  const location = countryCode ? `%20location%3A${countryCode}` : '';
+  const gl = countryCode ? `&gl=${countryCode}` : '';
 
   /** Search time ~ 0.33s */
   //fields=searchInformation/totalResults used to optimize the query. This is Filter, but response structure will be the same
 
   /** First cUrl shows worst result then second maybe "exactTerms" helps */
   // const cUrl = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=site%3A${encodeURI(siteURL)}%20${encodeURI(query)}`;
-  const cUrl = `https://customsearch.googleapis.com/customsearch/v1?cx=${cx}&exactTerms=${keyWord}&q=site%3A${encodeURI(siteURL)}%20${encodeURI(query)}${location}&key=${apiKey}`;
+  const cUrl = `https://customsearch.googleapis.com/customsearch/v1?cx=${cx}&exactTerms=${keyWord}${gl}&q=${location}%20site%3A${encodeURI(
+    siteURL
+  )}%20${encodeURI(query)}&key=${apiKey}`;
   let response;
 
   try {
     response = await axios.get(cUrl);
-    
   } catch (error) {
     const axiosError = error as AxiosResponse;
 
@@ -32,7 +34,6 @@ async function withQuery(siteURL: string, query: string, keyWord = '', region = 
     return handleHTTPError(response, siteURL);
   }
   const res = response.data;
-  console.log(res);
   return res;
 }
 

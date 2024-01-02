@@ -93,11 +93,15 @@
 
 .errorContainer {
   width: 100%;
+  text-align: center;
   color: #ff0000;
+  font-size: 22px;
+  padding: 4px;
 }
 
 .logContainer {
-  height: 20px;
   width: 100%;
   text-align: center;
+  height: 22px;
+  padding: 4px;
 }

@@ -22,6 +22,7 @@ import {
 import LinkInsertion from './pages/linkInsert/LinkInsertion';
 import fireStore, { UserProfile } from './services/fireStore';
 import { AuthContext } from './containers/AuthContext';
+import Profile from './pages/profile/Profile';
 
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
@@ -84,6 +85,7 @@ const App: React.FC = () => {
         <Route index element={<Home />} />
         <Route path="/tools/thematicity-index" element={<ThematicityIndex />} />
         <Route path="/tools/link-insertion" element={<LinkInsertion />} />
+        <Route path="/user/profile" element={<Profile />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     )

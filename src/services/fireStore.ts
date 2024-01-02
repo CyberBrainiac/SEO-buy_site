@@ -78,11 +78,7 @@ async function modifyUser(userID: string, modifyObj: ModifyUserProps) {
   }
 }
 
-async function modifyUserBalance({
-  userProfile,
-  requestCount,
-  toolName,
-}: ModifyUserBalanceProps): Promise<boolean> {
+async function calculateBalance({ userProfile, requestCount, toolName }: ModifyUserBalanceProps) {
   const paidRequest = requestCount - userProfile.freeRequest;
   const indexCalculation = userProfile.allIndexCalculation + requestCount;
   const pricePerRequest = (() => {
@@ -106,11 +102,10 @@ async function modifyUserBalance({
 
   if (paidRequest <= 0) {
     const newFreeRequest = userProfile.freeRequest - requestCount;
-    const modufyResult = await modifyUser(userProfile.uid, {
+    return {
       freeRequest: newFreeRequest,
       allIndexCalculation: indexCalculation,
-    });
-    return modufyResult;
+    };
   }
   const costOfRequests = paidRequest * pricePerRequest;
 
@@ -118,19 +113,19 @@ async function modifyUserBalance({
     alert(
       `You can do ${
         Math.trunc(userProfile.walletBalance / pricePerRequest) + userProfile.freeRequest
-      } index calculations, but tool got ${requestCount} urls`
+      } index calculations, but tool get ${requestCount} urls`
     );
     return false;
   }
 
   const newWalletBalance =
     Math.trunc((userProfile.walletBalance - costOfRequests) * 10000000) / 10000000;
-  await modifyUser(userProfile.uid, {
+
+  return {
     freeRequest: 0,
     walletBalance: newWalletBalance,
     allIndexCalculation: indexCalculation,
-  });
-  return true;
+  };
 }
 
 //Modify login time and set free request
@@ -171,7 +166,7 @@ const fireStore = {
   createUser,
   getUserProfl,
   modifyUser,
-  modifyUserBalance,
+  calculateBalance,
   modifyFreeRequest,
 };
 

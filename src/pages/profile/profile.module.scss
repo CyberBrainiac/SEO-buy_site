@@ -1,0 +1,40 @@
+@import '/src/assets/style/variables';
+@import '/src/assets/style/mixins';
+
+.container {
+  @include flex-column();
+  width: $max-app-width;
+  margin: 60px auto;
+}
+
+.img {
+  border-radius: 10%;
+  overflow: hidden;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 20px;
+}
+
+.mail {
+  margin: 20px 0;
+  font-size: 20px;
+}
+
+.balance {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 6px;
+
+  & span:nth-of-type(even) {
+    color: $highlight-additional;
+  }
+}
+
+.layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - $header-height - $footer-height);
+}

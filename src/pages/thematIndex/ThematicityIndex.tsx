@@ -62,7 +62,7 @@ const ThematicityIndex: React.FC = () => {
 
   //Write new Excel file
   const handleLoadResult = async () => {
-    if (!inputData) {
+    if (!inputData.length) {
       alert('Upload your file.xlsx or use Example file');
       return null;
     }
@@ -88,7 +88,9 @@ const ThematicityIndex: React.FC = () => {
   //Calculate Thematicity Index
   const formHandler = async (event: FormEvent) => {
     event.preventDefault();
-    setErrorMessage('');
+    setErrorMessage(null);
+    setLogProgress(null);
+
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
@@ -118,17 +120,14 @@ const ThematicityIndex: React.FC = () => {
     const request = `intitle:"${inputKeyword}"`;
     dispatch(setRequestIndexThematicity(request));
     const currentRequestCount = inputData.length;
-    dispatch(setStatusIndexThematicity(toolStatusValues.Working));
-
-    const modifyResult = await fireStore.modifyUserBalance({
+    const modifyBalance = await fireStore.calculateBalance({
       userProfile: userProfile,
       requestCount: currentRequestCount,
       toolName: 'ThematicityIndex',
     });
 
-    if (!modifyResult) {
-      return null;
-    }
+    if (!modifyBalance) return;
+    dispatch(setStatusIndexThematicity(toolStatusValues.Working));
 
     const calculatedData = await calcThematicityIndex({
       inputDataArr: inputData,
@@ -137,8 +136,13 @@ const ThematicityIndex: React.FC = () => {
       onError: errorHandler,
     });
 
-    if (!calculatedData) return;
-    await dispatch(addInputData(calculatedData));
+    if (!calculatedData) {
+      dispatch(setStatusIndexThematicity(toolStatusValues.Idle));
+      return;
+    }
+
+    await fireStore.modifyUser(userProfile.uid, modifyBalance);
+    dispatch(addInputData(calculatedData));
     dispatch(setStatusIndexThematicity(toolStatusValues.Idle));
     dispatch(setInformMessage('Successfully done'));
   };

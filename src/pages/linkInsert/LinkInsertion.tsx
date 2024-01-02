@@ -31,6 +31,7 @@ const LinkInsertion: React.FC = () => {
   const userQuery = useSelector(selectLinkInsertionRequest);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSettingVisible, setSettingVisible] = useState(false);
 
   //
   const handleFileUpload = (file: File) => {
@@ -60,8 +61,8 @@ const LinkInsertion: React.FC = () => {
 
   //Write new Excel file
   const handleLoadResult = async () => {
-    if (!inputData) {
-      alert('Upload your file.xlsx or use Example file');
+    if (!inputData.length) {
+      alert('Upload your file.xlsx with URLs or use Example file');
       return null;
     }
 
@@ -75,6 +76,9 @@ const LinkInsertion: React.FC = () => {
 
   const formHandler = async (event: FormEvent) => {
     event.preventDefault();
+    setErrorMessage(null);
+    setLogProgress(null);
+
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
 
@@ -100,34 +104,44 @@ const LinkInsertion: React.FC = () => {
       return null;
     }
 
+    let inputLocation = formData.get('location') as string;
+    inputLocation = inputLocation?.trim();
+
     const request = `"${inputKeyword}"`;
     dispatch(setRequestLinkInsertion(request));
     const currentRequestCount = inputData.length;
-    dispatch(setStatusLinkInsertion(toolStatusValues.Working));
-
-    const modifyResult = await fireStore.modifyUserBalance({
+    const modifyBalance = await fireStore.calculateBalance({
       userProfile: userProfile,
       requestCount: currentRequestCount,
       toolName: 'LinkInsertion',
     });
 
-    if (!modifyResult) {
-      return null;
-    }
+    if (!modifyBalance) return;
+    dispatch(setStatusLinkInsertion(toolStatusValues.Working));
 
     const calculatedData = await getLinkInsertion({
       inputDataArr: inputData,
       query: request,
       keyWord: inputKeyword,
+      location: inputLocation,
       onUpdate: progressHandler,
       onError: errorHandler,
     });
 
-    if (!calculatedData) return undefined;
+    if (!calculatedData) {
+      dispatch(setStatusLinkInsertion(toolStatusValues.Idle));
+      return undefined;
+    }
+
+    await fireStore.modifyUser(userProfile.uid, modifyBalance);
     dispatch(addInputData(calculatedData));
     dispatch(setStatusLinkInsertion(toolStatusValues.Idle));
     dispatch(setInformMessage('Successfully done'));
   };
+
+  function hadnleSettingToggle(event: React.ChangeEvent<HTMLInputElement>) {
+    setSettingVisible(event.target.checked);
+  }
 
   //
   const progressHandler = (value: string) => {
@@ -172,33 +186,53 @@ const LinkInsertion: React.FC = () => {
 
         <form onSubmit={formHandler} className={style.form}>
           <div className={style.formContainer}>
-            <label className={style.formLabel} htmlFor="ThemIndRequest">
-              Write keyword
-            </label>
-            <input
-              id="ThemIndRequest"
-              name="request"
-              type="text"
-              className={style.formInput}
-              placeholder="koala"
-              required
-            />
-            <ButtonCommon
-              className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
-              type="submit"
-              text={
-                toolStatus === toolStatusValues.Working
-                  ? 'Index Is Calculated'
-                  : 'Get Link Insertion'
-              }
-            />
-            <ButtonCommon
-              type="button"
-              className={style.loadBtn}
-              id="buttonLoadIndexThemat"
-              onClick={handleLoadResult}
-              text="Load Result"
-            />
+            <div className={style.formGridInput}>
+              <label className={style.formLabel} htmlFor="ThemIndRequest">
+                Write keyword
+              </label>
+              <input
+                id="ThemIndRequest"
+                name="request"
+                type="text"
+                className={style.formInput}
+                placeholder="koala"
+                required
+              />
+            </div>
+
+            <div className={style.formSetting}>
+              <div className={style.formSettingToggle} onChange={hadnleSettingToggle}>
+                <span>Show Settings</span>
+                <input type="checkbox" name="checkbox-group" />
+              </div>
+              {isSettingVisible ? (
+                <div className={style.formSettingContent}>
+                  <div className={style.formSettingElem}>
+                    <p>Location:</p>
+                    <input type="text" name="location" placeholder="United States  OR  us" />
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <div className={style.formBtnWrap}>
+              <ButtonCommon
+                className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
+                type="submit"
+                text={
+                  toolStatus === toolStatusValues.Working
+                    ? 'Index Is Calculated'
+                    : 'Get Link Insertion'
+                }
+              />
+              <ButtonCommon
+                type="button"
+                className={style.loadBtn}
+                id="buttonLoadIndexThemat"
+                onClick={handleLoadResult}
+                text="Load Result"
+              />
+            </div>
           </div>
         </form>
         <div className={style.logContainer}>{logProgress}</div>

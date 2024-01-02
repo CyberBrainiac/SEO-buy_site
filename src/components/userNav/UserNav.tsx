@@ -41,10 +41,10 @@ const UserNav: React.FC = () => {
         <div className={style.menu_topDecore}></div>
         <div className={style.menuItemWrap}>
           <div className={style.menuItem}>
-            <Link to={'/user/payment'}>Payment Details</Link>
+            <Link to={'/user/profile'}>Profile</Link>
           </div>
           <div className={style.menuItem}>
-            <Link to={'/contact-us'}>Contact Us</Link>
+            <Link to={'/user/payment'}>Payment Details</Link>
           </div>
           <ButtonCommon onClick={handleSignOut} className={style.signOutBtn} text="Sign out" />
         </div>
