@@ -24,6 +24,3 @@ dist-ssr
 *.sw?
 *.xlsx
 *.txt
-
-# Configs
-vite.config.ts

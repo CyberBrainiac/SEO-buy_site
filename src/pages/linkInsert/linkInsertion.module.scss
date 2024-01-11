@@ -31,8 +31,10 @@
 
   &NonAuth {
     @include common-text();
+    @include flex-column();
     font-size: 28px;
     color: $highlight-additional;
+    height: 112px;
   }
 }
 

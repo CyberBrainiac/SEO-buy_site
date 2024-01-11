@@ -148,12 +148,12 @@ const ThematicityIndex: React.FC = () => {
   };
 
   const userInf = userProfile ? (
-    <>
+    <div className={style.userInf}>
       <div className={style.userInf__freeReq}>
         You have: {userProfile.freeRequest} free calculations
       </div>
       <div className={style.userInf__walletBal}>Wallet balance: {userProfile.walletBalance}$</div>
-    </>
+    </div>
   ) : (
     <div className={style.userInf__unAuthMessage}>
       Sign up now and get 20 free thematicity index calculation per day!
@@ -164,7 +164,7 @@ const ThematicityIndex: React.FC = () => {
     <section className="thematicityIndex">
       <div className={style.container}>
         <h1 className={style.mainHeading}>Thematicity Index Tool</h1>
-        <div className={style.userInf}>{userInf}</div>
+        {userInf}
 
         <InputFile onFileUpload={handleFileUpload} />
         <aside className={style.acceptedFiles}>

@@ -35,6 +35,10 @@ p {
 
 .page {
   @include common-text();
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .header {
   position: fixed;

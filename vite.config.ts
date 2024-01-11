@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import autoprefixer from 'autoprefixer';
 import crypto from 'crypto';
-import getRandom from './src/utils/getRandom';
 import path from 'path';
 
 // https://vitejs.dev/config/

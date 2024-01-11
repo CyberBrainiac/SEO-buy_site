@@ -56,14 +56,59 @@
   @include flex-row();
   color: $highlight-main;
   font-size: 30px;
+  line-height: 1.4;
   width: 300px;
 
-  &Services {
+  &Name {
     cursor: pointer;
+    padding-left: 2px;
   }
 
-  &Tools {
-    cursor: pointer;
+  &Tools, &Services {
+    position: relative;
+  }
+
+  &Tools:hover {
+    .navTools_active {
+      top: 0;
+    }
+  }
+
+  &Services:hover {
+    .navService_active {
+      top: 0;
+    }
+  }
+
+  &List {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: #6a87ca8b;
+    top: -300px;
+    width: 220px;
+    padding-top: 70px;
+    font-size: 24px;
+    letter-spacing: 1.2;
+    border-radius: 0 0 16px 16px;
+
+    & > div {
+      background-color: $page-bg-color-additional;
+      padding-top: 4px;
+      padding-left: 10px;
+      border-left: 2px solid $border-color-main;
+      border-right: 2px solid $border-color-main;
+
+      &:hover {
+        color: $page-bg-color-main;
+        text-decoration: underline;
+      }
+    }
+
+    & div:last-child {
+      padding-bottom: 10px;
+      border-radius: 0 0 16px 16px;
+    }
   }
 }
 
