@@ -37,9 +37,7 @@
   transition: $transition-main;
 
   &More {
-    color: $highlight-additional;
-    font-size: 20px;
-    text-decoration: underline;
+    @include common-link();
     padding: 4px;
   }
 }

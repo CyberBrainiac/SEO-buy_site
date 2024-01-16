@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import style from './linkInsertion.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -32,6 +32,15 @@ const LinkInsertion: React.FC = () => {
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSettingVisible, setSettingVisible] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Effortless Link Placement with Our Locator Tool | SEO-Buy';
+
+    const newMetaDescription = document.createElement('meta');
+    newMetaDescription.name = 'description';
+    newMetaDescription.content = `Discover optimal spaces for your links seamlessly with our Link Insertion Locator. Save time and pinpoint strategic placements, integrating seamlessly with Google's SERPs for enhanced visibility.`;
+    document.head.appendChild(newMetaDescription);
+  }, []);
 
   //
   const handleFileUpload = (file: File) => {
