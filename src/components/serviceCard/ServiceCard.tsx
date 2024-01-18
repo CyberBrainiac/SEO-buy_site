@@ -39,19 +39,19 @@ const ServiceCard: React.FC<ServiceCardArgum> = ({
   };
 
   //
-  // const handleMouseLeave = () => {
-  //   setModalActive(false);
+  const handleMouseLeave = () => {
+    setModalActive(false);
 
-  //   //style MoreInfo
-  //   const MoreInfo = infoRef.current;
-  //   if (!MoreInfo) return;
+    //style MoreInfo
+    const MoreInfo = infoRef.current;
+    if (!MoreInfo) return;
 
-  //   fixMultipleInterval.current = setTimeout(() => {
-  //     MoreInfo.style.opacity = '0';
-  //     MoreInfo.style.bottom = '0';
-  //     fixMultipleInterval.current = null;
-  //   }, 700);
-  // };
+    fixMultipleInterval.current = setTimeout(() => {
+      MoreInfo.style.opacity = '0';
+      MoreInfo.style.bottom = '0';
+      fixMultipleInterval.current = null;
+    }, 700);
+  };
 
   const MoreInfo = () => {
     if (!additionalInfo && !informLink) return;
@@ -86,7 +86,7 @@ const ServiceCard: React.FC<ServiceCardArgum> = ({
         <div
           className={style.modalWrap}
           onMouseOver={handleMouseOver}
-          // onMouseLeave={handleMouseLeave}
+          onMouseLeave={handleMouseLeave}
         >
           {Modal}
         </div>
