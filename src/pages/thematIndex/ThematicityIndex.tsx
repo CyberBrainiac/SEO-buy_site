@@ -35,11 +35,13 @@ const ThematicityIndex: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Enhance SEO Precision with Thematic Domain Indexing | SEO-Buy';
+    const newMetaDescription = document.querySelector(
+      'meta[name="description"]'
+    ) as HTMLMetaElement;
 
-    const newMetaDescription = document.createElement('meta');
-    newMetaDescription.name = 'description';
-    newMetaDescription.content = `Empower your SEO strategy with Thematic Domain Indexing – a tool that calculates thematic indices for precise link placements, optimizing your website's visibility and organic growth.`;
-    document.head.appendChild(newMetaDescription);
+    if (newMetaDescription) {
+      newMetaDescription.content = `Empower your SEO strategy with Thematic Domain Indexing – a tool that calculates thematic indices for precise link placements, optimizing your website's visibility and organic growth.`;
+    }
   }, []);
 
   //

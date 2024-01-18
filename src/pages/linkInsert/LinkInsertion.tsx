@@ -35,11 +35,13 @@ const LinkInsertion: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Effortless Link Placement with Our Locator Tool | SEO-Buy';
+    const newMetaDescription = document.querySelector(
+      'meta[name="description"]'
+    ) as HTMLMetaElement;
 
-    const newMetaDescription = document.createElement('meta');
-    newMetaDescription.name = 'description';
-    newMetaDescription.content = `Discover optimal spaces for your links seamlessly with our Link Insertion Locator. Save time and pinpoint strategic placements, integrating seamlessly with Google's SERPs for enhanced visibility.`;
-    document.head.appendChild(newMetaDescription);
+    if (newMetaDescription) {
+      newMetaDescription.content = `Discover optimal spaces for your links seamlessly with our Link Insertion Locator. Save time and pinpoint strategic placements, integrating seamlessly with Google's SERPs for enhanced visibility.`;
+    }
   }, []);
 
   //

@@ -5,50 +5,10 @@ import Tools from './tools/Tools';
 const Home: React.FC = () => {
   useEffect(() => {
     document.title = 'SEO-Buy: link building and SEO services';
-
-    const newMetaDescription = document.createElement('meta');
-    newMetaDescription.name = 'description';
+    const newMetaDescription = document.querySelector(
+      'meta[name="description"]'
+    ) as HTMLMetaElement;
     newMetaDescription.content = `Explore innovative SEO solutions, strategic link building, and captivating custom content creation. Welcome to SEO-Buy – where digital excellence begins and your brand's success story unfolds.`;
-    document.head.appendChild(newMetaDescription);
-
-    /* Open Graph meta tags for Facebook and other platforms */
-    const newOgTitle = document.createElement('meta');
-    newOgTitle.setAttribute('property', 'og:title');
-    newOgTitle.setAttribute('content', 'SEO-Buy: link building and SEO services');
-    document.head.appendChild(newOgTitle);
-
-    const newOgDescription = document.createElement('meta');
-    newOgDescription.setAttribute('property', 'og:description');
-    newOgDescription.setAttribute(
-      'content',
-      `Explore innovative SEO solutions, strategic link building, and captivating custom content creation. Welcome to SEO-Buy – where digital excellence begins and your brand's success story unfolds.`
-    );
-    document.head.appendChild(newOgDescription);
-    // {/* <meta property="og:image" content="http://mysite.com/og-image.jpg" /> */}
-
-    const newOgUrl = document.createElement('meta');
-    newOgUrl.setAttribute('property', 'og:url');
-    newOgUrl.setAttribute('content', `https://seo-buy.com/`);
-    document.head.appendChild(newOgUrl);
-
-    const newOgType = document.createElement('meta');
-    newOgType.setAttribute('property', 'og:type');
-    newOgType.setAttribute('content', `website`);
-    document.head.appendChild(newOgType);
-
-    /* Twitter card meta tags */
-    const newTwitterTitle = document.createElement('meta');
-    newTwitterTitle.setAttribute('name', 'twitter:title');
-    newTwitterTitle.setAttribute('content', `SEO-Buy: link building and SEO services`);
-    document.head.appendChild(newTwitterTitle);
-
-    const newTwitterDescription = document.createElement('meta');
-    newTwitterDescription.setAttribute('name', 'twitter:description');
-    newTwitterDescription.setAttribute(
-      'content',
-      `Explore innovative SEO solutions, strategic link building, and captivating custom content creation. Welcome to SEO-Buy – where digital excellence begins and your brand's success story unfolds.`
-    );
-    document.head.appendChild(newTwitterDescription);
   }, []);
 
   return (
