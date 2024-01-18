@@ -9,7 +9,7 @@ const Tools: React.FC = () => {
       <div className={style.container}>
         <h2 className={style.heading}>Our Cutting-Edge Features</h2>
         <div className={style.cardWrap}>
-          <div className={style.card}>
+          <div className={style.cardDescription}>
             <h3>Link Insertion Locator</h3>
             <p>
               Precisely calculate thematic indices for domains, ensuring targeted and relevant link
@@ -27,7 +27,7 @@ const Tools: React.FC = () => {
             </ServiceCard>
           </div>
 
-          <div className={style.card}>
+          <div className={style.cardDescription}>
             <h3>Thematic Domain Indexing</h3>
             <p>
               Streamline your link building efforts with our advanced tool that identifies optimal

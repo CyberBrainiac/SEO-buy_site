@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from 'react';
 import {
-  createBrowserRouter,
+  createHashRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
@@ -68,7 +68,7 @@ const App: React.FC = () => {
   }
 
   //
-  const router = createBrowserRouter(
+  const router = createHashRouter(
     createRoutesFromElements(
       <Route
         path="/"
