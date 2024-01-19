@@ -4,7 +4,8 @@
 .container {
   @include flex-column();
   width: $max-app-width;
-  margin: 60px auto;
+  padding: 164px 0;
+  margin: 0 auto;
 }
 
 .img {

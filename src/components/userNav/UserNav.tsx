@@ -44,7 +44,7 @@ const UserNav: React.FC = () => {
             <Link to={'/user/profile'}>Profile</Link>
           </div>
           <div className={style.menuItem}>
-            <Link to={'/user/payment'}>Payment Details</Link>
+            <Link to={'/contactUs'}>Contact Us</Link>
           </div>
           <ButtonCommon onClick={handleSignOut} className={style.signOutBtn} text="Sign out" />
         </div>

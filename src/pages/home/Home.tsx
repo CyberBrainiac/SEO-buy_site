@@ -71,7 +71,7 @@ const Home: React.FC = () => {
           Elevate your online presence with <a href="https://seo-buy.com/">SEO-Buy</a>. Let`s build
           a digital legacy together!
         </p>
-        <div className={style.googleFormContainer}>
+        <div id="googleContactForm" className={style.googleFormContainer}>
           <iframe
             src="https://docs.google.com/forms/d/e/1FAIpQLSfzWUep1_3B6U0-VYZ4mYK1-1hbhDtS9tdA3-49tLj45pxOaQ/viewform?embedded=true"
             width="640"
