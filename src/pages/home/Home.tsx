@@ -76,7 +76,6 @@ const Home: React.FC = () => {
             src="https://docs.google.com/forms/d/e/1FAIpQLSfzWUep1_3B6U0-VYZ4mYK1-1hbhDtS9tdA3-49tLj45pxOaQ/viewform?embedded=true"
             width="640"
             height="700"
-            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
           >
             Завантаження…
           </iframe>
