@@ -11,7 +11,9 @@ const Header: React.FC = () => {
         <div className={style.container}>
           <div className={style.logoWrap}>
             <div className={style.logo}>
-              <Link to="/">SP</Link>
+              <Link to="/">
+                S<span className={style.logoSepar}>-</span>B
+              </Link>
             </div>
           </div>
 

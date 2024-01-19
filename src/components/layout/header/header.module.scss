@@ -17,40 +17,45 @@
   width: 100%;
 }
 
-.logoWrap {
-  position: relative;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background-image: radial-gradient(75% 75% at 50% 50%, #6a87ca 50%, #fffc62 98%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-
-  &:hover::before {
-    display: block;
-    position: absolute;
-    top: 85%;
-    left: -10px;
-    width: 90px;
-    color: $border-color-main;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 4px 0;
-    background-color: $highlight-main;
-    border-radius: 10px;
-    text-align: center;
-    opacity: 0.8;
-    content: 'Home page';
-  }
-}
-
 .logo {
   @include highlight-text();
   color: $highlight-main;
   font-size: 50px;
   cursor: pointer;
+
+  &Wrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-image: radial-gradient(75% 75% at 50% 50%, #6a87ca 50%, #fffc62 98%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover::before {
+      display: block;
+      position: absolute;
+      top: 83%;
+      width: 90px;
+      color: $border-color-main;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 4px 0;
+      background-color: $highlight-main;
+      border-radius: 10px;
+      text-align: center;
+      opacity: 0.8;
+      content: 'Home page';
+    }
+  }
+
+  &Separ {
+    font-family: $Open-Sans;
+    font-size: 40px;
+    font-weight: 300;
+  }
 }
 
 .nav {
