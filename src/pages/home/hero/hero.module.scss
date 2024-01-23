@@ -2,8 +2,13 @@
 @import '@style/mixins';
 
 .container {
+  display: grid;
+  justify-items: end;
   max-width: $max-app-width;
   margin: 0 auto;
+  grid-template-columns: 2fr 4fr;
+  grid-template-rows: 1fr;
+  padding: 100px 0;
 }
 
 .heading {
@@ -11,9 +16,12 @@
   background-color: $border-color-main;
   color: $highlight-main;
 
-  h1 {
+  &Elem {
     color: inherit;
     padding: 20px 0;
-    transition: $transition-main;
   }
+}
+
+.content {
+  text-indent: 1em;
 }
