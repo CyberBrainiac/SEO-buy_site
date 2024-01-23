@@ -11,7 +11,7 @@ const Tools: React.FC = () => {
         <div className={style.cardWrap}>
           <div className={style.cardDescription}>
             <h3>Link Insertion Locator</h3>
-            <p>
+            <p className={style.cardText}>
               Precisely calculate thematic indices for domains, ensuring targeted and relevant link
               placements. Enhance your SEO strategy with data-driven insights that drive organic
               growth.
@@ -29,7 +29,7 @@ const Tools: React.FC = () => {
 
           <div className={style.cardDescription}>
             <h3>Thematic Domain Indexing</h3>
-            <p>
+            <p className={style.cardText}>
               Streamline your link building efforts with our advanced tool that identifies optimal
               spaces for link insertions. Save time and resources by focusing on high-impact
               opportunities tailored to your niche.

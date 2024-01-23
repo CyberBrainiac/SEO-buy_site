@@ -19,6 +19,15 @@ const ContactUs: React.FC = () => {
           <div className={style.contactName}>Telegram:</div>
           <div className={style.contactLink}>--link to telega id--</div>
         </div>
+        <div id="googleContactForm" className={style.googleFormContainer}>
+          <iframe
+            src="https://docs.google.com/forms/d/e/1FAIpQLSfzWUep1_3B6U0-VYZ4mYK1-1hbhDtS9tdA3-49tLj45pxOaQ/viewform?embedded=true"
+            width="640"
+            height="700"
+          >
+            Завантаження…
+          </iframe>
+        </div>
       </div>
     </section>
   );

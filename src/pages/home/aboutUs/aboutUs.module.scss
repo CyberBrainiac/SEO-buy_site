@@ -1,0 +1,7 @@
+@import '@style/variables';
+@import '@style/mixins';
+
+.container {
+  max-width: $max-app-width;
+  margin: 0 auto;
+}

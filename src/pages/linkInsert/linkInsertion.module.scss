@@ -3,11 +3,8 @@
 
 .container {
   background-color: $page-bg-color-main;
-
-  @media screen and (min-width: $max-app-width) {
-    max-width: $max-app-width;
-    margin: 0 auto;
-  }
+  max-width: $max-app-width;
+  margin: 0 auto;
 }
 
 .mainHeading {

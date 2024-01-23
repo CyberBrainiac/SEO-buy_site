@@ -9,12 +9,8 @@
   background-color: $page-bg-color-additional;
   font-size: 22px;
   line-height: 120%;
-  padding: $offset-block-padding;
-
-  @media screen and (min-width: $max-app-width) {
-    max-width: $max-app-width;
-    margin: 0 auto;
-  }
+  max-width: $max-app-width;
+  margin: 0 auto;
 }
 
 .content {

@@ -19,15 +19,29 @@ const Header: React.FC = () => {
 
           <div className={style.nav}>
             <div className={style.navServices}>
-              <span className={style.navName}>Services</span>
+              <span className={`${style.navName} ${style.serviceName_active}`}>Services</span>
+              <div className={`${style.navList} ${style.navService_active}`}>
+                <div className={style.navItem}>
+                  <Link to={'/service/custom-article-creation'}>Custom Article Creation</Link>
+                </div>
+                <div className={style.navItem}>
+                  <Link to={'/service/link-building-services'}>Link Building Services</Link>
+                </div>
+                <div className={style.navItem}>
+                  <Link to={'/service/on-page-seo'}>On Page SEO</Link>
+                </div>
+              </div>
             </div>
+
             <div className={style.navTools}>
-              <span className={style.navName}>Tools</span>
+              <span id={style.tools} className={`${style.navName} ${style.toolsName_active}`}>
+                Tools
+              </span>
               <div className={`${style.navList} ${style.navTools_active}`}>
-                <div>
+                <div className={style.navItem}>
                   <Link to={'/tools/link-insertion'}>Link Insertion</Link>
                 </div>
-                <div>
+                <div className={style.navItem}>
                   <Link to={'/tools/thematicity-index'}>Thematicity Index</Link>
                 </div>
               </div>

@@ -4,9 +4,10 @@
 .container {
   @include flex-column();
   row-gap: 40px;
-  padding-top: 100px;
-  // height: 50vh;
   height: calc(100vh - $footer-height);
+  padding-top: 100px;
+  max-width: $max-app-width;
+  margin: 0 auto;
 }
 
 .linkButton {

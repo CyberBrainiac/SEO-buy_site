@@ -1,8 +1,11 @@
 @import '@style/variables';
 @import '@style/mixins';
+@import '@style/functions';
 
 .container {
   padding-top: 60px;
+  max-width: $max-app-width;
+  margin: 0 auto;
 }
 
 .heading {
@@ -15,15 +18,20 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    flex-basis: 420px;
 
     & > p {
       margin: 10px 0 20px 0;
     }
   }
 
+  &Text {
+    height: 140px;
+  }
+
   &Wrap {
     @include flex-row();
-    justify-content: space-between;
+    justify-content: space-evenly;
     padding-top: 60px;
     padding-bottom: 120px;
     column-gap: 20px;
@@ -32,5 +40,6 @@
   &Heading {
     margin-top: 90px;
     text-align: center;
+    position: relative;
   }
 }

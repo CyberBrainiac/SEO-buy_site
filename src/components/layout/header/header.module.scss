@@ -3,14 +3,10 @@
 
 .container {
   @include flex-row();
-  justify-content: space-between;
+  justify-content: space-around;
   height: $header-height;
-  padding: $offset-block-padding;
-
-  @media screen and (min-width: $max-app-width) {
-    max-width: $max-app-width;
-    margin: 0 auto;
-  }
+  max-width: $max-app-width;
+  margin: 0 auto;
 }
 .blankHeaderLayout {
   height: $header-height;
@@ -77,13 +73,19 @@
 
   &Tools:hover {
     .navTools_active {
-      top: 0;
+      top: 38px;
+    }
+    .toolsName_active {
+      opacity: 0.6;
     }
   }
 
   &Services:hover {
     .navService_active {
-      top: 0;
+      top: 38px;
+    }
+    .serviceName_active {
+      opacity: 0.6;
     }
   }
 
@@ -91,32 +93,34 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    background-color: #6a87ca8b;
     top: -300px;
-    width: 220px;
-    padding-top: 70px;
+    padding-top: 24px;
     font-size: 24px;
-    letter-spacing: 1.2;
     border-radius: 0 0 16px 16px;
-
-    & > div {
-      background-color: $page-bg-color-additional;
-      padding-top: 4px;
-      padding-left: 10px;
-      border-left: 2px solid $border-color-main;
-      border-right: 2px solid $border-color-main;
-
-      &:hover {
-        color: $page-bg-color-main;
-        text-decoration: underline;
-      }
-    }
 
     & div:last-child {
       padding-bottom: 10px;
       border-radius: 0 0 16px 16px;
     }
   }
+
+  &Item {
+    width: 300px;
+    background-color: $page-bg-color-additional;
+    padding-top: 4px;
+    padding-left: 10px;
+    border-left: 3px solid $highlight-additional;
+    border-right: 3px solid $highlight-additional;
+
+    &:hover {
+      color: $page-bg-color-main;
+      text-decoration: underline;
+    }
+  }
+}
+
+#tools {
+  padding-right: 20px;
 }
 
 .auth {

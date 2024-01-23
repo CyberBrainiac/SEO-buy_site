@@ -3,8 +3,9 @@
 
 .container {
   @include flex-column();
-  width: $max-app-width;
-  padding: 100px 0;
+  padding-top: 60px;
+  padding-bottom: 20px;
+  max-width: $max-app-width;
   margin: 0 auto;
 }
 
@@ -37,4 +38,10 @@
       font-size: 22px;
     }
   }
+}
+
+.googleFormContainer {
+  margin: 60px auto;
+  display: flex;
+  justify-content: center;
 }

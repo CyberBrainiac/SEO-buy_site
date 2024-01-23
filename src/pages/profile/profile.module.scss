@@ -3,8 +3,8 @@
 
 .container {
   @include flex-column();
-  width: $max-app-width;
   padding: 164px 0;
+  max-width: $max-app-width;
   margin: 0 auto;
 }
 

@@ -3,21 +3,9 @@
 
 .container {
   color: $text-color-main;
-  padding: $offset-block-padding;
-  padding-top: 60px;
+  background-color: #fcf5f5;
 
   a {
     @include common-link();
   }
-
-  @media screen and (min-width: $max-app-width) {
-    max-width: $max-app-width;
-    margin: 0 auto;
-  }
-}
-
-.googleFormContainer {
-  margin: 60px auto;
-  display: flex;
-  justify-content: center;
 }

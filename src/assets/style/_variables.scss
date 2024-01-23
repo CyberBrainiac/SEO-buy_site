@@ -15,7 +15,7 @@ $text-color-additional: #fcf1d2;
 $border-color-main: #000000;
 
 /*Height*/
-$header-height: 100px;
+$header-height: 84px;
 $footer-height: 220px;
 
 /*Transition*/
@@ -23,10 +23,14 @@ $transition-main: all 0.4s ease-out;
 $transition-fast: all 0.25s ease;
 
 /*Paddings*/
-$offset-block-padding: 0 20px 0 20px;
+// $padding-page-high: 16vw;
+// $padding-page-medium: 8vw;
+// $padding-page-low: 20px;
 /*Margins*/
 
 /*Border radius*/
 
 /*Width*/
-$max-app-width: 900px;
+// $high-app-width: 2000px;
+// $medium-app-width: 1200px;
+$max-app-width: 1200px;

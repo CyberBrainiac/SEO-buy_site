@@ -1,0 +1,19 @@
+@import '@style/variables';
+@import '@style/mixins';
+
+.container {
+  max-width: $max-app-width;
+  margin: 0 auto;
+}
+
+.heading {
+  text-align: center;
+  background-color: $border-color-main;
+  color: $highlight-main;
+
+  h1 {
+    color: inherit;
+    padding: 20px 0;
+    transition: $transition-main;
+  }
+}
