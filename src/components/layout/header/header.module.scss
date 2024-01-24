@@ -56,6 +56,7 @@
 
 .nav {
   @include flex-row();
+  justify-content: space-between;
   color: $highlight-main;
   font-size: 30px;
   line-height: 1.4;
@@ -99,8 +100,8 @@
     border-radius: 0 0 16px 16px;
 
     & div:last-child {
-      padding-bottom: 10px;
       border-radius: 0 0 16px 16px;
+      padding-bottom: 20px;
     }
   }
 

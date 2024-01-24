@@ -24,6 +24,8 @@ import fireStore, { UserProfile } from './services/fireStore';
 import { AuthContext } from './containers/AuthContext';
 import Profile from './pages/profile/Profile';
 import ContactUs from './pages/contactUs/ContactUs';
+import PrivacyPolicy from './pages/privacyPolicy/PrivacyPolicy';
+import TermsOfUse from './pages/termsOfUse/termsOfUse';
 
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
@@ -88,6 +90,8 @@ const App: React.FC = () => {
         <Route path="/tools/link-insertion" element={<LinkInsertion />} />
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/contactUs" element={<ContactUs />} />
+        <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+        <Route path="/termsOfUse" element={<TermsOfUse />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     )

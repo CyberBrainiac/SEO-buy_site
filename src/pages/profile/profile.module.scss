@@ -5,6 +5,7 @@
   @include flex-column();
   padding: 164px 0;
   max-width: $max-app-width;
+  height: calc(100vh - $header-height - $footer-height);
   margin: 0 auto;
 }
 

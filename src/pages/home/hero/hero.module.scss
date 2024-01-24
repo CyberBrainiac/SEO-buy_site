@@ -6,9 +6,10 @@
   justify-items: end;
   max-width: $max-app-width;
   margin: 0 auto;
-  grid-template-columns: 2fr 4fr;
+  grid-template-columns: 3fr 5fr;
   grid-template-rows: 1fr;
-  padding: 100px 0;
+  padding-top: 180px;
+  padding-bottom: 100px;
 }
 
 .heading {
@@ -24,4 +25,8 @@
 
 .content {
   text-indent: 1em;
+
+  h5 {
+    padding-bottom: 10px;
+  }
 }

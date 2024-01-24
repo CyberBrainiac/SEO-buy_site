@@ -34,7 +34,7 @@ const InputFile: React.FC<InputFileProps> = ({ onFileUpload }) => {
   return (
     <div {...getRootProps()} style={dropzoneStyles}>
       <input {...getInputProps()} />
-      <p>
+      <p style={{ textAlign: 'center' }}>
         {isDragActive
           ? 'Drop the file here'
           : 'Drag and drop a file here, or click to select a file'}

@@ -1,0 +1,55 @@
+@import '/src/assets/style/variables';
+@import '/src/assets/style/mixins';
+
+.container {
+  max-width: $max-app-width;
+  margin: 0 auto;
+  padding: 60px 0;
+
+  h1 {
+    text-align: center;
+  }
+
+  a {
+    @include common-link();
+  }
+}
+
+.updateTime {
+  @include highlight-text();
+  color: $text-color-main;
+  padding: 20px 0;
+}
+
+.otherInfoTop {
+  max-width: $small-app-width;
+  margin: 0 auto;
+}
+
+.list {
+  max-width: $small-app-width;
+  margin: 0 auto;
+
+  h4 {
+    padding-top: 40px;
+    align-self: flex-start;
+    font-weight: 500;
+  }
+
+  h5 {
+    color: $text-color-main;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-weight: 500;
+  }
+
+  li {
+    position: relative;
+    left: 24px;
+
+    &::marker {
+      font-size: 24px;
+      font-weight: 500;
+    }
+  }
+}

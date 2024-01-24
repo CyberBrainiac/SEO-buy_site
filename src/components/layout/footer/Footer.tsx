@@ -14,13 +14,17 @@ const Footer: React.FC = () => {
           <Link className={style.content_link} to="/contactUs">
             <p>Contact Us</p>
           </Link>
-          <Link className={style.content_link} to="/userDataPolicy">
-            <p>User Data Policy</p>
+          <Link className={style.content_link} to="/termsOfUse">
+            <p>Terms Of Use</p>
+          </Link>
+          <Link className={style.content_link} to="/privacyPolicy">
+            <p>Privacy Policy</p>
           </Link>
           <Link className={style.content_link} to="/prices">
             <p>Prices</p>
           </Link>
         </div>
+        <div className={style.separator}></div>
         <div className={style.copyright}>
           <p>
             Created by:{' '}

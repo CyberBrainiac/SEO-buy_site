@@ -4,4 +4,10 @@
 .container {
   max-width: $max-app-width;
   margin: 0 auto;
+  padding: 120px 0;
+  text-indent: 1em;
+
+  h3 {
+    padding-bottom: 20px;
+  }
 }

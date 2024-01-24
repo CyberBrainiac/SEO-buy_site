@@ -34,17 +34,29 @@ p {
   text-align: justify;
 }
 
+ol {
+  list-style-type: decimal;
+}
+
+ul {
+  list-style-type: disc;
+}
+
 .page {
   @include common-text();
+  min-height: 100vh;
 }
+
 .header {
   position: fixed;
   width: 100%;
   z-index: 2;
 }
+
 .footer {
   position: relative;
 }
+
 .home {
   position: relative;
 }

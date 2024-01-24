@@ -6,6 +6,9 @@
   background-color: #fcf5f5;
 
   a {
+    @include highlight-text();
     @include common-link();
+    text-decoration: none;
+    font-size: 24px;
   }
 }

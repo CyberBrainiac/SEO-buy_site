@@ -1,0 +1,23 @@
+@import '/src/assets/style/variables';
+@import '/src/assets/style/mixins';
+
+.container {
+  @include flex-column();
+  max-width: $medium-app-width;
+  margin: 0 auto;
+
+  p {
+    margin-top: 10px;
+    text-indent: 2rem;
+  }
+
+  h2 {
+    padding-top: 40px;
+    align-self: flex-start;
+    font-weight: 500;
+  }
+
+  &:last-child {
+    padding-bottom: 40px;
+  }
+}

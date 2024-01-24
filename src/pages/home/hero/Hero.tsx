@@ -52,9 +52,10 @@ const Hero: React.FC = () => {
       </div>
       <div className={style.container}>
         <div className={style.content}>
+          <h5>Unlock the power</h5>
           <p>
-            Unlock the power of seamless link building and elevate your website`s performance with
-            our innovative online service.
+            Of seamless link building and elevate your website`s performance with our innovative
+            online service.
           </p>
           <p>
             At <a href="https://seo-buy.com/">SEO-Buy</a>, we redefine the standards of link
@@ -66,7 +67,12 @@ const Hero: React.FC = () => {
           </p>
         </div>
         <LazyBackgroundImage
-          imgStyle={{ width: '640px', height: '308px', backgroundSize: 'cover' }}
+          imgStyle={{
+            width: '640px',
+            height: '308px',
+            backgroundSize: 'cover',
+            boxShadow: '0 0 20px 2px rgba(106, 135, 202, 1)',
+          }}
           imgUrl={HeroImg}
         />
       </div>
