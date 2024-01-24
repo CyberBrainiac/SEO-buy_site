@@ -25,7 +25,7 @@ import { AuthContext } from './containers/AuthContext';
 import Profile from './pages/profile/Profile';
 import ContactUs from './pages/contactUs/ContactUs';
 import PrivacyPolicy from './pages/privacyPolicy/PrivacyPolicy';
-import TermsOfUse from './pages/termsOfUse/termsOfUse';
+import TermsOfUse from './pages/termsOfUse/TermsOfUse';
 
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
