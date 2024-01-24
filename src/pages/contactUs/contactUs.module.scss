@@ -3,13 +3,12 @@
 
 .container {
   @include flex-column();
-  max-width: $max-app-width;
+  max-width: $medium-app-width;
   margin: 0 auto;
-  text-indent: 1em;
 
   h1 {
     padding: 60px 0;
-    align-self: flex-start;
+    text-align: center;
   }
   h2 {
     padding: 30px 0;

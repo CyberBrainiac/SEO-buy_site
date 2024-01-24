@@ -5,6 +5,7 @@
   @include flex-column();
   max-width: $medium-app-width;
   margin: 0 auto;
+  padding: 60px 0;
 
   p {
     margin-top: 10px;
@@ -15,9 +16,5 @@
     padding-top: 40px;
     align-self: flex-start;
     font-weight: 500;
-  }
-
-  &:last-child {
-    padding-bottom: 40px;
   }
 }
