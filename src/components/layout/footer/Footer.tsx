@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   const developerEmail = 'arsenij.arxipov.1998@gmail.com';
+  const date = new Date();
+  const currentYear = date.getFullYear();
+
   return (
     <footer className="footer">
       <div className={style.container}>
@@ -20,20 +23,20 @@ const Footer: React.FC = () => {
           <Link className={style.content_link} to="/privacyPolicy">
             <p>Privacy Policy</p>
           </Link>
-          <Link className={style.content_link} to="/prices">
-            <p>Prices</p>
-          </Link>
         </div>
         <div className={style.separator}></div>
-        <div className={style.copyright}>
-          <p>
-            Created by:{' '}
-            <a className={style.copyright_text} href={`mailto:${developerEmail}`}>
-              {developerEmail}
-            </a>
-          </p>
+      </div>
+      <div className={style.copyright}>
+        <div className={style.copyrightLegal}>
+          {' '}
+          © <span className={style.copyrightYear}>{currentYear}</span> SEO-buy
         </div>
-        <div className={style.background}></div>
+        <p className={style.copyrightCreator}>
+          Created by{' '}
+          <a className={style.copyrightCreator_mail} href={`mailto:${developerEmail}`}>
+            {developerEmail}
+          </a>
+        </p>
       </div>
     </footer>
   );

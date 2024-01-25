@@ -1,0 +1,28 @@
+@import '/src/assets/style/variables';
+@import '/src/assets/style/mixins';
+
+.container {
+  max-width: $medium-app-width;
+  margin: 0 auto;
+  padding-bottom: 60px;
+
+  h1 {
+    text-align: center;
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+
+  h2 {
+    margin-top: 40px;
+    font-weight: 500;
+  }
+
+  p {
+    margin-top: 10px;
+    text-indent: 2rem;
+  }
+
+  a {
+    @include common-link();
+  }
+}

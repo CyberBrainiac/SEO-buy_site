@@ -15,7 +15,7 @@ const PrivacyPolicy: React.FC = () => {
       <div className={style.container}>
         <h1>Privacy Policy of seo-buy.com</h1>
         <div className={style.otherInfoTop}>
-          <p className={style.updateTime}>Last Updated: 24.01.2024</p>
+          <p className={style.updateTime}>Last Updated: 25.01.2024</p>
           <p>
             Thank you for using SEO-Buy! This Privacy Policy outlines how we collect, use, disclose,
             and protect the information you provide when using our site. By using our application,
@@ -87,12 +87,11 @@ const PrivacyPolicy: React.FC = () => {
           <h4>Data Security:</h4>
           <p>
             We prioritize the security of your information and employ industry-standard measures to
-            protect it from unauthorized access, disclosure, alteration, or destruction. Your data
-            is stored at{' '}
+            protect it from unauthorized access, disclosure, alteration, or destruction.{' '}
             <a href="https://firebase.google.com" target="_blank" rel="noreferrer">
-              firebase.google.com
-            </a>
-            .
+              Firebase.google.com
+            </a>{' '}
+            keeps your information safe.
           </p>
 
           <h4>Data Sharing:</h4>

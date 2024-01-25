@@ -25,7 +25,7 @@ const Header: React.FC = () => {
                   <Link to={'/service/custom-article-creation'}>Custom Article Creation</Link>
                 </div>
                 <div className={style.navItem}>
-                  <Link to={'/service/link-building-services'}>Link Building Services</Link>
+                  <Link to={'/service/link-building'}>Link Building Services</Link>
                 </div>
                 <div className={style.navItem}>
                   <Link to={'/service/on-page-seo'}>On Page SEO</Link>

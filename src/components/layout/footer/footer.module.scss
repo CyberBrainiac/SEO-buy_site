@@ -4,9 +4,7 @@
 .container {
   @include flex-column();
   width: 100%;
-  height: $footer-height;
   color: #000;
-  background-color: $page-bg-color-additional;
   font-size: 22px;
   line-height: 120%;
   max-width: $max-app-width;
@@ -38,29 +36,29 @@
   }
 }
 
-.copyright {
-  padding: 10px 0;
-  text-align: center;
-
-  &_text {
-    color: $highlight-main;
-    font-size: 18px;
-
-    &:hover {
-      color: $highlight-additional;
-    }
-  }
-}
-
-.background {
-  @include absolute-container();
-  z-index: -1;
-  height: $footer-height;
-  background-color: $page-bg-color-additional;
-}
-
 .separator {
   width: 100%;
   height: 1px;
-  background-image: radial-gradient(200px 200px at 50% 50%, #020202ff 0%, #6a87ca 100%);
+  background-image: radial-gradient(250px 250px at 50% 50%, #020202ff 0%, #6a87ca 100%);
+}
+
+.copyright {
+  @include flex-row();
+  justify-content: center;
+  padding-top: 20px;
+  text-align: center;
+  font-size: 16px;
+  margin: auto;
+  column-gap: 30px;
+  color: $border-color-main;
+
+  &Creator {
+    &_mail {
+      color: rgb(0, 0, 255);
+
+      &:hover {
+        color: $highlight-main;
+      }
+    }
+  }
 }

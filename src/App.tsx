@@ -26,6 +26,10 @@ import Profile from './pages/profile/Profile';
 import ContactUs from './pages/contactUs/ContactUs';
 import PrivacyPolicy from './pages/privacyPolicy/PrivacyPolicy';
 import TermsOfUse from './pages/termsOfUse/TermsOfUse';
+import AboutUs from './pages/aboutUs/AboutUs';
+import ArticleCreation from './pages/articleCreation/ArticleCreation';
+import LinkBuilding from './pages/linkBuilding/LinkBuilding';
+import OnPageSEO from './pages/onPageSEO/OnPageSEO';
 
 const App: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
@@ -92,6 +96,10 @@ const App: React.FC = () => {
         <Route path="/contactUs" element={<ContactUs />} />
         <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
         <Route path="/termsOfUse" element={<TermsOfUse />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
+        <Route path="/service/custom-article-creation" element={<ArticleCreation />} />
+        <Route path="/service/link-building" element={<LinkBuilding />} />
+        <Route path="/service/on-page-seo" element={<OnPageSEO />} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     )
