@@ -174,7 +174,7 @@ const ThematicityIndex: React.FC = () => {
   return (
     <section className="thematicityIndex">
       <div className={style.container}>
-        <h1 className={style.mainHeading}>Thematicity Index Tool</h1>
+        <h1 className={style.mainHeading}>Thematic Domain Indexing</h1>
         {userInf}
 
         <InputFile onFileUpload={handleFileUpload} />
@@ -223,6 +223,66 @@ const ThematicityIndex: React.FC = () => {
 
         <div className={style.logContainer}>{logProgress}</div>
         <div className={style.errorContainer}>{errorMessage}</div>
+
+        <div className={style.content}>
+          <h2>Unveiling Relevance in the Digital Tapestry</h2>
+
+          <p>
+            In the dynamic landscape of digital content, relevance is the key to unlocking the full
+            potential of your website. At SEO-Buy, our Thematic Domain Indexing (TDI) tool serves as
+            a beacon, guiding you through the intricate maze of online visibility. Let`s delve into
+            the intricacies of how TDI can revolutionize your approach to link building and search
+            engine optimization.
+          </p>
+
+          <h2>How Thematic Domain Indexing Works</h2>
+          <p>
+            Thematic Domain Indexing is a sophisticated mechanism that evaluates the alignment
+            between a website and the thematic essence of a specific user query. Recognizing that
+            websites cover diverse thematic realms, TDI enables you to assess which domains from
+            your user`s database resonate most effectively with their content goals.
+          </p>
+
+          <h2>Precision in Matching</h2>
+          <p>
+            By assigning a thematic index to each domain, our tool provides a quantitative measure
+            of how well a website aligns with a particular user query. This not only streamlines the
+            link building process but also empowers you to make informed decisions based on
+            data-driven insights.
+          </p>
+
+          <h2>Optimizing for Google`s Affinity</h2>
+          <p>
+            In the realm of search engine optimization, Google values relevance. Thematic Domain
+            Indexing equips you with the ability to identify domains that are not only thematically
+            aligned with the user`s query but also possess a high likelihood of enhancing search
+            engine rankings.
+          </p>
+
+          <h2>Strategic Link Placements</h2>
+          <p>
+            Armed with the insights from TDI, you can strategically place links on websites that not
+            only share thematic relevance but also increase the probability of Google recognizing
+            the synergy. This synergy, in turn, boosts your website`s chances of climbing the ranks
+            in Google`s search results.
+          </p>
+
+          <h2>Enhancing User Experience</h2>
+          <p>
+            Thematic Domain Indexing isn`t just about appeasing search engines; it`s about enhancing
+            the user experience. By connecting users with content that precisely aligns with their
+            interests, you`re not only increasing visibility but also fostering a more engaging
+            online experience.
+          </p>
+
+          <p>
+            In a nutshell, Thematic Domain Indexing at SEO-Buy isn`t just a tool; it`s a compass
+            navigating you through the vast sea of digital content. Elevate your link building
+            strategy, enhance thematic relevance, and ascend the ranks of search engine results with
+            the precision of Thematic Domain Indexing. Welcome to a new era of targeted online
+            visibility!
+          </p>
+        </div>
       </div>
     </section>
   );

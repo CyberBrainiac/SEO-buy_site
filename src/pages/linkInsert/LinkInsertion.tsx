@@ -180,7 +180,7 @@ const LinkInsertion: React.FC = () => {
   return (
     <section className="linkInsertion">
       <div className={style.container}>
-        <h1 className={style.mainHeading}>Link Insertion Tool</h1>
+        <h1>Link Insertion Locator</h1>
         {userInf}
 
         <InputFile onFileUpload={handleFileUpload} />
@@ -248,6 +248,71 @@ const LinkInsertion: React.FC = () => {
         </form>
         <div className={style.logContainer}>{logProgress}</div>
         <div className={style.errorContainer}>{errorMessage}</div>
+
+        <div className={style.content}>
+          <h2>Navigating Your Path to Relevant Link Placements</h2>
+          <p>
+            In the ever-evolving world of digital marketing, strategic link placements are paramount
+            to establishing and fortifying your online presence. At SEO-Buy, our Link Insertion
+            Locator emerges as a powerful ally, simplifying the intricate process of finding ideal
+            spaces for your valuable links. Let`s explore the nuances of this online tool and how it
+            can revolutionize your link-building strategy.
+          </p>
+
+          <h2>Effortless Discovery of Link Placement Opportunities</h2>
+          <p>
+            The Link Insertion Locator is a game-changer for digital marketers seeking efficient and
+            targeted link placements. Say goodbye to endless hours spent manually scouring the
+            internet for suitable websites; our tool automates the process, allowing you to focus on
+            what truly matters – crafting compelling content and building your brand.
+          </p>
+
+          <h2>User-Friendly Interface</h2>
+          <p>
+            The process is seamless. Upload your database of websites and input your desired
+            keywords or phrases. The Link Insertion Locator swiftly sifts through your repository,
+            identifying websites whose content aligns perfectly with your specified criteria.
+          </p>
+
+          <h2>Precision in Matching</h2>
+          <p>
+            Our tool goes beyond basic keyword matching. It analyzes the content of each website in
+            your database, ensuring not only topical relevance but also contextual suitability for
+            link insertions. This meticulous approach guarantees that your links seamlessly
+            integrate into the fabric of each website, maximizing their impact.
+          </p>
+
+          <h2>Google SERP Integration</h2>
+          <p>
+            But we don`t stop there. The Link Insertion Locator taps into the vast wealth of
+            information available on Google`s Search Engine Results Pages (SERPs). By providing you
+            with the exact number of pages and a list of top-ranking pages from Google`s results
+            that precisely match your query, you gain unparalleled insights into the potential reach
+            and influence of your link placements.
+          </p>
+
+          <h2>Time-Efficient and Result-Driven</h2>
+          <p>
+            Imagine the hours saved as the Link Insertion Locator streamlines the process,
+            presenting you with a curated list of websites where your links will thrive. By
+            eliminating the guesswork and minimizing the search time, our tool empowers you to focus
+            on the strategic aspects of your link-building campaign.
+          </p>
+
+          <h2>Strategic Advantage</h2>
+          <p>
+            In the competitive landscape of digital marketing, every minute counts. The Link
+            Insertion Locator at SEO-Buy not only saves you time but also provides a strategic
+            advantage by ensuring that your links find a natural and impactful home in the digital
+            realm.
+          </p>
+
+          <p>
+            Welcome to a new era of efficiency in link building. Let the Link Insertion Locator be
+            your guide as you navigate the vast landscape of online opportunities, one relevant link
+            placement at a time. Elevate your strategy with precision and purpose!
+          </p>
+        </div>
       </div>
     </section>
   );

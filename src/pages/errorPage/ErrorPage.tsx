@@ -7,7 +7,7 @@ const ErrorPage: React.FC = () => {
     <section className="errorPage">
       <div className={style.container}>
         <h1>404 page not found :(</h1>
-        <ButtonLink href="/" text="Go home" />
+        <ButtonLink href="/" text="To home page" />
       </div>
     </section>
   );

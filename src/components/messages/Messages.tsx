@@ -13,7 +13,7 @@ const Messages: React.FC = () => {
   if (showInform) {
     setTimeout(() => {
       dispatch(setInformMessage(undefined));
-    }, 1500);
+    }, 3000);
   }
 
   return <div className={messageStyle}>{showInform}</div>;

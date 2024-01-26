@@ -6,6 +6,11 @@
   padding-top: 60px;
   max-width: $max-app-width;
   margin: 0 auto;
+
+  @media screen and (max-width: 879.8px) {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 .heading {
@@ -27,6 +32,10 @@
 
   &Text {
     height: 140px;
+
+    @media screen and (max-width: 879.8px) {
+      height: 160px;
+    }
   }
 
   &Wrap {

@@ -4,8 +4,7 @@
 .container {
   @include flex-column();
   row-gap: 40px;
-  height: calc(100vh - $footer-height);
-  padding-top: 100px;
+  height: calc(100vh - $footer-height - $header-height);
   max-width: $max-app-width;
   margin: 0 auto;
 }

@@ -5,18 +5,32 @@
   background-color: $page-bg-color-main;
   max-width: $max-app-width;
   margin: 0 auto;
-}
+  padding-bottom: 60px;
 
-.mainHeading {
-  padding-top: 10px;
-  text-align: center;
+  h1 {
+    text-align: center;
+    padding-top: 30px;
+  }
+
+  h2 {
+    margin-top: 40px;
+    font-weight: 500;
+  }
+
+  a {
+    @include common-link();
+  }
+
+  @media screen and (max-width: 1239.8px) {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 .userInf {
   font-size: 20px;
   text-align: center;
-  padding-top: 24px;
-  padding-bottom: 40px;
+  padding: 20px 0 40px 0;
 
   &__freeReq {
     color: rgb(4, 129, 4);
@@ -155,4 +169,14 @@
   text-align: center;
   height: 22px;
   padding: 4px;
+}
+
+.content {
+  & :first-child {
+    margin-top: 10px;
+  }
+  p {
+    text-indent: 2rem;
+    margin-top: 10px;
+  }
 }

@@ -57,22 +57,3 @@ const locStorage = {
 };
 
 export default locStorage;
-
-// function set(
-//   key: string,
-//   /* eslint-disable */
-//   data: any
-//   /* eslint-enable */
-// ) {
-//   try {
-//     localStorage.setItem(key, JSON.stringify(data));
-//   } catch (error) {
-//     console.error('Parse Error "set to session storage"', error);
-//   }
-// }
-
-// function get(key: string) {
-//   const data = localStorage.getItem(key);
-//   if (!data) return null;
-//   return JSON.parse(data);
-// }

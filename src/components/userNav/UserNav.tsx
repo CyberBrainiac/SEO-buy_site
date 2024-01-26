@@ -17,22 +17,24 @@ const UserNav: React.FC = () => {
     setUser('Google');
   };
 
-  if (!userProfile) {
-    return (
-      <div onClick={handleAuthBtnClick} className={style.auth}>
-        Sign In
-      </div>
-    );
-  }
-
   function handleSignOut() {
     deleteUser();
+  }
+
+  if (!userProfile) {
+    return (
+      <div className={style.container}>
+        <div onClick={handleAuthBtnClick} className={style.auth}>
+          Sign In
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className={style.container}>
       <IconContext.Provider value={{ color: '#fffc62', size: '3em' }}>
-        <div>
+        <div className={style.userIconWrap}>
           <BiUser />
         </div>
       </IconContext.Provider>
