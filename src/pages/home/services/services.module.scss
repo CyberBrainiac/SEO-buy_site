@@ -2,17 +2,33 @@
 @import '@style/mixins';
 
 .container {
+  display: flex;
+  column-gap: 60px;
+  align-items: center;
   max-width: $max-app-width;
   margin: 0 auto;
-  padding: 100px 0;
+  padding-top: 100px;
   text-indent: 1em;
 
-  h3 {
+  h2 {
     padding-bottom: 20px;
   }
 
   @media screen and (max-width: 1239.8px) {
     padding-left: 16px;
     padding-right: 16px;
+  }
+}
+
+.spiner {
+  width: 500px;
+  height: 500px;
+
+  &Img {
+    display: none;
+
+    &_active {
+      display: block;
+    }
   }
 }
