@@ -5,6 +5,8 @@ import Hero from './hero/Hero';
 import OnPageSEO from './onPageSEO/OnPageSEO';
 import ArticleCreation from './articleCreation/ArticleCreation';
 import AboutUs from './aboutUs/AboutUs';
+import LinkBuilding from './linkBuilding/LinkBuilding';
+import Services from './services/Services';
 
 const Home: React.FC = () => {
   useEffect(() => {
@@ -21,7 +23,9 @@ const Home: React.FC = () => {
         <Hero />
         <Tools />
         <OnPageSEO />
+        <LinkBuilding />
         <ArticleCreation />
+        <Services />
         <AboutUs />
       </div>
     </section>
