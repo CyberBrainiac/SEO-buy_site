@@ -27,6 +27,7 @@
 .spiner {
   width: 500px;
   height: 500px;
+  transition: transform 1s linear;
 
   &Img {
     display: none;
@@ -56,6 +57,6 @@
     width: 6px;
     background-color: $highlight-additional;
     opacity: 0;
-    transition: opacity 0.5s ease-out;
+    transition: opacity 0.4s ease-out;
   }
 }

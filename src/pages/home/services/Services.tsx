@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import style from './services.module.scss';
 import spiner_onPageSEO from '@image/Spiner_onPageSEO.svg';
 import spiner_linkBuilding from '@image/Spiner_linkBuilding.svg';
@@ -9,14 +9,15 @@ type TextRef = React.MutableRefObject<HTMLDivElement | null>;
 type TextImgAssociation = [TextRef, ImgRef][];
 
 const Services: React.FC = () => {
+  const [autoRotate, setAutoRotate] = useState(true);
   const img_onPageSEO = useRef<HTMLImageElement | null>(null);
   const img_linkBuilding = useRef<HTMLImageElement | null>(null);
   const img_articleCreation = useRef<HTMLImageElement | null>(null);
   const text_onPageSEO = useRef<HTMLDivElement | null>(null);
   const text_linkBuilding = useRef<HTMLDivElement | null>(null);
   const text_articleCreation = useRef<HTMLDivElement | null>(null);
-  const img_active = `${style.spinerImg} ${style.spinerImg_active}`;
-  const img_disable = `${style.spinerImg}`;
+  const spinerRef = useRef<HTMLDivElement | null>(null);
+  const defaultRotateInterval = 3000;
 
   const mapTextImg = useMemo(() => {
     const textImgAssociation: TextImgAssociation = [
@@ -28,8 +29,61 @@ const Services: React.FC = () => {
     return new Map(textImgAssociation);
   }, []);
 
+  //
+  function map_getKeyByValue(map: Map<TextRef, ImgRef>, target: ImgRef): TextRef | undefined {
+    for (const [key, value] of map.entries()) {
+      if (value.current === target.current) {
+        return key;
+      }
+    }
+  }
+
+  const rotate = () => {
+    const rotateStep = -120;
+    if (!spinerRef.current) {
+      throw new Error('spiner element does`nt exist');
+    }
+    const rotateString = spinerRef.current.style.transform;
+    const currentRotate = parseInt(rotateString.slice(rotateString.indexOf('(') + 1));
+
+    spinerRef.current.style.transform = `rotate(${currentRotate + rotateStep}deg)`;
+    console.log(spinerRef.current.style.transform);
+  };
+
+  //apply styles to textBlock and spiner
+  const applyStyle = useCallback(
+    (hoverTextBlock: HTMLDivElement) => {
+      const img_active = `${style.spinerImg} ${style.spinerImg_active}`;
+      const img_disable = `${style.spinerImg}`;
+      const hoverTextDecore = hoverTextBlock.children[0] as HTMLDivElement;
+      const hoverTextRef = [...mapTextImg.keys()].find(key => key.current === hoverTextBlock);
+      if (!hoverTextRef) {
+        throw new Error(`Reference for ${hoverTextBlock} does'nt exist`);
+      }
+
+      const hoverImgRef = mapTextImg.get(hoverTextRef);
+      if (!hoverImgRef || !hoverImgRef.current) {
+        throw new Error(`Corresponding image reference ${hoverTextRef} does'nt exist`);
+      }
+
+      for (const [text, img] of mapTextImg.entries()) {
+        if (text !== hoverTextRef) {
+          const decor = text.current?.children[0] as HTMLDivElement;
+          decor.style.opacity = '0';
+          const imgElem = img.current as HTMLImageElement;
+          imgElem.className = img_disable;
+        }
+
+        hoverTextDecore.style.opacity = '1';
+        hoverImgRef.current.className = img_active;
+      }
+    },
+    [mapTextImg]
+  );
+
   //initial highlight spiner sector
   useLayoutEffect(() => {
+    const img_active = `${style.spinerImg} ${style.spinerImg_active}`;
     if (img_onPageSEO.current) {
       img_onPageSEO.current.className = img_active;
       const correspondingText = map_getKeyByValue(mapTextImg, img_onPageSEO);
@@ -44,47 +98,44 @@ const Services: React.FC = () => {
       const correspondingTextDecor = correspondingText.current.children[0] as HTMLDivElement;
       correspondingTextDecor.style.opacity = '1';
     }
-  }, [img_active, mapTextImg]);
+  }, [mapTextImg]);
 
-  //
-  function map_getKeyByValue(map: Map<TextRef, ImgRef>, target: ImgRef): TextRef | undefined {
-    for (const [key, value] of map.entries()) {
-      if (value.current === target.current) {
-        return key;
-      }
+  useEffect(() => {
+    let elemIndex = 0;
+    const spiner = spinerRef.current!;
+
+    if (!autoRotate) {
+      spiner.ontransitionend = null;
     }
-  }
+
+    const rotateInterval = setInterval(() => {
+      const currentTarget = [...mapTextImg.keys()][elemIndex];
+      const newElemIndex = elemIndex + 1;
+      newElemIndex < mapTextImg.size ? ++elemIndex : (elemIndex = 0);
+      const textBlock = currentTarget.current!;
+
+      spiner.ontransitionend = () => {
+        console.log(elemIndex);
+        applyStyle(textBlock);
+      };
+
+      rotate();
+    }, defaultRotateInterval);
+
+    return () => {
+      clearInterval(rotateInterval);
+    };
+  }, [autoRotate, mapTextImg, applyStyle]);
 
   //Activate image after hover
   const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
+    setAutoRotate(false);
     const hoverTextBlock = event.currentTarget;
-    const hoverTextDecore = hoverTextBlock.children[0] as HTMLDivElement;
-
-    const hoverTextRef = [...mapTextImg.keys()].find(key => key.current === hoverTextBlock);
-    if (!hoverTextRef) {
-      throw new Error(`Reference for ${hoverTextBlock} does'nt exist`);
-    }
-
-    const hoverImgRef = mapTextImg.get(hoverTextRef);
-    if (!hoverImgRef || !hoverImgRef.current) {
-      throw new Error(`Corresponding image reference ${hoverTextRef} does'nt exist`);
-    }
-
-    for (const [text, img] of mapTextImg.entries()) {
-      if (text !== hoverTextRef) {
-        const decor = text.current?.children[0] as HTMLDivElement;
-        decor.style.opacity = '0';
-        const imgElem = img.current as HTMLImageElement;
-        imgElem.className = img_disable;
-      }
-
-      hoverTextDecore.style.opacity = '1';
-      hoverImgRef.current.className = img_active;
-    }
+    applyStyle(hoverTextBlock);
   };
 
   const handleMouseLeave = () => {
-    console.log('leave');
+    setAutoRotate(true);
   };
 
   return (
@@ -147,7 +198,7 @@ const Services: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className={style.spiner}>
+        <div ref={spinerRef} className={style.spiner}>
           <img
             ref={img_onPageSEO}
             className={style.spinerImg}
