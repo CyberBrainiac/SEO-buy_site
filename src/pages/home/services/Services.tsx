@@ -10,6 +10,7 @@ type TextImgAssociation = [TextRef, ImgRef][];
 
 const Services: React.FC = () => {
   const [autoRotate, setAutoRotate] = useState(true);
+  const createdIntervals = useRef<NodeJS.Timeout[]>([]);
   const img_onPageSEO = useRef<HTMLImageElement | null>(null);
   const img_linkBuilding = useRef<HTMLImageElement | null>(null);
   const img_articleCreation = useRef<HTMLImageElement | null>(null);
@@ -38,16 +39,17 @@ const Services: React.FC = () => {
     }
   }
 
-  const rotate = () => {
+  const rotate = (boost = 1) => {
     const rotateStep = -120;
+
     if (!spinerRef.current) {
       throw new Error('spiner element does`nt exist');
     }
     const rotateString = spinerRef.current.style.transform;
-    const currentRotate = parseInt(rotateString.slice(rotateString.indexOf('(') + 1));
+    let currentRotate = parseInt(rotateString.slice(rotateString.indexOf('(') + 1));
+    if (isNaN(currentRotate)) currentRotate = 0;
 
-    spinerRef.current.style.transform = `rotate(${currentRotate + rotateStep}deg)`;
-    console.log(spinerRef.current.style.transform);
+    spinerRef.current.style.transform = `rotate(${currentRotate + rotateStep * boost}deg)`;
   };
 
   //apply styles to textBlock and spiner
@@ -103,27 +105,36 @@ const Services: React.FC = () => {
   useEffect(() => {
     let elemIndex = 0;
     const spiner = spinerRef.current!;
+    const allCreatedIntervals = createdIntervals.current;
 
     if (!autoRotate) {
-      spiner.ontransitionend = null;
+      return () => {
+        allCreatedIntervals.forEach(interval => {
+          clearInterval(interval);
+        });
+        createdIntervals.current = [];
+        spiner.style.transform = '';
+      };
     }
 
-    const rotateInterval = setInterval(() => {
+    spiner.ontransitionend = () => {
+      spiner.ontransitionend = null;
       const currentTarget = [...mapTextImg.keys()][elemIndex];
-      const newElemIndex = elemIndex + 1;
-      newElemIndex < mapTextImg.size ? ++elemIndex : (elemIndex = 0);
       const textBlock = currentTarget.current!;
+      applyStyle(textBlock);
+    };
 
-      spiner.ontransitionend = () => {
-        console.log(elemIndex);
-        applyStyle(textBlock);
-      };
-
+    const rotateInterval = setInterval(() => {
+      const nextElemIndex = elemIndex + 1;
+      nextElemIndex < mapTextImg.size ? ++elemIndex : (elemIndex = 0);
       rotate();
     }, defaultRotateInterval);
+    createdIntervals.current.push(rotateInterval);
 
     return () => {
-      clearInterval(rotateInterval);
+      allCreatedIntervals.forEach(interval => {
+        clearInterval(interval);
+      });
     };
   }, [autoRotate, mapTextImg, applyStyle]);
 
@@ -131,7 +142,26 @@ const Services: React.FC = () => {
   const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
     setAutoRotate(false);
     const hoverTextBlock = event.currentTarget;
-    applyStyle(hoverTextBlock);
+    const animateBlocksArr = [...mapTextImg.keys()];
+    const indexOfTargetBlock = animateBlocksArr.findIndex(
+      textRef => textRef.current === hoverTextBlock
+    );
+
+    const spiner = spinerRef.current!;
+    const rotateString = spiner.style.transform;
+    const currentRotate = parseInt(rotateString.slice(rotateString.indexOf('(') + 1));
+    const currentTurn = Math.abs(currentRotate / 120);
+    const turnInTurnover = currentTurn % 3; //finished turn in current turnover;
+
+    spiner.ontransitionend = () => {
+      spiner.ontransitionend = null;
+      applyStyle(hoverTextBlock);
+    };
+
+    const invertedIndexOfTargetBlock = Math.abs(indexOfTargetBlock - (animateBlocksArr.length - 1)); //subtract last index in arr
+    const rotateBoost =
+      turnInTurnover === invertedIndexOfTargetBlock ? 0 : invertedIndexOfTargetBlock;
+    rotate(rotateBoost);
   };
 
   const handleMouseLeave = () => {
@@ -198,25 +228,27 @@ const Services: React.FC = () => {
             </div>
           </div>
         </div>
-        <div ref={spinerRef} className={style.spiner}>
-          <img
-            ref={img_onPageSEO}
-            className={style.spinerImg}
-            src={spiner_onPageSEO}
-            alt="circle with enumerate of our services: on page SEO"
-          />
-          <img
-            ref={img_linkBuilding}
-            className={style.spinerImg}
-            src={spiner_linkBuilding}
-            alt="circle with enumerate of our services: link building"
-          />
-          <img
-            ref={img_articleCreation}
-            className={style.spinerImg}
-            src={spiner_articleCreation}
-            alt="circle with enumerate of our services: article creation"
-          />
+        <div className={style.animationWrap}>
+          <div ref={spinerRef} className={style.spiner}>
+            <img
+              ref={img_onPageSEO}
+              className={style.spinerImg}
+              src={spiner_onPageSEO}
+              alt="circle with enumerate of our services: on page SEO"
+            />
+            <img
+              ref={img_linkBuilding}
+              className={style.spinerImg}
+              src={spiner_linkBuilding}
+              alt="circle with enumerate of our services: link building"
+            />
+            <img
+              ref={img_articleCreation}
+              className={style.spinerImg}
+              src={spiner_articleCreation}
+              alt="circle with enumerate of our services: article creation"
+            />
+          </div>
         </div>
       </div>
     </section>
