@@ -26,13 +26,14 @@
 }
 
 .animationWrap {
+  position: relative;
   min-width: 500px;
   height: 500px;
   overflow: hidden;
 }
 
 .spiner {
-  transition: transform 0.6s linear;
+  transition: transform 0.5s linear;
 
   &Img {
     display: none;
@@ -43,7 +44,21 @@
   }
 }
 
+.centralImg {
+  @include absolute-container();
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 10px rgba(106, 135, 202, 0.24)
+}
+
 .description {
+  position: relative;
+
   & :last-child {
     margin-bottom: 0;
   }
@@ -62,6 +77,6 @@
     width: 6px;
     background-color: $highlight-additional;
     opacity: 0;
-    transition: opacity 0.4s ease-out;
+    transition: opacity 0.3s ease-out;
   }
 }

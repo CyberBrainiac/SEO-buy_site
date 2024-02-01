@@ -3,6 +3,7 @@ import style from './services.module.scss';
 import spiner_onPageSEO from '@image/Spiner_onPageSEO.svg';
 import spiner_linkBuilding from '@image/Spiner_linkBuilding.svg';
 import spiner_articleCreation from '@image/Spiner_articleCreation.svg';
+import centralImg from '@image/Central-picture.svg';
 
 type ImgRef = React.MutableRefObject<HTMLImageElement | null>;
 type TextRef = React.MutableRefObject<HTMLDivElement | null>;
@@ -26,7 +27,6 @@ const Services: React.FC = () => {
       [text_linkBuilding, img_linkBuilding],
       [text_articleCreation, img_articleCreation],
     ];
-
     return new Map(textImgAssociation);
   }, []);
 
@@ -41,15 +41,14 @@ const Services: React.FC = () => {
 
   const rotate = (boost = 1) => {
     const rotateStep = -120;
+    const spiner = spinerRef.current;
+    if (!spiner) throw new Error('spiner element does`nt exist');
 
-    if (!spinerRef.current) {
-      throw new Error('spiner element does`nt exist');
-    }
-    const rotateString = spinerRef.current.style.transform;
+    const rotateString = spiner.style.transform;
     let currentRotate = parseInt(rotateString.slice(rotateString.indexOf('(') + 1));
     if (isNaN(currentRotate)) currentRotate = 0;
 
-    spinerRef.current.style.transform = `rotate(${currentRotate + rotateStep * boost}deg)`;
+    spiner.style.transform = `rotate(${currentRotate + rotateStep * boost}deg)`;
   };
 
   //apply styles to textBlock and spiner
@@ -86,44 +85,50 @@ const Services: React.FC = () => {
   //initial highlight spiner sector
   useLayoutEffect(() => {
     const img_active = `${style.spinerImg} ${style.spinerImg_active}`;
-    if (img_onPageSEO.current) {
-      img_onPageSEO.current.className = img_active;
-      const correspondingText = map_getKeyByValue(mapTextImg, img_onPageSEO);
+    const initialImg = img_onPageSEO.current;
 
-      if (!correspondingText) {
-        throw new Error('Provided image hasn`t corresponding text');
-      }
-      if (!correspondingText.current) {
-        throw new Error('Text for image does`nt exist');
-      }
+    if (!initialImg) throw new Error('Provided image does`nt exist');
+    initialImg.className = img_active;
+    const correspondingText = map_getKeyByValue(mapTextImg, img_onPageSEO);
 
-      const correspondingTextDecor = correspondingText.current.children[0] as HTMLDivElement;
-      correspondingTextDecor.style.opacity = '1';
+    if (!correspondingText) {
+      throw new Error('Provided image hasn`t corresponding text');
     }
+    if (!correspondingText.current) {
+      throw new Error('Text for image does`nt exist');
+    }
+    const correspondingTextDecor = correspondingText.current.children[0] as HTMLDivElement;
+    correspondingTextDecor.style.opacity = '1';
   }, [mapTextImg]);
 
+  //Auto Rotation algorithm
   useEffect(() => {
-    let elemIndex = 0;
     const spiner = spinerRef.current!;
     const allCreatedIntervals = createdIntervals.current;
 
     if (!autoRotate) {
-      return () => {
-        allCreatedIntervals.forEach(interval => {
-          clearInterval(interval);
-        });
-        createdIntervals.current = [];
-        spiner.style.transform = '';
-      };
+      allCreatedIntervals.forEach(interval => {
+        clearInterval(interval);
+      });
+      createdIntervals.current = [];
+      return;
     }
 
+    //define current spiner position
+    const rotateString = spiner.style.transform;
+    let currentRotate = parseInt(rotateString.slice(rotateString.indexOf('(') + 1));
+    if (isNaN(currentRotate)) currentRotate = 0;
+    const currentTurn = Math.abs(currentRotate / 120);
+    let elemIndex = currentTurn % 3; //finished turn in current turnover;
+
+    //apply style after animation end
     spiner.ontransitionend = () => {
-      spiner.ontransitionend = null;
       const currentTarget = [...mapTextImg.keys()][elemIndex];
       const textBlock = currentTarget.current!;
       applyStyle(textBlock);
     };
 
+    //rotate spiner to next position
     const rotateInterval = setInterval(() => {
       const nextElemIndex = elemIndex + 1;
       nextElemIndex < mapTextImg.size ? ++elemIndex : (elemIndex = 0);
@@ -135,6 +140,7 @@ const Services: React.FC = () => {
       allCreatedIntervals.forEach(interval => {
         clearInterval(interval);
       });
+      createdIntervals.current = [];
     };
   }, [autoRotate, mapTextImg, applyStyle]);
 
@@ -143,13 +149,17 @@ const Services: React.FC = () => {
     setAutoRotate(false);
     const hoverTextBlock = event.currentTarget;
     const animateBlocksArr = [...mapTextImg.keys()];
+    const indexOfLastElem = animateBlocksArr.length - 1;
     const indexOfTargetBlock = animateBlocksArr.findIndex(
       textRef => textRef.current === hoverTextBlock
     );
 
-    const spiner = spinerRef.current!;
+    const spiner = spinerRef.current;
+    if (!spiner) throw new Error('Spiner element does`nt exist');
     const rotateString = spiner.style.transform;
-    const currentRotate = parseInt(rotateString.slice(rotateString.indexOf('(') + 1));
+    let currentRotate = parseInt(rotateString.slice(rotateString.indexOf('(') + 1));
+
+    if (isNaN(currentRotate)) currentRotate = 0;
     const currentTurn = Math.abs(currentRotate / 120);
     const turnInTurnover = currentTurn % 3; //finished turn in current turnover;
 
@@ -158,26 +168,32 @@ const Services: React.FC = () => {
       applyStyle(hoverTextBlock);
     };
 
-    const invertedIndexOfTargetBlock = Math.abs(indexOfTargetBlock - (animateBlocksArr.length - 1)); //subtract last index in arr
-    const rotateBoost =
-      turnInTurnover === invertedIndexOfTargetBlock ? 0 : invertedIndexOfTargetBlock;
+    const rotateBoost = (() => {
+      if (indexOfTargetBlock === turnInTurnover) return 0;
+      if (indexOfTargetBlock === 0 && turnInTurnover === indexOfLastElem) return 1;
+      return indexOfTargetBlock - turnInTurnover;
+    })();
+
+    if (rotateBoost === 0) return;
     rotate(rotateBoost);
   };
 
-  const handleMouseLeave = () => {
-    setAutoRotate(true);
+  const handleMouseLeave = async () => {
+    //bad code
+    //whait before all transitions finished 700 - css transition duration, 20 - more delay
+    const transitionDuration = 700 + 20;
+    setTimeout(() => setAutoRotate(true), transitionDuration);
   };
 
   return (
     <section className="services">
       <div className={style.container}>
-        <div className={style.description}>
+        <div onMouseLeave={handleMouseLeave} className={style.description}>
           <div
             id="text_onPageSEO"
             className={style.elem}
             ref={text_onPageSEO}
             onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
           >
             <div className={style.elem_decor}></div>
             <div className={style.elemText}>
@@ -195,7 +211,6 @@ const Services: React.FC = () => {
             className={style.elem}
             ref={text_linkBuilding}
             onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
           >
             <div className={style.elem_decor}></div>
             <div className={style.elemText}>
@@ -213,7 +228,6 @@ const Services: React.FC = () => {
             className={style.elem}
             ref={text_articleCreation}
             onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
           >
             <div className={style.elem_decor}></div>
             <div className={style.elemText}>
@@ -248,6 +262,9 @@ const Services: React.FC = () => {
               src={spiner_articleCreation}
               alt="circle with enumerate of our services: article creation"
             />
+          </div>
+          <div className={style.centralImg}>
+            <img src={centralImg} alt="Rising trafic image" />
           </div>
         </div>
       </div>
