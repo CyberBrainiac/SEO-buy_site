@@ -1,13 +1,18 @@
 @import '@style/variables';
 @import '@style/mixins';
 
+.heading {
+  text-align: center;
+  padding-top: 100px;
+  padding-bottom: 50px;
+}
+
 .container {
   display: flex;
   column-gap: 60px;
   align-items: center;
   max-width: $max-app-width;
   margin: 0 auto;
-  padding-top: 100px;
   text-indent: 1em;
 
   h2 {

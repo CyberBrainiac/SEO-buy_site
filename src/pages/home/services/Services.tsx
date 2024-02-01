@@ -187,6 +187,7 @@ const Services: React.FC = () => {
 
   return (
     <section className="services">
+      <h2 className={style.heading}>Our Services</h2>
       <div className={style.container}>
         <div onMouseLeave={handleMouseLeave} className={style.description}>
           <div
