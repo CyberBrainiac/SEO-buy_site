@@ -2,10 +2,7 @@ import React, { useEffect } from 'react';
 import style from './home.module.scss';
 import Tools from './tools/Tools';
 import Hero from './hero/Hero';
-import OnPageSEO from './onPageSEO/OnPageSEO';
-import ArticleCreation from './articleCreation/ArticleCreation';
 import AboutUs from './aboutUs/AboutUs';
-import LinkBuilding from './linkBuilding/LinkBuilding';
 import Services from './services/Services';
 
 const Home: React.FC = () => {
@@ -22,9 +19,6 @@ const Home: React.FC = () => {
       <div className={style.container}>
         <Hero />
         <Tools />
-        <OnPageSEO />
-        <LinkBuilding />
-        <ArticleCreation />
         <Services />
         <AboutUs />
       </div>
