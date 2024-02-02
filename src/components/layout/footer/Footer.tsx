@@ -3,7 +3,6 @@ import style from './footer.module.scss';
 import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
-  const developerEmail = 'arsenij.arxipov.1998@gmail.com';
   const date = new Date();
   const currentYear = date.getFullYear();
 
@@ -46,12 +45,6 @@ const Footer: React.FC = () => {
             {' '}
             © <span className={style.copyrightYear}>{currentYear}</span> SEO-buy
           </div>
-          <p className={style.copyrightCreator}>
-            Created by{' '}
-            <a className={style.copyrightCreator_mail} href={`mailto:${developerEmail}`}>
-              {developerEmail}
-            </a>
-          </p>
         </div>
       </div>
     </footer>

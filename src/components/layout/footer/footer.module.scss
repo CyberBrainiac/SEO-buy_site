@@ -34,7 +34,9 @@
   }
 }
 
-.companyInformation, .services, .tools {
+.companyInformation,
+.services,
+.tools {
   @include flex-column();
   max-width: 256px;
 }

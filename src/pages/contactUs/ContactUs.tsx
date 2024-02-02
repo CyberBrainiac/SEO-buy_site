@@ -30,7 +30,7 @@ const ContactUs: React.FC = () => {
         </div>
         <div className={style.contactWrap}>
           <div className={style.contactName}>Email:</div>
-          <div className={style.contactLink}>template email @.com</div>
+          <div className={style.contactLink}>contact.seobuy@gmail.com</div>
           <div className={style.contactName}>WhatsApp:</div>
           <div className={style.contactLink}>what`s up bro?</div>
           <div className={style.contactName}>Telegram:</div>
@@ -43,11 +43,11 @@ const ContactUs: React.FC = () => {
             collaborate to amplify your online presence and shape your digital success story.
           </p>
           <iframe
-            src="https://docs.google.com/forms/d/e/1FAIpQLSfzWUep1_3B6U0-VYZ4mYK1-1hbhDtS9tdA3-49tLj45pxOaQ/viewform?embedded=true"
+            src="https://docs.google.com/forms/d/e/1FAIpQLScRNGsAITjAjEfuO_xnjIKsyX65VK8DycGv4AUE-oUfRGt-Gg/viewform?embedded=true"
             width="640"
-            height="700"
+            height="800"
           >
-            Завантаження…
+            Download…
           </iframe>
           <p>
             Thank you for considering <a href="https://seo-buy.com/">SEO-Buy</a> as your digital
