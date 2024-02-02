@@ -13,7 +13,8 @@ const LinkBuilding: React.FC = () => {
   return (
     <section className="aboutUs">
       <div className={style.container}>
-        <h1>Link Building Services: Building Bridges to Online Authority</h1>
+        <h1>Link Building Services</h1>
+        <h2>Building Bridges to Online Authority</h2>
 
         <p>
           In the intricate realm of digital marketing, link building stands as a pillar of success,

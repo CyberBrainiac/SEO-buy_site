@@ -13,7 +13,8 @@ const OnPageSEO: React.FC = () => {
   return (
     <section className="aboutUs">
       <div className={style.container}>
-        <h1>Comprehensive SEO Services: Unleashing the Full Potential of Your Digital Presence</h1>
+        <h1>Comprehensive SEO Services</h1>
+        <h2>Unleashing the Full Potential of Your Digital Presence</h2>
 
         <p>
           In the ever-evolving digital landscape, conquering the search engine results is a

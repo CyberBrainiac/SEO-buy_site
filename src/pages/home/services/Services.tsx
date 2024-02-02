@@ -99,6 +99,15 @@ const Services: React.FC = () => {
     }
     const correspondingTextDecor = correspondingText.current.children[0] as HTMLDivElement;
     correspondingTextDecor.style.opacity = '1';
+
+    //optimize perfomance when user switch browser tab or minimizes browser window
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        setAutoRotate(false);
+        return;
+      }
+      setAutoRotate(true);
+    });
   }, [mapTextImg]);
 
   //Auto Rotation algorithm
@@ -187,7 +196,7 @@ const Services: React.FC = () => {
 
   return (
     <section className="services">
-      <h2 className={style.heading}>Our Services</h2>
+      <h2 className={style.heading}>Services</h2>
       <div className={style.container}>
         <div onMouseLeave={handleMouseLeave} className={style.description}>
           <div
