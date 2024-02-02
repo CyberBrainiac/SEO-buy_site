@@ -28,13 +28,27 @@
     padding-right: 16px;
     column-gap: 10px;
   }
+
+  @media screen and (max-width: 899.8px) {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr;
+  }
 }
 
 .animationWrap {
   position: relative;
   min-width: 500px;
-  height: 500px;
+  min-height: 500px;
+  max-width: 500px;
+  max-height: 500px;
   overflow: hidden;
+  user-select: none; //important things if i dont wont see gigant text select stick in Edge browser))
+
+  @media screen and (max-width: 899.8px) {
+    top: -20px;
+  }
 }
 
 .spiner {
@@ -58,7 +72,7 @@
   transform: translate(-50%, -50%);
   display: flex;
   border-radius: 50%;
-  box-shadow: 0 0 10px 10px rgba(106, 135, 202, 0.24)
+  box-shadow: 0 0 10px 10px rgba(106, 135, 202, 0.24);
 }
 
 .description {
@@ -66,6 +80,14 @@
 
   & :last-child {
     margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 899.8px) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    text-indent: 0;
+    text-align: center;
   }
 }
 
@@ -83,5 +105,14 @@
     background-color: $highlight-additional;
     opacity: 0;
     transition: opacity 0.3s ease-out;
+
+    @media screen and (max-width: 899.8px) {
+      margin-top: 40%;
+      height: 300px;
+    }
+  }
+
+  @media screen and (max-width: 899.8px) {
+    max-width: 30%;
   }
 }

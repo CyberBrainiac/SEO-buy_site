@@ -13,8 +13,8 @@ const AboutUs: React.FC = () => {
   return (
     <section className="aboutUs">
       <div className={style.container}>
-        <h1>About Us: Crafting Digital Success Stories Since 2019</h1>
-
+        <h1>About Us</h1>
+        <h2>Crafting Digital Success Stories Since 2019</h2>
         <p>
           Welcome to <a href="https://seo-buy.com/">SEO-Buy</a>, where innovation meets expertise,
           and your digital success story unfolds. Our journey began in 2019, and since then, we`ve

@@ -2,38 +2,58 @@
 @import '@style/mixins';
 
 .container {
-  @include flex-column();
   width: 100%;
   color: #000;
   font-size: 22px;
   line-height: 120%;
   max-width: $max-app-width;
   margin: 0 auto;
+
+  h4 {
+    font-weight: 500;
+    color: rgb(63, 58, 85);
+    margin-bottom: 10px;
+  }
 }
 
-.content {
+.contentWrap {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
   justify-items: center;
-  margin-bottom: 24px;
+  align-items: start;
+  padding-bottom: 24px;
 
-  &_link {
-    cursor: pointer;
-    padding: 8px;
+  a {
     color: $highlight-main;
+    padding: 4px 0;
 
     &:hover {
       color: $highlight-additional;
     }
   }
+}
 
-  @media screen and (max-width: 1023.9px) {
-    display: grid;
-    justify-items: center;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
+.companyInformation, .services, .tools {
+  @include flex-column();
+  max-width: 256px;
+}
+
+.companyInformation {
+  align-items: flex-start;
+  padding-left: 16px;
+}
+
+.services {
+  text-align: center;
+  margin-top: 42px;
+}
+
+.tools {
+  text-align: end;
+  align-items: flex-end;
+  padding-right: 16px;
+  margin-top: 42px;
 }
 
 .separator {

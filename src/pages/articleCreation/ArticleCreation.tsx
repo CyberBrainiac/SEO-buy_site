@@ -13,7 +13,8 @@ const ArticleCreation: React.FC = () => {
   return (
     <section className="aboutUs">
       <div className={style.container}>
-        <h1>Custom Article Creation: Crafting Your Digital Narrative with Precision</h1>
+        <h1>Custom Article Creation</h1>
+        <h2>Crafting Your Digital Narrative with Precision</h2>
 
         <p>
           In the vast expanse of the digital landscape, content reigns supreme. At{' '}

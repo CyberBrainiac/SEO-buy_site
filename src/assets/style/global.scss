@@ -55,6 +55,8 @@ ul {
 
 .footer {
   position: relative;
+  display: flex;
+  align-items: center;
   height: $footer-height;
   background-color: $page-bg-color-additional;
 }
