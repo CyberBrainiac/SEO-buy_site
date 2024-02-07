@@ -1,0 +1,45 @@
+@import '/src/assets/style/variables';
+@import '/src/assets/style/mixins';
+
+.container {
+  width: 264px;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0px 0px 10px 2px $page-bg-color-additional;
+
+  h4 {
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  &_decore {
+    height: 20px;
+    background-color: $page-bg-color-additional;
+    border-radius: 16px 16px 0 0;
+  }
+
+  & label {
+    margin-right: 10px;
+  }
+
+  & input {
+    margin: 10px 0;
+    border-width: 3px;
+    border-style: groove;
+    border-color: $page-bg-color-additional;
+    padding: 3px 7px;
+    font-size: 18px;
+  }
+}
+
+.contentWrap {
+  border: 2px solid $page-bg-color-additional;
+  padding: 5px;
+}
+
+.result {
+  & span {
+    margin-left: 63px;
+    color: $border-color-main;
+    font-weight: 600;
+  }
+}

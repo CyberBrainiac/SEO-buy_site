@@ -21,6 +21,8 @@ import {
   setStatusIndexThematicity,
   toolStatusValues,
 } from '@/containers/reducers/toolsSlice';
+import Calculator from '@/components/calculator/Calculator';
+import price from '@/services/config/price';
 
 const ThematicityIndex: React.FC = () => {
   const [logProgress, setLogProgress] = useState<string | null>(null);
@@ -189,37 +191,41 @@ const ThematicityIndex: React.FC = () => {
           />
         </aside>
 
-        <form onSubmit={formHandler} className={style.form}>
-          <div className={style.formContainer}>
-            <label className={style.formLabel} htmlFor="ThemIndRequest">
-              Write keyword
-            </label>
-            <input
-              id="ThemIndRequest"
-              name="request"
-              type="text"
-              className={style.formInput}
-              placeholder="koala"
-              required
-            />
-            <ButtonCommon
-              className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
-              type="submit"
-              text={
-                toolStatus === toolStatusValues.Working
-                  ? 'Index Is Calculated'
-                  : 'Get Thematicity Index'
-              }
-            />
-            <ButtonCommon
-              type="button"
-              className={style.loadBtn}
-              id="buttonLoadIndexThemat"
-              onClick={handleLoadResult}
-              text="Load Result"
-            />
-          </div>
-        </form>
+        <div className={style.toolWrap}>
+          <Calculator pricePerRequest={price.indexThematiicityRequest} />
+
+          <form onSubmit={formHandler} className={style.form}>
+            <div className={style.formContainer}>
+              <label className={style.formLabel} htmlFor="ThemIndRequest">
+                Write keyword
+              </label>
+              <input
+                id="ThemIndRequest"
+                name="request"
+                type="text"
+                className={style.formInput}
+                placeholder="koala"
+                required
+              />
+              <ButtonCommon
+                className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
+                type="submit"
+                text={
+                  toolStatus === toolStatusValues.Working
+                    ? 'Index Is Calculated'
+                    : 'Get Thematicity Index'
+                }
+              />
+              <ButtonCommon
+                type="button"
+                className={style.loadBtn}
+                id="buttonLoadIndexThemat"
+                onClick={handleLoadResult}
+                text="Load Result"
+              />
+            </div>
+          </form>
+        </div>
 
         <div className={style.logContainer}>{logProgress}</div>
         <div className={style.errorContainer}>{errorMessage}</div>
