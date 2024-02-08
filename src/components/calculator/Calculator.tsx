@@ -37,6 +37,7 @@ const Calculator: React.FC<CalculatorProps> = ({ pricePerRequest }) => {
         <div className={style.container_decore}></div>
         <div className={style.contentWrap}>
           <h4>Calculate Cost</h4>
+          <h6>per 1 keyword</h6>
           <label htmlFor="countUrl">Urls count:</label>
           <input
             onChange={handleInput}

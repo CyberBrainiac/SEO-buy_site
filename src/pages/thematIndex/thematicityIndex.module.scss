@@ -2,7 +2,6 @@
 @import '@style/variables';
 
 .container {
-  background-color: $page-bg-color-main;
   max-width: $max-app-width;
   margin: 0 auto;
   padding-bottom: 60px;
@@ -27,26 +26,57 @@
   }
 }
 
-.userInf {
-  font-size: 20px;
-  text-align: center;
+.column {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 1fr;
   padding-top: 20px;
-  padding-bottom: 40px;
+
+  &Left {
+    max-width: 280px;
+    padding-right: 20px;
+  }
+
+  &Right {
+    max-width: 700px;
+  }
+}
+
+.userInf {
+  font-size: 30px;
+  margin-bottom: 40px;
+  border-left: 4px solid $page-bg-color-additional;
+  border-radius: 10px;
+  padding-left: 6px;
 
   &__freeReq {
-    color: rgb(4, 129, 4);
+    border-bottom: 2px solid $page-bg-color-additional;
+    border-radius: 0 0 6px 6px;
+
+    p {
+      color: $highlight-additional;
+      text-align: end;
+    }
   }
 
   &__walletBal {
-    color: $highlight-additional;
+    border-top: 2px solid $page-bg-color-additional;
+    border-radius: 6px 6px 0 0;
+
+    p {
+      color: $highlight-additional;
+      text-align: end;
+    }
+
   }
 
   &__unAuthMessage {
     @include common-text();
-    @include flex-column();
-    font-size: 28px;
-    color: $highlight-additional;
-    height: 112px;
+    font-size: 24px;
+    
+    p {
+      text-align: start;
+    }
   }
 }
 
@@ -58,6 +88,10 @@
   justify-content: center;
   align-items: center;
   margin-top: 6px;
+
+  p {
+    color: #008000;
+  }
 }
 
 .acceptedDescription {
@@ -65,14 +99,8 @@
   color: $border-color-main;
 }
 
-.exampleBtn {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
 .form {
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 
   &Container {
     @include flex-column();

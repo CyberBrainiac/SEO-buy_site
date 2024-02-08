@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Footer from './footer/Footer';
 import Header from './header/Header';
-import './rootLayout.scss';
+import style from './rootLayout.module.scss';
 
 const RootLayout: React.FC = () => {
   const location = useLocation();
@@ -21,9 +21,11 @@ const RootLayout: React.FC = () => {
 
   return (
     <section className="page">
-      <Header />
-      <Outlet />
-      <Footer />
+      <div className={style.container}>
+        <Header />
+        <Outlet />
+        <Footer />
+      </div>
     </section>
   );
 };

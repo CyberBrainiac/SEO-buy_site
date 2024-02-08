@@ -3,7 +3,6 @@
 
 .container {
   color: $text-color-main;
-  background-color: #fcf5f5;
 
   a {
     @include highlight-text();

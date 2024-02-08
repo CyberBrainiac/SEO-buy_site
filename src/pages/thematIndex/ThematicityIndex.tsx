@@ -163,13 +163,15 @@ const ThematicityIndex: React.FC = () => {
   const userInf = userProfile ? (
     <div className={style.userInf}>
       <div className={style.userInf__freeReq}>
-        You have: {userProfile.freeRequest} free calculations
+        Free calculations: <p>{userProfile.freeRequest} url{(userProfile.freeRequest === 1) ? '' : 's'}</p>
       </div>
-      <div className={style.userInf__walletBal}>Wallet balance: {userProfile.walletBalance}$</div>
+      <div className={style.userInf__walletBal}>Wallet balance: <p>{userProfile.walletBalance}$</p></div>
     </div>
   ) : (
-    <div className={style.userInf__unAuthMessage}>
-      Sign up now and get 20 free thematicity index calculation per day!
+    <div className={style.userInf}>
+      <div className={style.userInf__unAuthMessage}>
+        <div>Sign in now, get <p style={{fontSize: '26px', color: 'rgb(4, 129, 4)'}}>20 free</p> thematicity index calculation per day!</div>
+      </div>
     </div>
   );
 
@@ -177,58 +179,62 @@ const ThematicityIndex: React.FC = () => {
     <section className="thematicityIndex">
       <div className={style.container}>
         <h1 className={style.mainHeading}>Thematic Domain Indexing</h1>
-        {userInf}
 
-        <InputFile onFileUpload={handleFileUpload} />
-        <aside className={style.acceptedFiles}>
-          <div className={style.acceptedDescription}>
-            {loadedFileName ? <p>{`Uploaded file: ${loadedFileName}`}</p> : null}
+        <div className={style.column}>
+          <div className={style.columnLeft}>
+            {userInf}
+            <Calculator pricePerRequest={price.indexThematiicityRequest} />
           </div>
-          <ButtonCommon
-            className={style.exampleBtn}
-            onClick={handleCreateExample}
-            text={'Load Example'}
-          />
-        </aside>
 
-        <div className={style.toolWrap}>
-          <Calculator pricePerRequest={price.indexThematiicityRequest} />
+          <div className={style.columnRight}>
+            <InputFile onFileUpload={handleFileUpload} />
+            <aside className={style.acceptedFiles}>
+              <div className={style.acceptedDescription}>
+                {loadedFileName ? <p>{`Uploaded file: ${loadedFileName}`}</p> : null}
+              </div>
+              <ButtonCommon
+                className={style.exampleBtn}
+                onClick={handleCreateExample}
+                text={'Load Example'}
+              />
+            </aside>
 
-          <form onSubmit={formHandler} className={style.form}>
-            <div className={style.formContainer}>
-              <label className={style.formLabel} htmlFor="ThemIndRequest">
-                Write keyword
-              </label>
-              <input
-                id="ThemIndRequest"
-                name="request"
-                type="text"
-                className={style.formInput}
-                placeholder="koala"
-                required
-              />
-              <ButtonCommon
-                className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
-                type="submit"
-                text={
-                  toolStatus === toolStatusValues.Working
-                    ? 'Index Is Calculated'
-                    : 'Get Thematicity Index'
-                }
-              />
-              <ButtonCommon
-                type="button"
-                className={style.loadBtn}
-                id="buttonLoadIndexThemat"
-                onClick={handleLoadResult}
-                text="Load Result"
-              />
-            </div>
-          </form>
+            <form onSubmit={formHandler} className={style.form}>
+              <div className={style.formContainer}>
+                <label className={style.formLabel} htmlFor="ThemIndRequest">
+                  Write keyword
+                </label>
+                <input
+                  id="ThemIndRequest"
+                  name="request"
+                  type="text"
+                  className={style.formInput}
+                  placeholder="koala"
+                  required
+                />
+                <ButtonCommon
+                  className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
+                  type="submit"
+                  text={
+                    toolStatus === toolStatusValues.Working
+                      ? 'Index Is Calculated'
+                      : 'Get Thematicity Index'
+                  }
+                />
+                <ButtonCommon
+                  type="button"
+                  className={style.loadBtn}
+                  id="buttonLoadIndexThemat"
+                  onClick={handleLoadResult}
+                  text="Load Result"
+                />
+              </div>
+            </form>
+
+            <div className={style.logContainer}>{logProgress}</div>
+            <div className={style.errorContainer}>{errorMessage}</div>
+          </div>
         </div>
-
-        <div className={style.logContainer}>{logProgress}</div>
-        <div className={style.errorContainer}>{errorMessage}</div>
 
         <div className={style.content}>
           <h2>Unveiling Relevance in the Digital Tapestry</h2>
