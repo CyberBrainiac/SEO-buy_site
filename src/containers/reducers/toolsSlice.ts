@@ -51,7 +51,7 @@ const toolsSlice = createSlice({
       state.linkInsertion.status = action.payload;
     },
     setStatusIndexThematicity(state, action) {
-      state.linkInsertion.status = action.payload;
+      state.indexThematicity.status = action.payload;
     },
   },
   extraReducers: builder => {

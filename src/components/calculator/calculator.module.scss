@@ -4,8 +4,10 @@
 .container {
   width: 264px;
   border-radius: 16px 16px 0 0;
+  box-shadow: 8px 8px 2px 0px rgba(106, 135, 202, 0.52);
 
-  h4, h6 {
+  h4,
+  h6 {
     font-weight: 500;
   }
 

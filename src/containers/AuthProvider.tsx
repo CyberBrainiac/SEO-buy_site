@@ -104,7 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return;
         }
         /**
-         * in same situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'! Why?
+         * in same situation, 'onSnapshot' return data 2 times, in 1 time serverTimestamp return 'null'!
          */
         if (!modifiedUserProfile.lastLogIn) {
           //du to 2 renders

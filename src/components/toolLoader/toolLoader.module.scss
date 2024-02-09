@@ -1,0 +1,24 @@
+@import '/src/assets/style/variables';
+@import '/src/assets/style/mixins';
+
+@keyframes toolLoadAnim {
+  to {
+    background-position: 80% 100%;
+  }
+}
+
+.container {
+  font-family: $Open-Sans;
+  font-weight: 500;
+  font-size: 40px;
+  color: #000;
+  width: fit-content;
+  padding: 0 5px 8px 0;
+  background: repeating-linear-gradient(90deg, currentColor 0 8%, #0000 0 10%) 200% 100%/200% 3px
+    no-repeat;
+  animation: toolLoadAnim 2s steps(6) infinite;
+
+  &:before {
+    content: 'Working...';
+  }
+}
