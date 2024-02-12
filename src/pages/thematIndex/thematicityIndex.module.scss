@@ -2,14 +2,13 @@
 @import '@style/variables';
 
 .container {
-  background-color: $page-bg-color-main;
   max-width: $max-app-width;
   margin: 0 auto;
   padding-bottom: 60px;
 
   h1 {
     text-align: center;
-    padding-top: 30px;
+    margin-top: 20px;
   }
 
   h2 {
@@ -27,66 +26,102 @@
   }
 }
 
+.column {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 1fr;
+  justify-items: center;
+  padding-top: 30px;
+
+  &Left {
+    max-width: 280px;
+    padding-right: 20px;
+  }
+
+  &Right {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    row-gap: 10px;
+    border: 3px solid $page-bg-color-additional;
+    box-shadow: 8px 8px 2px 0px rgba(106, 135, 202, 0.52);
+    border-radius: 10px;
+    background-size: 100% 100%;
+    background-image: repeating-linear-gradient(315deg, #00ffff2e 92%, #073aff00 100%),
+      repeating-radial-gradient(75% 75% at 238% 218%, #00ffff12 30%, #073aff14 39%),
+      radial-gradient(99% 99% at 109% 2%, rgba(0, 200, 255, 0.1) 0%, #073aff00 100%),
+      radial-gradient(99% 99% at 21% 78%, rgba(123, 0, 255, 0.1) 0%, #073aff00 100%);
+
+    &_top,
+    &_bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px;
+
+      @media screen and (max-width: 1025.8px) {
+        flex-direction: column;
+        row-gap: 10px;
+      }
+    }
+
+    &_bottom {
+      align-self: flex-start;
+    }
+  }
+}
+
 .userInf {
-  font-size: 20px;
-  text-align: center;
-  padding-top: 20px;
-  padding-bottom: 40px;
+  font-size: 30px;
+  margin-bottom: 40px;
+  border-left: 4px solid $page-bg-color-additional;
+  border-radius: 10px;
+  padding-left: 6px;
 
   &__freeReq {
-    color: rgb(4, 129, 4);
+    border-bottom: 2px solid $page-bg-color-additional;
+    border-radius: 0 0 6px 6px;
+
+    p {
+      color: $highlight-additional;
+      text-align: end;
+    }
   }
 
   &__walletBal {
-    color: $highlight-additional;
+    border-top: 2px solid $page-bg-color-additional;
+    border-radius: 6px 6px 0 0;
+
+    p {
+      color: $highlight-additional;
+      text-align: end;
+    }
   }
 
   &__unAuthMessage {
     @include common-text();
-    @include flex-column();
-    font-size: 28px;
-    color: $highlight-additional;
-    height: 112px;
+    font-size: 24px;
+
+    p {
+      text-align: start;
+    }
   }
 }
 
-.acceptedFiles {
-  position: relative;
-  height: 50px;
-  row-gap: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 6px;
-}
-
-.acceptedDescription {
-  margin-right: 20px;
-  color: $border-color-main;
-}
-
-.exampleBtn {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-.form {
-  padding: 20px;
-
-  &Container {
-    @include flex-column();
-    width: 50%;
-    margin: 0 auto;
-  }
+.keyword {
+  @include flex-column();
+  min-width: 420px;
 
   &Label {
-    @include highlight-text();
-    color: $highlight-additional;
+    font-family: $Open-Sans;
+    font-weight: 500;
+    color: $border-color-main;
+    font-size: 40px;
+    height: 50px;
   }
 
   &Input {
-    width: 100%;
+    width: 430px;
     margin: 10px 0;
     border-width: 3px;
     border-style: groove;
@@ -94,16 +129,39 @@
     padding: 3px 7px;
     font-size: 18px;
   }
+}
 
-  &Btn {
+.btn {
+  &Example {
+    width: 170px;
+    height: 70px;
+    margin-left: 20px;
+  }
+
+  &Calc {
+    width: 170px;
+    height: 70px;
+    margin-left: 20px;
+    animation: blinkButton 7s linear 0s infinite normal none;
+    align-self: flex-start;
+    margin-top: 40px;
+
     &_active {
       background-color: rgb(76, 212, 76);
+    }
+
+    @media screen and (max-width: 1025.8px) {
+      margin-top: 0;
+      align-self: center;
     }
   }
 }
 
-.loadBtn {
-  margin-top: 10px;
+.appMessages {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  border-top: 2px solid #6a87ca;
 }
 
 .errorContainer {
@@ -111,22 +169,34 @@
   text-align: center;
   color: #ff0000;
   font-size: 22px;
+  font-weight: 600;
   padding: 4px;
 }
 
 .logContainer {
   width: 100%;
   text-align: center;
-  height: 22px;
+  font-size: 22px;
+  font-weight: 600;
   padding: 4px;
 }
 
 .content {
+  margin-top: 30px;
+
   & :first-child {
     margin-top: 10px;
   }
   p {
     text-indent: 2rem;
     margin-top: 10px;
+  }
+}
+
+@keyframes blinkButton {
+  50% {
+    background: rgba(76, 212, 76, 0.25);
+    color: #000;
+    border-color: #000;
   }
 }

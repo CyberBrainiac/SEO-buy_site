@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import style from './thematicityIndex.module.scss';
 import InputFile from '@/components/inputFile/InputFile';
@@ -8,12 +8,7 @@ import fireStore from '@/services/fireStore';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setInformMessage } from '@/containers/reducers/userSlice';
 import { AppDispatch } from '@/containers/storeRedux';
-import {
-  InputData,
-  addInputData,
-  selectFileName,
-  selectInputData,
-} from '@/containers/reducers/inputDataSlice';
+import { InputData, addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
 import {
   selectIndexThematicityRequest,
   selectIndexThematicityStatus,
@@ -21,17 +16,20 @@ import {
   setStatusIndexThematicity,
   toolStatusValues,
 } from '@/containers/reducers/toolsSlice';
+import Calculator from '@/components/calculator/Calculator';
+import price from '@/services/config/price';
+import ToolLoader from '@/components/toolLoader/ToolLoader';
 
 const ThematicityIndex: React.FC = () => {
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const keywordRef = useRef<HTMLInputElement | null>(null);
 
   const dispatch = useDispatch() as AppDispatch;
   const userProfile = useSelector(selectUser);
   const inputData = useSelector(selectInputData) as InputData[];
   const userQuery = useSelector(selectIndexThematicityRequest) as string;
   const toolStatus = useSelector(selectIndexThematicityStatus);
-  const loadedFileName = useSelector(selectFileName);
 
   useEffect(() => {
     document.title = 'Enhance SEO Precision with Thematic Domain Indexing | SEO-Buy';
@@ -56,7 +54,6 @@ const ThematicityIndex: React.FC = () => {
     reader.onerror = error => {
       console.error('Error in File Reader', error);
     };
-
     reader.readAsArrayBuffer(file);
   };
 
@@ -96,20 +93,20 @@ const ThematicityIndex: React.FC = () => {
     setErrorMessage(errorMessage);
   };
 
-  //Calculate Thematicity Index
-  const formHandler = async (event: FormEvent) => {
-    event.preventDefault();
+  //
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.target.style.borderColor = '#6a87ca';
     setErrorMessage(null);
     setLogProgress(null);
+  };
 
-    const form = event.target as HTMLFormElement;
-    const formData = new FormData(form);
-
-    let inputKeyword = formData.get('request') as string;
-    inputKeyword = inputKeyword.trim();
+  const calculateThematicityIndex = async () => {
+    const inputElem = keywordRef.current!;
+    const inputKeyword = inputElem.value.trim();
 
     if (!inputKeyword) {
-      alert('Empty request');
+      inputElem.style.borderColor = '#ff0000';
+      setErrorMessage('Prowide keyword');
       return;
     }
 
@@ -156,18 +153,31 @@ const ThematicityIndex: React.FC = () => {
     dispatch(addInputData(calculatedData));
     dispatch(setStatusIndexThematicity(toolStatusValues.Idle));
     dispatch(setInformMessage('Successfully done'));
+
+    //Finaly, load result
+    handleLoadResult();
   };
 
   const userInf = userProfile ? (
     <div className={style.userInf}>
       <div className={style.userInf__freeReq}>
-        You have: {userProfile.freeRequest} free calculations
+        Free calculations:{' '}
+        <p>
+          {userProfile.freeRequest} url{userProfile.freeRequest === 1 ? '' : 's'}
+        </p>
       </div>
-      <div className={style.userInf__walletBal}>Wallet balance: {userProfile.walletBalance}$</div>
+      <div className={style.userInf__walletBal}>
+        Wallet balance: <p>{userProfile.walletBalance}$</p>
+      </div>
     </div>
   ) : (
-    <div className={style.userInf__unAuthMessage}>
-      Sign up now and get 20 free thematicity index calculation per day!
+    <div className={style.userInf}>
+      <div className={style.userInf__unAuthMessage}>
+        <div>
+          Sign in now, get <p style={{ fontSize: '26px', color: 'rgb(4, 129, 4)' }}>20 free</p>{' '}
+          thematicity index calculation per day!
+        </div>
+      </div>
     </div>
   );
 
@@ -175,54 +185,58 @@ const ThematicityIndex: React.FC = () => {
     <section className="thematicityIndex">
       <div className={style.container}>
         <h1 className={style.mainHeading}>Thematic Domain Indexing</h1>
-        {userInf}
 
-        <InputFile onFileUpload={handleFileUpload} />
-        <aside className={style.acceptedFiles}>
-          <div className={style.acceptedDescription}>
-            {loadedFileName ? <p>{`Uploaded file: ${loadedFileName}`}</p> : null}
+        <div className={style.column}>
+          <div className={style.columnLeft}>
+            {userInf}
+            <Calculator pricePerRequest={price.indexThematiicityRequest} />
           </div>
-          <ButtonCommon
-            className={style.exampleBtn}
-            onClick={handleCreateExample}
-            text={'Load Example'}
-          />
-        </aside>
 
-        <form onSubmit={formHandler} className={style.form}>
-          <div className={style.formContainer}>
-            <label className={style.formLabel} htmlFor="ThemIndRequest">
-              Write keyword
-            </label>
-            <input
-              id="ThemIndRequest"
-              name="request"
-              type="text"
-              className={style.formInput}
-              placeholder="koala"
-              required
-            />
-            <ButtonCommon
-              className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
-              type="submit"
-              text={
-                toolStatus === toolStatusValues.Working
-                  ? 'Index Is Calculated'
-                  : 'Get Thematicity Index'
-              }
-            />
-            <ButtonCommon
-              type="button"
-              className={style.loadBtn}
-              id="buttonLoadIndexThemat"
-              onClick={handleLoadResult}
-              text="Load Result"
-            />
+          <div className={style.columnRight}>
+            <div className={style.columnRight_top}>
+              <InputFile onFileUpload={handleFileUpload} />
+              <ButtonCommon
+                className={style.btnExample}
+                onClick={handleCreateExample}
+                text={'Load Example'}
+              />
+            </div>
+
+            <div className={style.columnRight_bottom}>
+              <div className={style.keyword}>
+                <div className={style.keywordLabel}>
+                  {toolStatus === toolStatusValues.Working ? <ToolLoader /> : 'Write keyword'}
+                </div>
+                <input
+                  id="requestThemIndex"
+                  ref={keywordRef}
+                  onChange={handleInputChange}
+                  type="text"
+                  className={style.keywordInput}
+                  placeholder="artificial intelligence"
+                />
+              </div>
+              <ButtonCommon
+                className={
+                  toolStatus === toolStatusValues.Working
+                    ? `${style.btnCalc} ${style.btnCalc_active}`
+                    : style.btnCalc
+                }
+                onClick={calculateThematicityIndex}
+                text={
+                  toolStatus === toolStatusValues.Working
+                    ? 'Index Is Calculating'
+                    : 'Get Thematicity Index'
+                }
+              />
+            </div>
+
+            <div className={style.appMessages}>
+              <div className={style.logContainer}>{logProgress}</div>
+              <div className={style.errorContainer}>{errorMessage}</div>
+            </div>
           </div>
-        </form>
-
-        <div className={style.logContainer}>{logProgress}</div>
-        <div className={style.errorContainer}>{errorMessage}</div>
+        </div>
 
         <div className={style.content}>
           <h2>Unveiling Relevance in the Digital Tapestry</h2>
