@@ -54,7 +54,6 @@ const ThematicityIndex: React.FC = () => {
     reader.onerror = error => {
       console.error('Error in File Reader', error);
     };
-
     reader.readAsArrayBuffer(file);
   };
 
@@ -101,7 +100,6 @@ const ThematicityIndex: React.FC = () => {
     setLogProgress(null);
   };
 
-  //Calculate Thematicity Index
   const calculateThematicityIndex = async () => {
     const inputElem = keywordRef.current!;
     const inputKeyword = inputElem.value.trim();
@@ -210,17 +208,13 @@ const ThematicityIndex: React.FC = () => {
                   {toolStatus === toolStatusValues.Working ? <ToolLoader /> : 'Write keyword'}
                 </div>
                 <input
-                  id="request"
+                  id="requestThemIndex"
                   ref={keywordRef}
                   onChange={handleInputChange}
                   type="text"
                   className={style.keywordInput}
                   placeholder="artificial intelligence"
                 />
-                <div className={style.appMessages}>
-                  <div className={style.logContainer}>{logProgress}</div>
-                  <div className={style.errorContainer}>{errorMessage}</div>
-                </div>
               </div>
               <ButtonCommon
                 className={
@@ -235,6 +229,11 @@ const ThematicityIndex: React.FC = () => {
                     : 'Get Thematicity Index'
                 }
               />
+            </div>
+
+            <div className={style.appMessages}>
+              <div className={style.logContainer}>{logProgress}</div>
+              <div className={style.errorContainer}>{errorMessage}</div>
             </div>
           </div>
         </div>

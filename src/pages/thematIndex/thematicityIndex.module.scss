@@ -161,6 +161,7 @@
   display: flex;
   width: 100%;
   justify-content: center;
+  border-top: 2px solid #6a87ca;
 }
 
 .errorContainer {
@@ -192,11 +193,10 @@
   }
 }
 
-
-@keyframes blinkButton{
+@keyframes blinkButton {
   50% {
-      background: rgba(76, 212, 76, 0.25);
-      color: #000;
-      border-color: #000;
+    background: rgba(76, 212, 76, 0.25);
+    color: #000;
+    border-color: #000;
   }
 }

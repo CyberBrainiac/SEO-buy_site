@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import style from './linkInsertion.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -9,29 +9,28 @@ import {
   toolStatusValues,
 } from '@/containers/reducers/toolsSlice';
 import { AppDispatch } from '@/containers/storeRedux';
-import {
-  InputData,
-  addInputData,
-  selectFileName,
-  selectInputData,
-} from '@/containers/reducers/inputDataSlice';
+import { InputData, addInputData, selectInputData } from '@/containers/reducers/inputDataSlice';
 import { selectUser, setInformMessage } from '@/containers/reducers/userSlice';
 import { ButtonCommon } from '@/components/buttons/Buttons';
 import InputFile from '@/components/inputFile/InputFile';
 import fileExcel from '../../utils/fileExcel';
 import fireStore from '@/services/fireStore';
 import getLinkInsertion from './getLinkInsertion';
+import Calculator from '@/components/calculator/Calculator';
+import price from '@/services/config/price';
+import ToolLoader from '@/components/toolLoader/ToolLoader';
 
 const LinkInsertion: React.FC = () => {
   const dispatch = useDispatch() as AppDispatch;
   const inputData = useSelector(selectInputData) as InputData[];
-  const loadedFileName = useSelector(selectFileName);
   const userProfile = useSelector(selectUser);
   const toolStatus = useSelector(selectLinkInsertionStatus);
   const userQuery = useSelector(selectLinkInsertionRequest);
   const [logProgress, setLogProgress] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSettingVisible, setSettingVisible] = useState(false);
+  const keywordRef = useRef<HTMLInputElement | null>(null);
+  const locationRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     document.title = 'Effortless Link Placement with Our Locator Tool | SEO-Buy';
@@ -85,27 +84,30 @@ const LinkInsertion: React.FC = () => {
     fileExcel.createExample();
   };
 
-  const formHandler = async (event: FormEvent) => {
-    event.preventDefault();
+  //
+  const progressHandler = (value: string) => {
+    setLogProgress(value);
+  };
+
+  //
+  const errorHandler = (errorMessage: string) => {
+    setErrorMessage(errorMessage);
+  };
+
+  //
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.target.style.borderColor = '#6a87ca';
     setErrorMessage(null);
     setLogProgress(null);
+  };
 
-    const form = event.target as HTMLFormElement;
-    const formData = new FormData(form);
+  const calculateLinkInsertion = async () => {
+    const inputElem = keywordRef.current!;
+    const inputKeyword = inputElem.value.trim();
 
-    let inputKeyword = formData.get('request') as string;
-    inputKeyword = inputKeyword.trim();
-
-    if (!inputData.length) {
-      alert('Upload list of url');
-      return null;
-    }
-    if (!userProfile) {
-      alert('Need to sign in');
-      return null;
-    }
     if (!inputKeyword) {
-      alert('Empty request');
+      inputElem.style.borderColor = '#ff0000';
+      setErrorMessage('Prowide keyword');
       return;
     }
 
@@ -115,12 +117,25 @@ const LinkInsertion: React.FC = () => {
       return null;
     }
 
-    let inputLocation = formData.get('location') as string;
-    inputLocation = inputLocation?.trim();
+    if (!inputData.length) {
+      alert('Upload list of url');
+      return null;
+    }
+    if (!userProfile) {
+      alert('Need to sign in');
+      return null;
+    }
+
+    let inputLocation;
+    if (locationRef.current) {
+      const inputLocationElem = locationRef.current;
+      inputLocation = inputLocationElem.value.trim();
+    }
 
     const request = `"${inputKeyword}"`;
-    dispatch(setRequestLinkInsertion(request));
     const currentRequestCount = inputData.length;
+
+    dispatch(setRequestLinkInsertion(request));
     const modifyBalance = await fireStore.calculateBalance({
       userProfile: userProfile,
       requestCount: currentRequestCount,
@@ -148,106 +163,113 @@ const LinkInsertion: React.FC = () => {
     dispatch(addInputData(calculatedData));
     dispatch(setStatusLinkInsertion(toolStatusValues.Idle));
     dispatch(setInformMessage('Successfully done'));
+
+    //Finaly, load result
+    handleLoadResult();
   };
 
   function hadnleSettingToggle(event: React.ChangeEvent<HTMLInputElement>) {
     setSettingVisible(event.target.checked);
   }
 
-  //
-  const progressHandler = (value: string) => {
-    setLogProgress(value);
-  };
-
-  //
-  const errorHandler = (errorMessage: string) => {
-    setErrorMessage(errorMessage);
-  };
-
   const userInf = userProfile ? (
     <div className={style.userInf}>
       <div className={style.userInf__freeReq}>
-        You have: {userProfile.freeRequest} free calculations
+        Free calculations:{' '}
+        <p>
+          {userProfile.freeRequest} url{userProfile.freeRequest === 1 ? '' : 's'}
+        </p>
       </div>
-      <div className={style.userInf__walletBal}>Wallet balance: {userProfile.walletBalance}$</div>
+      <div className={style.userInf__walletBal}>
+        Wallet balance: <p>{userProfile.walletBalance}$</p>
+      </div>
     </div>
   ) : (
-    <div className={style.userInfNonAuth}>
-      Sign up now and get 20 free thematicity index calculation per day!
+    <div className={style.userInf}>
+      <div className={style.userInf__unAuthMessage}>
+        <div>
+          Sign in now, get <p style={{ fontSize: '26px', color: 'rgb(4, 129, 4)' }}>20 free</p>{' '}
+          thematicity index calculation per day!
+        </div>
+      </div>
     </div>
   );
 
   return (
     <section className="linkInsertion">
       <div className={style.container}>
-        <h1>Link Insertion Locator</h1>
-        {userInf}
+        <h1 className={style.mainHeading}>Link Insertion Locator</h1>
 
-        <InputFile onFileUpload={handleFileUpload} />
-        <aside className={style.acceptedFiles}>
-          <div className={style.acceptedDescription}>
-            {loadedFileName ? <p>{`Uploaded file: ${loadedFileName}`}</p> : null}
+        <div className={style.column}>
+          <div className={style.columnLeft}>
+            {userInf}
+            <Calculator pricePerRequest={price.linkInsertionRequest} />
           </div>
-          <ButtonCommon
-            className={style.exampleBtn}
-            onClick={handleCreateExample}
-            text={'Load Example'}
-          />
-        </aside>
 
-        <form onSubmit={formHandler} className={style.form}>
-          <div className={style.formContainer}>
-            <div className={style.formGridInput}>
-              <label className={style.formLabel} htmlFor="ThemIndRequest">
-                Write keyword
-              </label>
-              <input
-                id="ThemIndRequest"
-                name="request"
-                type="text"
-                className={style.formInput}
-                placeholder="koala"
-                required
+          <div className={style.columnRight}>
+            <div className={style.columnRight_top}>
+              <InputFile onFileUpload={handleFileUpload} />
+              <ButtonCommon
+                className={style.btnExample}
+                onClick={handleCreateExample}
+                text={'Load Example'}
               />
             </div>
 
-            <div className={style.formSetting}>
-              <div className={style.formSettingToggle} onChange={hadnleSettingToggle}>
-                <span>Show Settings</span>
-                <input type="checkbox" name="checkbox-group" />
-              </div>
-              {isSettingVisible ? (
-                <div className={style.formSettingContent}>
-                  <div className={style.formSettingElem}>
-                    <p>Location:</p>
-                    <input type="text" name="location" placeholder="United States  OR  us" />
-                  </div>
+            <div className={style.columnRight_bottom}>
+              <div className={style.keyword}>
+                <div className={style.keywordLabel}>
+                  {toolStatus === toolStatusValues.Working ? <ToolLoader /> : 'Write keyword'}
                 </div>
-              ) : null}
-            </div>
-
-            <div className={style.formBtnWrap}>
+                <input
+                  id="requestLinkInsert"
+                  ref={keywordRef}
+                  onChange={handleInputChange}
+                  type="text"
+                  className={style.keywordInput}
+                  placeholder="artificial intelligence"
+                />
+                <div className={style.setting}>
+                  <div className={style.settingToggle} onChange={hadnleSettingToggle}>
+                    <span>Show Settings</span>
+                    <input type="checkbox" name="checkbox-group" />
+                  </div>
+                  {isSettingVisible ? (
+                    <div className={style.settingContent}>
+                      <div className={style.settingElem}>
+                        <p>Location:</p>
+                        <input
+                          ref={locationRef}
+                          type="text"
+                          name="location"
+                          placeholder="United States  OR  us"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
               <ButtonCommon
-                className={toolStatus === toolStatusValues.Working ? style.formBtn_active : ''}
-                type="submit"
+                className={
+                  toolStatus === toolStatusValues.Working
+                    ? `${style.btnCalc} ${style.btnCalc_active}`
+                    : style.btnCalc
+                }
+                onClick={calculateLinkInsertion}
                 text={
                   toolStatus === toolStatusValues.Working
-                    ? 'Index Is Calculated'
-                    : 'Get Link Insertion'
+                    ? 'Find Insertions'
+                    : 'Get Link Insertions'
                 }
               />
-              <ButtonCommon
-                type="button"
-                className={style.loadBtn}
-                id="buttonLoadIndexThemat"
-                onClick={handleLoadResult}
-                text="Load Result"
-              />
+            </div>
+
+            <div className={style.appMessages}>
+              <div className={style.logContainer}>{logProgress}</div>
+              <div className={style.errorContainer}>{errorMessage}</div>
             </div>
           </div>
-        </form>
-        <div className={style.logContainer}>{logProgress}</div>
-        <div className={style.errorContainer}>{errorMessage}</div>
+        </div>
 
         <div className={style.content}>
           <h2>Navigating Your Path to Relevant Link Placements</h2>
