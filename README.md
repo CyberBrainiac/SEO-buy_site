@@ -1,4 +1,4 @@
-# .[SEO-Buy](https://seo-buy.com)
+# [SEO-Buy](https://seo-buy.com)
 
 ## About team
 
