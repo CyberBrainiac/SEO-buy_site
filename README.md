@@ -1,29 +1,35 @@
-# Template: React + TypeScript + Vite
+# SEO-Buy
 
-## Static deploy
+## About team
 
-After deploy on GitHub pages change vite.config: -base: '/site_indexThematicity/' -delete server:
-{port: 4200,},
+Behind every successful strategy is a team of experts, and ours is second to none. With a wealth of experience and a passion for innovation, our professionals bring diverse skills to the table – from SEO gurus and content maestros to strategic link-building enthusiasts. 
+Together, we navigate the digital frontier, guiding your brand towards unparalleled success.
 
-## Expanding the ESLint configuration
+## About project
 
-If you are developing a production application, we recommend updating the configuration to enable
-type aware lint rules:
+The site was created for SEO and content writing specialists to promote the brand and the ambitious team. 
+In the Tools section, you will find applications for automating routine work. 
+These include: 
+- searching for websites to post content;
+- classifying websites by topic from a database.
 
-- Configure the top-level `parserOptions` property like this:
+## Technology stack
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+**Programming language**:
+- TypeScript;
+- Html;
+- Scss.
+  
+**Main library**:
+- React.
 
-- Replace `plugin:@typescript-eslint/recommended` to
-  `plugin:@typescript-eslint/recommended-type-checked` or
-  `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add
-  `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+**Web App Development Platform**: 
+- [Firebase](https://firebase.google.com/).
+
+**Database**: 
+- Firestore.
+
+**API**:
+- Firebase JS SDK;
+- Google Identity Toolkit API;
+- Google Custom Search JSON API.
