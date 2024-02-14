@@ -21,7 +21,8 @@ These include:
 - Scss.
   
 **Main library**:
-- React.
+- React;
+- Redux.
 
 **Web App Development Platform**: 
 - [Firebase](https://firebase.google.com/).
