@@ -10,7 +10,7 @@ Together, we navigate the digital frontier, guiding your brand towards unparalle
 The site was created for SEO and content writing specialists to promote the brand and the ambitious team. 
 In the Tools section, you will find applications for automating routine work. 
 These include: 
-- searching for websites to post content;
+- searching websites to post content;
 - classifying websites by topic from a database.
 
 ## Technology stack
