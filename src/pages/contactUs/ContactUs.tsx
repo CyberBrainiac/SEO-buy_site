@@ -21,7 +21,7 @@ const ContactUs: React.FC = () => {
           we`re here to guide you.
         </p>
 
-        <h2>Contact Information:</h2>
+        {/* <h2>Contact Information:</h2>
         <div className={style.img}>
           <img
             src="https://firebasestorage.googleapis.com/v0/b/thematicity-index.appspot.com/o/assets%2FSEOb_logo.jpg?alt=media&token=1805af8b-7173-4072-b2e9-b6f589907850"
@@ -35,7 +35,8 @@ const ContactUs: React.FC = () => {
           <div className={style.contactLink}>what`s up bro?</div>
           <div className={style.contactName}>Telegram:</div>
           <div className={style.contactLink}>--link to telega id--</div>
-        </div>
+        </div> */}
+
         <div id="googleContactForm" className={style.googleFormContainer}>
           <h2>Get in Touch:</h2>
           <p>
