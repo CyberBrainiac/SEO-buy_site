@@ -7,11 +7,10 @@ Together, we navigate the digital frontier, guiding your brand towards unparalle
 
 ## About project
 
-The site was created for SEO and content writing specialists to promote the brand and the ambitious team. 
-In the Tools section, you will find applications for automating routine work. 
-These include: 
-- searching websites to post content;
-- classifying websites by topic from a database.
+Site to promote SEO and content writing services with tools to help individuals and teams find place to post content or link building.
+
+- Link insertion tool: search web pages with provided keywords from a list of sites in Excel to post thematicity articles;
+- Thematicity Index Tool: range sites from a list of sites in Excel to find the most relevant sites by topic or keyword.
 
 ## Technology stack
 
